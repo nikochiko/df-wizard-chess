@@ -1,0 +1,33 @@
+task today: Allow conversion of speech to move
+
+Start with one format and then expand
+
+Should keep in mind all corner cases:
+> castling (long and short)
+> captures
+> promotions
+> pawn moves vs piece moves
+> checks and not checks (and checkmates)
+
+
+strategy:
+> dont worry about checks or captures - can figure that out later very easily
+> key things:
+> - either two squares or a piece and a square (might need more data)
+
+anomaly:
+> promotion. needs a square and a promotion piece - could also be a capture or check
+
+> you already can convert move to speech
+
+you only need to worry about speech to move
+
+speech examples:
+> knight from g1 to/captures f3 (check)?
+> pawn from e7 to/captures e8 queen
+
+for now, work with the two squares approach
+you can know promotion or not by checking the last word in speech
+otherwise, you can just ask options for which piece to promote to
+
+> also need some util to work with receiving answers to options

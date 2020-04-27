@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "chess-server"
+version = "0.1.0"
+description = ""
+authors = ["nikochiko <kaustubh299792458@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+flask = "^1.1.2"
+gunicorn = "^20.0.4"
+python-chess = "^0.31.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
