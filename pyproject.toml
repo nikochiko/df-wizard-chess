@@ -10,6 +10,7 @@ flask = "^1.1.2"
 gunicorn = "^20.0.4"
 python-chess = "^0.31.0"
 flask-sqlalchemy = "^2.4.1"
+flake8 = "^3.7.9"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
