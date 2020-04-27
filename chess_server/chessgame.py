@@ -166,10 +166,18 @@ class Mediator:
         # If engine path is not given, check if it is mentioned in config file
         if not engine_path:
             # Default to 'stockfish' if engine path is not specified in config file
-            engine_path = ENGINE_PATH or "stockfish"
+            engine_path = ENGINE_PATH
 
-        # Load engine
-        self.engine = chess.engine.SimpleEngine.popen_uci(engine_path)
+        try:
+            # Load engine
+            self.engine = chess.engine.SimpleEngine.popen_uci(engine_path)
+        except Exception as exc:
+            # Log and throw error
+            print(f'Error while trying to set up engine from path {engine_path}. '
+                'See logs for more details.')
+            log.error(f'[-] Error while trying to set up engine from {engine_path}:\n{exc}')
+            raise
+
 
     def play_engine_move_and_get_lan(self, user: User) -> str:
         """Play engine's move on the board"""

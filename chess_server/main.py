@@ -150,7 +150,7 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
     # TODO: Store this reply somewhere
     if lan == "illegal move":
         return generate_response_for_google_assistant(
-            textToSpeech=f"The move {lan} is not legal, please try once again. Just an FYI, you can say Show Board to see the current position on the board."
+            textToSpeech=f"The move is not legal, please try once again. Just an FYI, you can say Show Board to see the current position on the board."
         )
 
     # Maybe recite the user's move back for confirmation?

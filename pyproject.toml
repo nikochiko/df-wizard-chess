@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "chess-server"
-version = "0.1.0"
+version = "0.1.1-alpha.0"
 description = ""
 authors = ["nikochiko <kaustubh299792458@gmail.com>"]
 
@@ -9,6 +9,7 @@ python = "^3.6"
 flask = "^1.1.2"
 gunicorn = "^20.0.4"
 python-chess = "^0.31.0"
+flask-sqlalchemy = "^2.4.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
