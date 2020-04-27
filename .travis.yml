@@ -6,4 +6,4 @@ before_install:
 install:
 - poetry install
 script:
-- poetry run flake8 chess_server/ tests/
+- poetry run flake8
