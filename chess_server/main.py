@@ -21,12 +21,13 @@ app = Flask(__name__)
 log = app.logger
 
 RESPONSES = {
-    "result_win": "Congratulations! You have won the game. Thanks for playing.",
+    "result_win": "Congratulations! You have won the game."
+                  " Thanks for playing.",
     "result_lose": "Oops, you were checkmated. Thanks for playing.",
     "result_draw": "The game has been drawn due to {reason}. "
                    "Thanks for playing.",
-    "illegal_move": "The move is not legal, please try once again. Just an FYI,"
-                    " you can say Show Board to see the"
+    "illegal_move": "The move is not legal, please try once again."
+                    " Just an FYI, you can say Show Board to see the"
                     " current position on the board."
 }
 
@@ -74,17 +75,17 @@ def welcome(req: Dict[str, Any]) -> Dict[str, Any]:
     response_text = "Howdy! Which color would you like to choose?"
     options = [
         {
-            "optionInfo": {"key": "white",},
+            "optionInfo": {"key": "white"},
             "description": "I like white!",
             "title": "White",
         },
         {
-            "optionInfo": {"key": "black",},
+            "optionInfo": {"key": "black"},
             "description": "I'll choose black.",
             "title": "Black",
         },
         {
-            "optionInfo": {"key": "random",},
+            "optionInfo": {"key": "random"},
             "description": "Choose randomly",
             "title": "Anything works!",
         },
@@ -160,7 +161,7 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
     if game_result:
         # TODO: Display image of board when game is over
         # image = get_image(board)
-        del PLAYERS[sessoin_id]  # Free up memory
+        del PLAYERS[session_id]  # Free up memory
         return generate_response_for_google_assistant(
             textToSpeech=game_result, expectUserResponse=False
         )
@@ -262,8 +263,8 @@ def initialize_game_by_session_and_color(session_id: str, color: str):
 def get_result_comment(user: User) -> str:
     """Return a response provided that the game has ended
 
-	result is a str: valid values are '1-0', '0-1' or '1/2-1/2'
-	"""
+    result is a str: valid values are '1-0', '0-1' or '1/2-1/2'
+    """
     # Get result
     result = user.board.result(claim_draw=True)
 
