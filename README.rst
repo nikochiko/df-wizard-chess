@@ -19,4 +19,4 @@ v1.0.0 - 27/04/2020
 	* Store games in a database instead of dict()
 	* Add support for simple SAN notation - intent, entity, intent-handler
 	* Add support for when one piece and one square are mentioned - tell the user if move is ambiguous
-	* Integrate with coverage tool and cover at least 80% with unit tests.
+	* Setup Travis CI with flake8 and coverage tools and cover at least 80% with unit tests

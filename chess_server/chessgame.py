@@ -1,9 +1,12 @@
+import logging
 from typing import List, NamedTuple, Optional
 
 import chess.engine
 
 from chess_server.config import ENGINE_PATH
 
+logger = logging.getLogger(__name__)
+logger.setLevel('WARNING')
 
 pieces = {
     "K": "King",
@@ -27,7 +30,7 @@ class User(NamedTuple):
 
     Initialize with
     ```python
-	user = User(board=chess.Board(), color=chess.WHITE)  # For user with white pieces
+    user = User(board=chess.Board(), color=chess.WHITE)  # For white pieces
     ```
     """
 
@@ -38,12 +41,12 @@ class User(NamedTuple):
 def lan_to_speech(lan: str) -> str:
     """Convert LAN move to a more spoken form
 
-	Such as:
-	Ng1-f3 -> Knight from g1 to f3
-	Bc4xf7+ -> Bishop from c4 captures f7 check
-	e7-e8Q -> Pawn from e7 to e8 queen
-	h7xg8Q -> Pawn from h7 captures g8 queen
-	"""
+    Such as:
+    Ng1-f3 -> Knight from g1 to f3
+    Bc4xf7+ -> Bishop from c4 captures f7 check
+    e7-e8Q -> Pawn from e7 to e8 queen
+    h7xg8Q -> Pawn from h7 captures g8 queen
+    """
 
     # Setting up boolean flag is_check
     if lan[-1] == "+" or lan[-1] == "#":
@@ -54,7 +57,8 @@ def lan_to_speech(lan: str) -> str:
 
     # Return early for castling moves
     if lan.startswith("O-O"):
-        return f'{"Long" if lan.startswith("O-O-O") else "Short"} castle{" check" if is_check else ""}'
+        return f'{"Long" if lan.startswith("O-O-O") else "Short"} \
+castle{" check" if is_check else ""}'
 
     output_string = ""
 
@@ -82,9 +86,9 @@ def lan_to_speech(lan: str) -> str:
 
 
 def two_squares_and_piece_to_lan(
-    board: chess.Board, squares: List[str], piece: Optional[str] = None
+    board: chess.Board, squares: List[str], piece: Optional[str] = None,
 ) -> str:
-    """Take two squares and piece as argument and return the LAN notation of the move"""
+    """Get the LAN notation of the move from two squares and a piece"""
 
     # Squares should strictly have only 2 elements
     initial_square, destination_square = squares
@@ -97,7 +101,7 @@ def two_squares_and_piece_to_lan(
     if board.is_legal(move):
         return board.lan(move)
 
-    # Move could be promotion, try adding the piece to uci and see if that works
+    # Move could be promotion, try adding theat to uci and see if that works
     if piece:
         uci = f"{uci}{pieces_symbols[piece]}"
         move = chess.Move.from_uci(uci)
@@ -110,9 +114,11 @@ def two_squares_and_piece_to_lan(
 
 def process_castle_by_querytext(board: chess.Board, queryText: str) -> str:
     """
-    Process queryText to determine whether castle is legal and which side it should be done.
-    Returns the LAN notation of the castling move (O-O or O-O-O with + or # suffix if required)
-    
+    Process queryText to determine whether castle is legal and which side
+    it should be done.
+    Returns the LAN notation of the castling move (O-O or O-O-O with + or
+    # suffix if required)
+
     Defaults to short castle (O-O) when the side is not explicitly mentioned
     """
     queryText = queryText.lower()
@@ -165,7 +171,7 @@ class Mediator:
 
         # If engine path is not given, check if it is mentioned in config file
         if not engine_path:
-            # Default to 'stockfish' if engine path is not specified in config file
+            # See: config.py
             engine_path = ENGINE_PATH
 
         try:
@@ -173,11 +179,14 @@ class Mediator:
             self.engine = chess.engine.SimpleEngine.popen_uci(engine_path)
         except Exception as exc:
             # Log and throw error
-            print(f'Error while trying to set up engine from path {engine_path}. '
-                'See logs for more details.')
-            log.error(f'[-] Error while trying to set up engine from {engine_path}:\n{exc}')
+            print(
+                f"Error while trying to set up engine from path {engine_path}."
+                " See logs for more details."
+            )
+            logger.error(
+                f"Error while initializing engine from {engine_path}:\n{exc}"
+            )
             raise
-
 
     def play_engine_move_and_get_lan(self, user: User) -> str:
         """Play engine's move on the board"""
@@ -201,7 +210,7 @@ class Mediator:
         return lan_to_speech(lan)
 
     def play_lan(self, user: User, lan: str) -> bool:
-        """Play move and return True if move was successful otherwise return False"""
+        """Play move and return bool showing if move was successful"""
 
         try:
             user.board.push_san(lan)

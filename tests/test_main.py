@@ -22,7 +22,8 @@ class TestGetResultComment(TestCase):
 
         user = chessgame.User(
             board=chess.Board(
-                "r1bq2k1/ppp2Bp1/2np1n1p/b3p3/3PP3/B1P5/P4PPP/RN1Q1RK1 b - - 0 11"
+                "r1bq2k1/ppp2Bp1/2np1n1p/b3p3/3PP3/B1P5/P4PPP/RN1Q1RK1 b - - "
+                "0 11"
             ),
             color=chess.BLACK,
         )
@@ -64,7 +65,8 @@ class TestGetResultComment(TestCase):
 
         # As white
         user = chessgame.User(
-            board=chess.Board("7K/7P/7k/8/6q1/8/8/8 w - - 0 1"), color=chess.WHITE
+            board=chess.Board("7K/7P/7k/8/6q1/8/8/8 w - - 0 1"),
+            color=chess.WHITE,
         )
         result = main.get_result_comment(user=user)
 
@@ -72,7 +74,8 @@ class TestGetResultComment(TestCase):
 
         # As black
         user = chessgame.User(
-            board=chess.Board("7K/7P/7k/8/6q1/8/8/8 w - - 0 1"), color=chess.BLACK
+            board=chess.Board("7K/7P/7k/8/6q1/8/8/8 w - - 0 1"),
+            color=chess.BLACK,
         )
         result = main.get_result_comment(user=user)
 
@@ -80,11 +83,14 @@ class TestGetResultComment(TestCase):
 
     def test_get_result_comment_drawn_by_insufficient_material(self):
 
-        expected = RESPONSES["result_draw"].format(reason="insufficient material")
+        expected = RESPONSES["result_draw"].format(
+            reason="insufficient material"
+        )
 
         # As white
         user = chessgame.User(
-            board=chess.Board("4k3/8/8/8/8/5B2/8/4K3 w - - 0 1"), color=chess.WHITE
+            board=chess.Board("4k3/8/8/8/8/5B2/8/4K3 w - - 0 1"),
+            color=chess.WHITE,
         )
         result = main.get_result_comment(user=user)
 
@@ -92,7 +98,8 @@ class TestGetResultComment(TestCase):
 
         # As black
         user = chessgame.User(
-            board=chess.Board("4k3/8/8/8/8/5B2/8/4K3 w - - 0 1"), color=chess.BLACK
+            board=chess.Board("4k3/8/8/8/8/5B2/8/4K3 w - - 0 1"),
+            color=chess.BLACK,
         )
         result = main.get_result_comment(user=user)
 
@@ -104,7 +111,8 @@ class TestGetResultComment(TestCase):
 
         # As white
         user = chessgame.User(
-            board=chess.Board("4k3/8/6r1/8/8/8/2R5/4K3 w - - 120 1"), color=chess.WHITE
+            board=chess.Board("4k3/8/6r1/8/8/8/2R5/4K3 w - - 120 1"),
+            color=chess.WHITE,
         )
         result = main.get_result_comment(user=user)
 
@@ -112,7 +120,8 @@ class TestGetResultComment(TestCase):
 
         # As black
         user = chessgame.User(
-            board=chess.Board("4k3/8/6r1/8/8/8/2R5/4K3 w - - 120 1"), color=chess.BLACK
+            board=chess.Board("4k3/8/6r1/8/8/8/2R5/4K3 w - - 120 1"),
+            color=chess.BLACK,
         )
         result = main.get_result_comment(user=user)
 
@@ -120,7 +129,9 @@ class TestGetResultComment(TestCase):
 
     def test_get_result_comment_drawn_by_threefold_repetition(self):
 
-        expected = RESPONSES["result_draw"].format(reason="threefold repetition")
+        expected = RESPONSES["result_draw"].format(
+            reason="threefold repetition"
+        )
 
         # As white
         board = chess.Board()

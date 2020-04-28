@@ -7,7 +7,6 @@ from flask import Flask, jsonify, make_response, request
 from chess_server.chessgame import (
     Mediator,
     User,
-    lan_to_speech,
     process_castle_by_querytext,
     two_squares_and_piece_to_lan,
 )
@@ -21,24 +20,14 @@ from chess_server.utils import (
 app = Flask(__name__)
 log = app.logger
 
-
-# TODO: Add tests!!!
-
-# Flow >
-# > user says hi to dialogflow
-# > we reply using a pun
-# > we ask for color as a option
-# > we start game according to color chosen
-# > if it is engine's move, engine move is played and replied
-# > else user is asked for input
-# > action can be 'castle' or 'two_squares'
-# > after each move, check if game has ended
-# > if it has, return an output string for that, and ask for another game with options
-
 RESPONSES = {
     "result_win": "Congratulations! You have won the game. Thanks for playing.",
     "result_lose": "Oops, you were checkmated. Thanks for playing.",
-    "result_draw": "The game has been drawn due to {reason}. Thanks for playing.",
+    "result_draw": "The game has been drawn due to {reason}. "
+                   "Thanks for playing.",
+    "illegal_move": "The move is not legal, please try once again. Just an FYI,"
+                    " you can say Show Board to see the"
+                    " current position on the board."
 }
 
 mediator = Mediator()
@@ -113,7 +102,9 @@ def choose_color(req: Dict[str, Any]) -> Dict[str, Any]:
     session_id = get_session_by_req(req)
 
     # Extract the key of chosen list item
-    arguments = req["originalDetectIntentRequest"]["payload"]["inputs"]  # Is a list
+    arguments = req["originalDetectIntentRequest"]["payload"][
+        "inputs"
+    ]  # Is a list
 
     for each in arguments:
         if each["intent"] == "actions.intent.OPTION":
@@ -145,12 +136,14 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
     player = PLAYERS[session_id]
 
     # Get LAN move
-    lan = two_squares_and_piece_to_lan(board=player.board, squares=squares, piece=piece)
+    lan = two_squares_and_piece_to_lan(
+        board=player.board, squares=squares, piece=piece
+    )
 
     # TODO: Store this reply somewhere
     if lan == "illegal move":
         return generate_response_for_google_assistant(
-            textToSpeech=f"The move is not legal, please try once again. Just an FYI, you can say Show Board to see the current position on the board."
+            textToSpeech=RESPONSES['illegal_move']
         )
 
     # Maybe recite the user's move back for confirmation?
@@ -199,7 +192,7 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
 
     if lan == "illegal move":
         return generate_response_for_google_assistant(
-            textToSpeech=f"The move you are trying to play is not legal, please try once again. Just an FYI, you can say Show Board to see the current position on the board."
+            textToSpeech=RESPONSES['illegal_move']
         )
 
     mediator.play_lan(user=user, lan=lan)
@@ -238,7 +231,6 @@ def resign(req: Dict[str, Any]) -> Dict[str, Any]:
 
 def initialize_game_by_session_and_color(session_id: str, color: str):
     """Initializes game given session and color"""
-    # TODO: Store the PLAYERS data in a DB (sqlite for now, postgres later) instead of using a dict
 
     if color == "white":
         PLAYERS[session_id] = User(board=chess.Board(), color=chess.WHITE)
@@ -259,7 +251,9 @@ def initialize_game_by_session_and_color(session_id: str, color: str):
 
     else:
         # Play engine's move and append that move's speech to output
-        speech = mediator.play_engine_move_and_get_speech(user=PLAYERS[session_id])
+        speech = mediator.play_engine_move_and_get_speech(
+            user=PLAYERS[session_id]
+        )
         output += f" My move is {speech}."
 
     return generate_response_for_google_assistant(textToSpeech=output)
@@ -298,7 +292,8 @@ def get_result_comment(user: User) -> str:
 
     # When user wins
     elif (result[-1] == "0") == user.color:
-        # User.color is True when it is chess.WHITE, and white is winner when result[-1] = '0'
+        # User.color is True when it is chess.WHITE,
+        # white is winner when result[-1] = '0'
         # If both are False, then player was black and black won
         # In the other case player lost
 

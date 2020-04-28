@@ -17,7 +17,7 @@ def test_get_params_by_req():
 def test_generate_response_for_google_assistant():
 
     result = utils.generate_response_for_google_assistant(
-        textToSpeech=data.sample_textToSpeech, options=data.sample_options
+        textToSpeech=data.sample_textToSpeech, options=data.sample_options,
     )
     assert result == data.sample_response_for_google_assistant
 

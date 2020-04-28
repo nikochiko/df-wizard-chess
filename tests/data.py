@@ -7,23 +7,29 @@ sample_request = {
         "allRequiredParamsPresent": True,
         "outputContexts": [
             {
-                "name": "projects/PROJECTID/agent/sessions/SESSIONID/contexts/actions_capability_screen_output"
+                "name": "projects/PROJECTID/agent/sessions/SESSIONID/"
+                "contexts/actions_capability_screen_output"
             },
             {
-                "name": "projects/PROJECTID/agent/sessions/SESSIONID/contexts/actions_capability_audio_output"
+                "name": "projects/PROJECTID/agent/sessions/SESSIONID/"
+                "contexts/actions_capability_audio_output"
             },
             {
-                "name": "projects/PROJECTID/agent/sessions/SESSIONID/contexts/google_assistant_input_type_keyboard"
+                "name": "projects/PROJECTID/agent/sessions/SESSIONID/"
+                "contexts/google_assistant_input_type_keyboard"
             },
             {
-                "name": "projects/PROJECTID/agent/sessions/SESSIONID/contexts/actions_capability_media_response_audio"
+                "name": "projects/PROJECTID/agent/sessions/SESSIONID/"
+                "contexts/actions_capability_media_response_audio"
             },
             {
-                "name": "projects/PROJECTID/agent/sessions/SESSIONID/contexts/actions_capability_web_browser"
+                "name": "projects/PROJECTID/agent/sessions/SESSIONID/"
+                "contexts/actions_capability_web_browser"
             },
         ],
         "intent": {
-            "name": "projects/PROJECTID/agent/intents/1f4e5bd9-a670-4161-a22e-2c97b077f29f",
+            "name": "projects/PROJECTID/agent/intents/"
+            "1f4e5bd9-a670-4161-a22e-2c97b077f29f",
             "displayName": "Name of Dialogflow Intent",
         },
         "intentDetectionConfidence": 1,
@@ -46,7 +52,10 @@ sample_request = {
             "inputs": [
                 {
                     "rawInputs": [
-                        {"query": "query from the user", "inputType": "KEYBOARD"}
+                        {
+                            "query": "query from the user",
+                            "inputType": "KEYBOARD",
+                        }
                     ],
                     "arguments": [
                         {
@@ -91,7 +100,7 @@ sample_options = [
         "optionInfo": {"key": "first title key"},
         "description": "first description",
         "image": {
-            "url": "/assistant/images/badges/XPM_BADGING_GoogleAssistant_VER.png",
+            "url": "/assistant/images/badges/img.png",
             "accessibilityText": "first alt",
         },
         "title": "first title",
@@ -100,7 +109,7 @@ sample_options = [
         "optionInfo": {"key": "second"},
         "description": "second description",
         "image": {
-            "url": "https://lh3.googleusercontent.com/Nu3a6F80WfixUqf_ec_vgXy_c0-0r4VLJRXjVFF_X_CIilEu8B9fT35qyTEj_PEsKw",
+            "url": "https://test-url/image2.png",
             "accessibilityText": "second alt",
         },
         "title": "second title",
@@ -113,19 +122,22 @@ sample_response_for_google_assistant = {
         "google": {
             "expectUserResponse": True,
             "richResponse": {
-                "items": [{"simpleResponse": {"textToSpeech": "Options Title"}}]
+                "items": [
+                    {"simpleResponse": {"textToSpeech": "Options Title"}}
+                ]
             },
             "systemIntent": {
                 "intent": "actions.intent.OPTION",
                 "data": {
-                    "@type": "type.googleapis.com/google.actions.v2.OptionValueSpec",
+                    "@type": "type.googleapis.com/"
+                    "google.actions.v2.OptionValueSpec",
                     "listSelect": {
                         "items": [
                             {
                                 "optionInfo": {"key": "first title key"},
                                 "description": "first description",
                                 "image": {
-                                    "url": "/assistant/images/badges/XPM_BADGING_GoogleAssistant_VER.png",
+                                    "url": "/assistant/images/badges/img.png",
                                     "accessibilityText": "first alt",
                                 },
                                 "title": "first title",
@@ -134,7 +146,7 @@ sample_response_for_google_assistant = {
                                 "optionInfo": {"key": "second"},
                                 "description": "second description",
                                 "image": {
-                                    "url": "https://lh3.googleusercontent.com/Nu3a6F80WfixUqf_ec_vgXy_c0-0r4VLJRXjVFF_X_CIilEu8B9fT35qyTEj_PEsKw",
+                                    "url": "https://test-url/image2.png",
                                     "accessibilityText": "second alt",
                                 },
                                 "title": "second title",
@@ -151,7 +163,9 @@ sample_google_response_template = {
     "payload": {
         "google": {
             "expectUserResponse": True,
-            "richResponse": {"items": [{"simpleResponse": {"textToSpeech": ""}}]},
+            "richResponse": {
+                "items": [{"simpleResponse": {"textToSpeech": ""}}]
+            },
         }
     }
 }
@@ -159,11 +173,14 @@ sample_google_response_template_with_options = {
     "payload": {
         "google": {
             "expectUserResponse": True,
-            "richResponse": {"items": [{"simpleResponse": {"textToSpeech": ""}}]},
+            "richResponse": {
+                "items": [{"simpleResponse": {"textToSpeech": ""}}]
+            },
             "systemIntent": {
                 "intent": "actions.intent.OPTION",
                 "data": {
-                    "@type": "type.googleapis.com/google.actions.v2.OptionValueSpec",
+                    "@type": "type.googleapis.com/"
+                    "google.actions.v2.OptionValueSpec",
                     "listSelect": {"items": []},
                 },
             },
