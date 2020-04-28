@@ -57,8 +57,8 @@ def lan_to_speech(lan: str) -> str:
 
     # Return early for castling moves
     if lan.startswith("O-O"):
-        return f'{"Long" if lan.startswith("O-O-O") else "Short"} \
-castle{" check" if is_check else ""}'
+        prefix = "Long " if lan == "O-O-O" else "Short "
+        return f"{prefix}castle{' check' if is_check else ''}"
 
     output_string = ""
 
@@ -73,7 +73,7 @@ castle{" check" if is_check else ""}'
     output_string += f" from {lan[:2]}"
 
     # Add destination square to output_string
-    output_string += f'{" captures" if lan[2] == "x" else " to"} {lan[3:5]}'
+    output_string += f"{' captures' if lan[2] == 'x' else ' to'} {lan[3:5]}"
 
     # If it is a promotion move (a7-a8Q)
     if lan[-1] in pieces.keys():

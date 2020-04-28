@@ -22,13 +22,13 @@ log = app.logger
 
 RESPONSES = {
     "result_win": "Congratulations! You have won the game."
-                  " Thanks for playing.",
+    " Thanks for playing.",
     "result_lose": "Oops, you were checkmated. Thanks for playing.",
     "result_draw": "The game has been drawn due to {reason}. "
-                   "Thanks for playing.",
+    "Thanks for playing.",
     "illegal_move": "The move is not legal, please try once again."
-                    " Just an FYI, you can say Show Board to see the"
-                    " current position on the board."
+    " Just an FYI, you can say Show Board to see the"
+    " current position on the board.",
 }
 
 mediator = Mediator()
@@ -144,7 +144,7 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
     # TODO: Store this reply somewhere
     if lan == "illegal move":
         return generate_response_for_google_assistant(
-            textToSpeech=RESPONSES['illegal_move']
+            textToSpeech=RESPONSES["illegal_move"]
         )
 
     # Maybe recite the user's move back for confirmation?
@@ -193,7 +193,7 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
 
     if lan == "illegal move":
         return generate_response_for_google_assistant(
-            textToSpeech=RESPONSES['illegal_move']
+            textToSpeech=RESPONSES["illegal_move"]
         )
 
     mediator.play_lan(user=user, lan=lan)
