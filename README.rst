@@ -6,6 +6,12 @@ Voice activated blindflod chess
 Changelog
 =========
 
+v0.1.1
+------
+* Set up Travis CI
+* Set up coverage reporting with Codecov
+* Improve syntax
+
 v0.1.0 - 27/04/2020
 -------------------
 * Format according to Black formatting tool
