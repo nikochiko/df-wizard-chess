@@ -1,13 +1,12 @@
 language: python
-platform: xenial
 python:
 - 3.6
 before_install:
-- pip install poetry flake8 pytest codecov
+- pip install poetry flake8 pytest
 install:
 - poetry install
 script:
 - poetry run flake8
 - poetry run pytest tests/
 after_success:
-- codecov .
+- bash <(curl -s https://codecov.io/bash)
