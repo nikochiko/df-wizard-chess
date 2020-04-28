@@ -2,8 +2,11 @@ language: python
 python:
 - 3.6
 before_install:
-- pip install poetry
+- pip install poetry flake8 pytest
 install:
 - poetry install
 script:
 - poetry run flake8
+- poetry run pytest tests/
+after_success:
+- bash <(curl -s https://codecov.io/bash) || echo 'Codecov failed to upload'
