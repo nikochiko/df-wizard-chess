@@ -1,0 +1,8 @@
+[run]
+omit =
+  */__pycache__/*
+  tests/*
+
+[report]
+exclude_lines =
+  import
