@@ -31,8 +31,8 @@ RESPONSES = {
     " current position on the board.",
 }
 
-mediator = Mediator()
 PLAYERS = {}
+mediator = Mediator()
 
 
 @app.route("/", methods=["POST"])
@@ -309,8 +309,7 @@ def get_result_comment(user: User) -> str:
 
 def main():
 
-    PLAYERS = {}
-    mediator = Mediator()
+    mediator.activate_engine()
 
     app.run(host="0.0.0.0")
 

@@ -167,7 +167,7 @@ def process_castle_by_querytext(board: chess.Board, queryText: str) -> str:
 
 
 class Mediator:
-    def __init__(self, engine_path: Optional[str] = None):
+    def activate_engine(self, engine_path: Optional[str] = None):
 
         # If engine path is not given, check if it is mentioned in config file
         if not engine_path:
