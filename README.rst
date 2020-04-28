@@ -6,7 +6,7 @@ Voice activated blindflod chess
 Changelog
 =========
 
-v1.0.0 - 27/04/2020
+v0.1.0 - 27/04/2020
 -------------------
 * Format according to Black formatting tool
 * Basic functionality to play a game as a Google Action
