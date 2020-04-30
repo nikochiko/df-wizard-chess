@@ -1,12 +1,13 @@
 import logging
-from typing import List, NamedTuple, Optional
+from typing import List, Optional
 
 import chess.engine
 
 from chess_server.config import ENGINE_PATH
+from chess_server.utils import get_user, update_user
 
 logger = logging.getLogger(__name__)
-logger.setLevel('WARNING')
+logger.setLevel("WARNING")
 
 pieces = {
     "K": "King",
@@ -23,19 +24,6 @@ pieces_symbols = {
     "knight": "n",
     "bishop": "b",
 }
-
-
-class User(NamedTuple):
-    """Simple structure to store game and user data
-
-    Initialize with
-    ```python
-    user = User(board=chess.Board(), color=chess.WHITE)  # For white pieces
-    ```
-    """
-
-    board: chess.Board
-    color: chess.Color
 
 
 def lan_to_speech(lan: str) -> str:
@@ -188,32 +176,31 @@ class Mediator:
             )
             raise
 
-    def play_engine_move_and_get_lan(self, user: User) -> str:
-        """Play engine's move on the board"""
+    def play_engine_move_and_get_speech(self, session_id: str) -> str:
+        """Play engine's move and return the speech conversion of the move"""
+
+        user = get_user(session_id)
 
         # Doesn't actually play the move
         result = self.engine.play(user.board, chess.engine.Limit(time=0.100))
 
-        # Take LAN notation of move to return
+        # Store LAN notation and push
         lan = user.board.lan(result.move)
-
-        # Play the move now
         user.board.push(result.move)
 
-        return lan
-
-    def play_engine_move_and_get_speech(self, user: User) -> str:
-        """Play the move and return the speech conversion of the move"""
-
-        lan = self.play_engine_move_and_get_lan(user)
+        # Update DB
+        update_user(session_id, user.board)
 
         return lan_to_speech(lan)
 
-    def play_lan(self, user: User, lan: str) -> bool:
+    def play_lan(self, session_id: str, lan: str) -> bool:
         """Play move and return bool showing if move was successful"""
+
+        user = get_user(session_id)
 
         try:
             user.board.push_san(lan)
+            update_user(session_id)
             return True
         except ValueError:  # Illegal, invalid or ambiguous move
             return False

@@ -1,10 +1,21 @@
 import sqlite3
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, NamedTuple, Optional, Union
 
 import chess
 from flask import g
 
-from chess_server.chessgame import User
+
+class User(NamedTuple):
+    """Simple structure to store game and user data
+
+    Initialize with
+    ```python
+    user = User(board=chess.Board(), color=chess.WHITE)  # For white pieces
+    ```
+    """
+
+    board: chess.Board
+    color: chess.Color
 
 
 def get_session_by_req(req: Dict[str, Any]) -> str:
