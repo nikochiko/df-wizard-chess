@@ -2,7 +2,7 @@ import sqlite3
 from typing import Any, Dict, List, Optional, Union
 
 import chess
-from flask import g, current_app
+from flask import g
 
 from chess_server.chessgame import User
 
@@ -195,7 +195,7 @@ def exists_in_db(session_id: str) -> bool:
 
     c = g.db.cursor()
 
-    res = c.execute('SELECT * FROM users WHERE session_id=?', (session_id,))
+    res = c.execute("SELECT * FROM users WHERE session_id=?", (session_id,))
 
     # res.fetchone() is None if entry does not exist
     return res.fetchone() is not None
@@ -204,8 +204,8 @@ def exists_in_db(session_id: str) -> bool:
 def create_user(session_id: str, board: chess.Board, color: chess.Color):
     """Creates a new entry in table with given data"""
 
-    if 'db' not in g:
-        raise Exception('Database not found.')
+    if "db" not in g:
+        raise Exception("Database not found.")
 
     c = g.db.cursor()
 
@@ -213,12 +213,12 @@ def create_user(session_id: str, board: chess.Board, color: chess.Color):
 
     try:
         c.execute(
-            'INSERT INTO users (session_id, fen, color) VALUES (?,?,?)',
+            "INSERT INTO users (session_id, fen, color) VALUES (?,?,?)",
             (session_id, fen, color),
         )
     except sqlite3.IntegrityError:
         if exists_in_db(session_id):
-            raise Exception(f'Entry with key {session_id} already exists.')
+            raise Exception(f"Entry with key {session_id} already exists.")
 
         raise
 
@@ -227,32 +227,32 @@ def create_user(session_id: str, board: chess.Board, color: chess.Color):
 
 def get_user(session_id: str) -> User:
     """Gets the required user from database when its session id is given"""
-    if 'db' not in g:
-        raise Exception('Database not found.')
+    if "db" not in g:
+        raise Exception("Database not found.")
 
     # Get cursor on the database
     c = g.db.cursor()
 
     # Find user by session_id
-    res = c.execute('SELECT * FROM users WHERE session_id=?', (session_id,))
+    res = c.execute("SELECT * FROM users WHERE session_id=?", (session_id,))
 
     # Get first (and only) result
     res = res.fetchone()
 
-    if res == None:
+    if res is None:
         # When entry does not exist
-        raise Exception('Entry not found.')
+        raise Exception("Entry not found.")
 
-    board = chess.Board(res['fen'])
-    color = chess.WHITE if res['color'] else chess.BLACK
+    board = chess.Board(res["fen"])
+    color = chess.WHITE if res["color"] else chess.BLACK
 
     return User(board=board, color=color)
 
 
 def update_user(session_id: str, board: chess.Board):
     """Updates an existing entry for user with session id session_id"""
-    if 'db' not in g:
-        raise Exception('Database not found.')
+    if "db" not in g:
+        raise Exception("Database not found.")
 
     c = g.db.cursor()
 
@@ -260,23 +260,23 @@ def update_user(session_id: str, board: chess.Board):
 
     if exists_in_db(session_id):
         c.execute(
-            'UPDATE users SET fen=? WHERE session_id=?', (fen, session_id)
+            "UPDATE users SET fen=? WHERE session_id=?", (fen, session_id)
         )
 
     else:
         # Throw entry not found exception
-        raise Exception('Entry not found.')
+        raise Exception("Entry not found.")
 
     g.db.commit()
 
 
 def delete_user(session_id: str):
     """Deletes a user entry from db"""
-    if 'db' not in g:
-        raise Exception('Database not found.')
+    if "db" not in g:
+        raise Exception("Database not found.")
 
     c = g.db.cursor()
 
-    c.execute('DELETE FROM users WHERE session_id=?', (session_id,))
+    c.execute("DELETE FROM users WHERE session_id=?", (session_id,))
 
     g.db.commit()
