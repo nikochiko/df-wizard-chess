@@ -12,7 +12,7 @@ What is this?
 =============
 Wizard Chess is a new idea to provide the best blindfold chess experience and training. This repo is the
 source code of what serves as the backend to our chatbots. We are using Dialogflow as the framework for
-our chatbots. They process the user's request using NLP and then send that to our server. Our server (this repo!!)
+our chatbots. It processes the user's request using NLP and then sends that to our server. Our server (this repo!!)
 handles that request and allows users to play chess with just their voice.
 
 Changelog
