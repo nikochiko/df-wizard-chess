@@ -147,13 +147,6 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
             textToSpeech=RESPONSES["illegal_move"]
         )
 
-    # Maybe recite the user's move back for confirmation?
-    #
-    # # Return speech form
-    # speech = lan_to_speech(lan)
-
-    # output = f'The move {speech} has been played.'
-
     # Play move on board
     mediator.play_lan(player, lan)
 
@@ -310,6 +303,9 @@ def get_result_comment(user: User) -> str:
 def main():
 
     mediator.activate_engine()
+
+    from chess_server import db
+    db.init_app(app)
 
     app.run(host="0.0.0.0")
 
