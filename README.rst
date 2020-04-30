@@ -1,7 +1,19 @@
-=================================================
-Dialogflow Fulfillment Server for Blindfold Chess
-=================================================
-Voice activated blindflod chess
+==========================
+Wizard Chess w/ Dialogflow
+==========================
+.. image:: https://travis-ci.com/nikochiko/chess-server.svg?token=Tv6EyBGSze8NLsac3zQC&branch=master
+    :target: https://travis-ci.com/nikochiko/chess-server
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+		:target: https://github.com/ambv/black
+.. image:: https://codecov.io/gh/nikochiko/chess-server/branch/master/graph/badge.svg?token=HMjzAbiZU1
+   :target: https://codecov.io/gh/nikochiko/chess-server
+
+What is this?
+=============
+Wizard Chess is a new idea to provide the best blindfold chess experience and training. This repo is the
+source code of what serves as the backend to our chatbots. We are using Dialogflow as the framework for
+our chatbots. They process the user's request using NLP and then send that to our server. Our server (this repo!!)
+handles that request and allows users to play chess with just their voice.
 
 Changelog
 =========
