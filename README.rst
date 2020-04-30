@@ -3,10 +3,10 @@ Wizard Chess w/ Dialogflow
 ==========================
 .. image:: https://travis-ci.com/nikochiko/chess-server.svg?token=Tv6EyBGSze8NLsac3zQC&branch=master
     :target: https://travis-ci.com/nikochiko/chess-server
+.. image:: https://codecov.io/gh/nikochiko/chess-server/branch/master/graph/badge.svg?token=HMjzAbiZU1
+		:target: https://codecov.io/gh/nikochiko/chess-server
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
 		:target: https://github.com/ambv/black
-.. image:: https://codecov.io/gh/nikochiko/chess-server/branch/master/graph/badge.svg?token=HMjzAbiZU1
-   :target: https://codecov.io/gh/nikochiko/chess-server
 
 What is this?
 =============
