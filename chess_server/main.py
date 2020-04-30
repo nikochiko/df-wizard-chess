@@ -6,11 +6,11 @@ from flask import Flask, jsonify, make_response, request
 
 from chess_server.chessgame import (
     Mediator,
-    User,
     process_castle_by_querytext,
     two_squares_and_piece_to_lan,
 )
 from chess_server.utils import (
+    User,
     create_user,
     delete_user,
     get_user,

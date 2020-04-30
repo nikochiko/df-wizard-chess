@@ -1,5 +1,5 @@
 import logging
-from typing import List, NamedTuple, Optional
+from typing import List, Optional
 
 import chess.engine
 
@@ -24,19 +24,6 @@ pieces_symbols = {
     "knight": "n",
     "bishop": "b",
 }
-
-
-class User(NamedTuple):
-    """Simple structure to store game and user data
-
-    Initialize with
-    ```python
-    user = User(board=chess.Board(), color=chess.WHITE)  # For white pieces
-    ```
-    """
-
-    board: chess.Board
-    color: chess.Color
 
 
 def lan_to_speech(lan: str) -> str:

@@ -10,9 +10,9 @@ import pytest
 from flask import g
 
 from chess_server import main
-from chess_server.chessgame import User
 from chess_server.db import init_db
 from chess_server.utils import (
+    User,
     create_user,
     get_user,
     update_user,
