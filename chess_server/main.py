@@ -11,6 +11,9 @@ from chess_server.chessgame import (
     two_squares_and_piece_to_lan,
 )
 from chess_server.utils import (
+    create_user,
+    delete_user,
+    get_user,
     get_session_by_req,
     get_params_by_req,
     generate_response_for_google_assistant,
@@ -31,7 +34,6 @@ RESPONSES = {
     " current position on the board.",
 }
 
-PLAYERS = {}
 mediator = Mediator()
 
 
@@ -134,11 +136,11 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
 
     # TODO: Handle case when `session_id not found' when migrating to db
     # Get user
-    player = PLAYERS[session_id]
+    user = get_user(session_id)
 
     # Get LAN move
     lan = two_squares_and_piece_to_lan(
-        board=player.board, squares=squares, piece=piece
+        board=user.board, squares=squares, piece=piece
     )
 
     # TODO: Store this reply somewhere
@@ -148,24 +150,24 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
         )
 
     # Play move on board
-    mediator.play_lan(player, lan)
+    mediator.play_lan(session_id=session_id, lan=lan)
 
-    game_result = get_result_comment(user=player)
+    game_result = get_result_comment(user=user)
     if game_result:
         # TODO: Display image of board when game is over
         # image = get_image(board)
-        del PLAYERS[session_id]  # Free up memory
+        delete_user(session_id)  # Free up memory
         return generate_response_for_google_assistant(
             textToSpeech=game_result, expectUserResponse=False
         )
 
     # Play engine's move
-    output = mediator.play_engine_move_and_get_speech(user=player)
+    output = mediator.play_engine_move_and_get_speech(session_id=session_id)
 
-    game_result = get_result_comment(user=player)
+    game_result = get_result_comment(user=user)
     if game_result:
         output = f"{output}. {game_result}"
-        del PLAYERS[session_id]  # Free up memory
+        delete_user(session_id)  # Free up memory
         return generate_response_for_google_assistant(
             textToSpeech=output, expectUserResponse=False
         )
@@ -177,7 +179,7 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
     """When asked to castle, try playing the castles move"""
 
     session_id = get_session_by_req(req)
-    user = PLAYERS[session_id]
+    user = get_user(session_id)
 
     queryText = req["queryResult"]["queryText"]
 
@@ -189,24 +191,24 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
             textToSpeech=RESPONSES["illegal_move"]
         )
 
-    mediator.play_lan(user=user, lan=lan)
+    mediator.play_lan(session_id=session_id, lan=lan)
 
     game_result = get_result_comment(user=user)
     if game_result:
         # TODO: Display image of board when game is over
         # image = get_image(board)
-        del PLAYERS[session_id]
+        delete_user(session_id)
         return generate_response_for_google_assistant(
             textToSpeech=game_result, expectUserResponse=False
         )
 
     # Play engine's move
-    output = mediator.play_engine_move_and_get_speech(user=user)
+    output = mediator.play_engine_move_and_get_speech(session_id=session_id)
 
     game_result = get_result_comment(user=user)
     if game_result:
         output = f"{output}. {game_result}"
-        del PLAYERS[session_id]
+        delete_user(session_id)
         return generate_response_for_google_assistant(
             textToSpeech=output, expectUserResponse=False
         )
@@ -217,7 +219,7 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
 def resign(req: Dict[str, Any]) -> Dict[str, Any]:
     """Delete the player from the database and return a conclusion response"""
     session_id = get_session_by_req(req)
-    del PLAYERS[session_id]
+    delete_user(session_id)
 
     output = "GG! Thanks for playing."
     return generate_response_for_google_assistant(textToSpeech=output)
@@ -227,26 +229,26 @@ def initialize_game_by_session_and_color(session_id: str, color: str):
     """Initializes game given session and color"""
 
     if color == "white":
-        PLAYERS[session_id] = User(board=chess.Board(), color=chess.WHITE)
+        create_user(session_id, board=chess.Board(), color=chess.WHITE)
 
     elif color == "black":
-        PLAYERS[session_id] = User(board=chess.Board(), color=chess.BLACK)
+        create_user(session_id, board=chess.Board(), color=chess.BLACK)
 
     else:
         chosen = random.choice([chess.WHITE, chess.BLACK])
         color = "white" if chosen else "black"
-        PLAYERS[session_id] = User(board=chess.Board(), color=chosen)
+        create_user(session_id, board=chess.Board(), color=chosen)
 
     output = f"Okay! You are playing with the {color} pieces."
 
     # If player has white pieces
-    if PLAYERS[session_id].color:
+    if get_user(session_id).color:
         output += " Your turn."
 
     else:
         # Play engine's move and append that move's speech to output
         speech = mediator.play_engine_move_and_get_speech(
-            user=PLAYERS[session_id]
+            session_id=session_id
         )
         output += f" My move is {speech}."
 
