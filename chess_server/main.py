@@ -305,6 +305,7 @@ def main():
     mediator.activate_engine()
 
     from chess_server import db
+
     db.init_app(app)
 
     app.run(host="0.0.0.0")
