@@ -1,6 +1,4 @@
-import os
 import sqlite3
-import tempfile
 from typing import Any, List, Tuple
 
 import chess
@@ -8,7 +6,6 @@ import pytest
 from flask import g
 
 from chess_server import main
-from chess_server.db import init_db
 from chess_server.utils import (
     User,
     create_user,
@@ -37,27 +34,13 @@ def get_all_entries_from_db() -> List[Tuple[Any]]:
     return res
 
 
-@pytest.fixture
-def client():
-    db_fd, main.app.config["DATABASE"] = tempfile.mkstemp()
-    main.app.config["TESTING"] = True
-
-    with main.app.app_context():
-        init_db()
-
-        yield
-
-    os.close(db_fd)
-    os.unlink(main.app.config["DATABASE"])
-
-
-def test_setup(client):
+def test_setup(context):
     assert "DATABASE" in main.app.config
     assert main.app.config["TESTING"] is True
     assert "db" in g
 
 
-def test_create_user(client):
+def test_create_user(context):
     # Creating a random session id of length 36
     session_id = get_random_session_id()
 
@@ -77,7 +60,7 @@ def test_create_user(client):
     assert data[0] == (session_id, board.fen(), color)
 
 
-def test_create_user_multiple_entries(client):
+def test_create_user_multiple_entries(context):
     session_id1 = get_random_session_id()
     board1 = chess.Board()
     board1.push_san("Nf3")
@@ -108,7 +91,7 @@ def test_create_user_multiple_entries(client):
     assert (session_id2, board2.fen(), color2) in data
 
 
-def test_create_user_when_entry_with_key_already_exists(client):
+def test_create_user_when_entry_with_key_already_exists(context):
     session_id = get_random_session_id()
     board = chess.Board()
     color = chess.WHITE
@@ -122,11 +105,11 @@ def test_create_user_when_entry_with_key_already_exists(client):
     with pytest.raises(
         Exception, match=f"Entry with key {session_id} already exists."
     ):
-        create_user(session_id, board, client)
+        create_user(session_id, board, color)
 
 
 def test_create_user_db_does_not_exist():
-    # Not using client fixture so db does not exist prior to this test
+    # Not using context fixture so db does not exist prior to this test
 
     session_id = get_random_session_id()
     board = chess.Board()
@@ -141,7 +124,7 @@ def test_create_user_db_does_not_exist():
             create_user(session_id, board, color)
 
 
-def test_get_user(client):
+def test_get_user(context):
     session_id = get_random_session_id()
     board = chess.Board()
     color = chess.BLACK
@@ -151,7 +134,7 @@ def test_get_user(client):
     assert get_user(session_id) == User(board, color)
 
 
-def test_get_user_when_multiple_entries_exist(client):
+def test_get_user_when_multiple_entries_exist(context):
     session_id = get_random_session_id()
     board = chess.Board()
     color = chess.WHITE
@@ -181,7 +164,7 @@ def test_get_user_db_does_not_exist():
             get_user(session_id)
 
 
-def test_get_user_entry_does_not_exist(client):
+def test_get_user_entry_does_not_exist(context):
     session_id = get_random_session_id()
 
     # Skipping create_user() step
@@ -189,7 +172,7 @@ def test_get_user_entry_does_not_exist(client):
         get_user(session_id)
 
 
-def test_update_user(client):
+def test_update_user(context):
     session_id = get_random_session_id()
     board = chess.Board()
     color = chess.BLACK
@@ -205,7 +188,7 @@ def test_update_user(client):
     assert get_user(session_id) == User(board, color)
 
 
-def test_update_user_multiple_entries(client):
+def test_update_user_multiple_entries(context):
     session_id = get_random_session_id()
     board = chess.Board()
     color = chess.WHITE
@@ -239,7 +222,7 @@ def test_update_user_db_does_not_exist():
             update_user(session_id, board)
 
 
-def test_update_user_entry_does_not_exist(client):
+def test_update_user_entry_does_not_exist(context):
     session_id = get_random_session_id()
     board = chess.Board()
 
@@ -257,7 +240,7 @@ def test_update_user_entry_does_not_exist(client):
         update_user(session_id, board)
 
 
-def test_delete_user(client):
+def test_delete_user(context):
     session_id = get_random_session_id()
     board = chess.Board()
     color = chess.BLACK
@@ -277,7 +260,7 @@ def test_delete_user(client):
     assert len(data) == 0
 
 
-def test_delete_user_multiple_entries(client):
+def test_delete_user_multiple_entries(context):
     session_id = get_random_session_id()
     board = chess.Board()
     color = chess.WHITE

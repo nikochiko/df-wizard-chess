@@ -1,5 +1,5 @@
 from chess_server import utils
-from . import data
+from tests import data
 
 
 def test_get_session_by_req():
