@@ -63,7 +63,7 @@ def lan_to_speech(lan: str) -> str:
     # Add destination square to output_string
     output_string += f"{' captures' if lan[2] == 'x' else ' to'} {lan[3:5]}"
 
-    # If it is a promotion move (a7-a8Q)
+    # If it is a promotion move (a7-a8=Q)
     if lan[-1] in pieces.keys():
         output_string += f" {pieces[lan[-1]]}"
 
