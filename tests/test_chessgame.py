@@ -419,3 +419,77 @@ class TestProcessCastleByQueryText(TestCase):
         result = chessgame.process_castle_by_querytext(board, queryText)
 
         self.assertEqual(result, expected)
+
+    def test_process_castle_by_querytext_only_short_is_possible(self):
+
+        # Reference: https://www.chess.com/games/view/13507963
+
+        board = chess.Board(
+            "r1bqkbnr/p2ppp1p/2p3p1/2p5/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 5"
+        )
+
+        queryText = "castles"
+        expected = "O-O"
+        result = chessgame.process_castle_by_querytext(board, queryText)
+
+        self.assertEqual(result, expected)
+
+    def test_process_castle_by_querytext_only_long_is_possible(self):
+
+        # Reference: https://www.chess.com/games/view/1190007
+
+        board = chess.Board(
+            "r1bqk2r/1p2bppp/p1nppn2/8/3NP3/2N1BP2/PPPQ2PP/R3KB1R w KQkq - 4 9"
+        )
+
+        queryText = "castle"
+        expected = "O-O-O"
+        result = chessgame.process_castle_by_querytext(board, queryText)
+
+        self.assertEqual(result, expected)
+
+    def test_process_castle_by_querytext_both_are_possible(self):
+
+        # Reference: https://www.chess.com/games/view/13507971
+
+        board = chess.Board(
+            "r2r2k1/1b3pbp/p1n2pp1/1p6/3P4/P1N1PN2/1P2BPPP/R3K2R w KQ - 2 14"
+        )
+
+        queryText = "castling"
+        expected = "O-O"  # Short castling is preferred
+        result = chessgame.process_castle_by_querytext(board, queryText)
+
+        self.assertEqual(result, expected)
+
+    def test_process_castle_by_querytext_short_illegal(self):
+
+        board = chess.Board()
+
+        queryText = "castle short"
+        expected = "illegal move"
+        result = chessgame.process_castle_by_querytext(board, queryText)
+
+        self.assertEqual(result, expected)
+
+    def test_process_castle_by_querytext_long_illegal(self):
+
+        board = chess.Board(
+            "rnbqkb1r/1p3ppp/p2ppn2/8/3NP3/2N5/PPP1BPPP/R1BQK2R w KQkq - 0 7"
+        )
+
+        queryText = "castle long"
+        expected = "illegal move"
+        result = chessgame.process_castle_by_querytext(board, queryText)
+
+        self.assertEqual(result, expected)
+
+    def test_process_castle_by_querytext_illegal(self):
+
+        board = chess.Board()
+
+        queryText = "castle"
+        expected = "illegal move"
+        result = chessgame.process_castle_by_querytext(board, queryText)
+
+        self.assertEqual(result, expected)
