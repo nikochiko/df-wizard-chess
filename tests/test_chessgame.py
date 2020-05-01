@@ -129,6 +129,34 @@ class TestLanToSpeech(TestCase):
 
         self.assertEqual(chessgame.lan_to_speech(lan), expected)
 
+    def test_lan_to_speech_promotion_move_queen(self):
+
+        lan = "a7-a8=Q"
+        expected = "Pawn from a7 to a8 Queen"
+
+        self.assertEqual(chessgame.lan_to_speech(lan), expected)
+
+    def test_lan_to_speech_pawn_promotion_move_rook_check(self):
+
+        lan = "d7-d8=R+"
+        expected = "Pawn from d7 to d8 Rook check"
+
+        self.assertEqual(chessgame.lan_to_speech(lan), expected)
+
+    def test_lan_to_speech_promotion_capture_knight_check(self):
+
+        lan = "b2xc1=N+"
+        expected = "Pawn from b2 captures c1 Knight check"
+
+        self.assertEqual(chessgame.lan_to_speech(lan), expected)
+
+    def test_lan_to_speech_promotion_capture_bishop(self):
+
+        lan = "a2xb1=B"
+        expected = "Pawn from a2 captures b1 Bishop"
+
+        self.assertEqual(chessgame.lan_to_speech(lan), expected)
+
 
 class TestTwoSquaresAndPieceToLan(TestCase):
     """
