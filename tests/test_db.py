@@ -20,9 +20,6 @@ from chess_server.utils import (
 from tests.utils import get_random_session_id
 
 
-# Helper
-
-
 def get_all_entries_from_db() -> List[Tuple[Any]]:
     """Fetches all entries from table users from the database"""
     conn = sqlite3.connect(main.app.config["DATABASE"])
