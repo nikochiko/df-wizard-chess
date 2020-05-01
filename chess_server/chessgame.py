@@ -200,7 +200,7 @@ class Mediator:
 
         try:
             user.board.push_san(lan)
-            update_user(session_id)
+            update_user(session_id, user.board)
             return True
         except ValueError:  # Illegal, invalid or ambiguous move
             return False
