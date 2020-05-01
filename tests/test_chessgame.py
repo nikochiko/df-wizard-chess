@@ -527,7 +527,7 @@ class TestProcessCastleByQueryText(TestCase):
         self.assertEqual(result, expected)
 
 
-class TestMediatorBaseClass(TestCase):
+class TestMediator(TestCase):
 
     def setUp(self):
         self.mock_engine_path = 'engine_path'
