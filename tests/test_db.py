@@ -1,9 +1,7 @@
 import os
-import random
 import sqlite3
-import string
 import tempfile
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Tuple
 
 import chess
 import pytest
@@ -19,16 +17,10 @@ from chess_server.utils import (
     delete_user,
     exists_in_db,
 )
+from tests.utils import get_random_session_id
 
 
-# Helpers
-
-
-def get_random_session_id(length: Optional[int] = 36) -> str:
-    """Returns a randomly generated session id of given length (default 36)"""
-    return "".join(
-        random.choice(string.ascii_letters + string.digits) for i in range(36)
-    )
+# Helper
 
 
 def get_all_entries_from_db() -> List[Tuple[Any]]:
