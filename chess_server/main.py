@@ -243,7 +243,7 @@ def start_game_and_get_response(session_id: str, color: str):
     output = f"Okay! You are playing with the {color} pieces."
 
     # If player has white pieces
-    if get_user(session_id).color:
+    if color == "white":
         output += " Your turn."
 
     else:
