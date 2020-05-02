@@ -17,7 +17,7 @@ from chess_server.utils import (
     get_user,
     get_session_by_req,
     get_params_by_req,
-    generate_response_for_google_assistant,
+    get_response_for_google,
 )
 
 
@@ -94,7 +94,7 @@ def welcome(req: Dict[str, Any]) -> Dict[str, Any]:
         },
     ]
 
-    return generate_response_for_google_assistant(
+    return get_response_for_google(
         textToSpeech=response_text, options=options
     )
 
@@ -146,7 +146,7 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
 
     # TODO: Store this reply somewhere
     if lan == "illegal move":
-        return generate_response_for_google_assistant(
+        return get_response_for_google(
             textToSpeech=RESPONSES["illegal_move"]
         )
 
@@ -158,7 +158,7 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
         # TODO: Display image of board when game is over
         # image = get_image(board)
         delete_user(session_id)  # Free up memory
-        return generate_response_for_google_assistant(
+        return get_response_for_google(
             textToSpeech=game_result, expectUserResponse=False
         )
 
@@ -169,11 +169,11 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
     if game_result:
         output = f"{output}. {game_result}"
         delete_user(session_id)  # Free up memory
-        return generate_response_for_google_assistant(
+        return get_response_for_google(
             textToSpeech=output, expectUserResponse=False
         )
 
-    return generate_response_for_google_assistant(textToSpeech=output)
+    return get_response_for_google(textToSpeech=output)
 
 
 def castle(req: Dict[str, Any]) -> Dict[str, Any]:
@@ -188,7 +188,7 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
     lan = process_castle_by_querytext(board=user.board, queryText=queryText)
 
     if lan == "illegal move":
-        return generate_response_for_google_assistant(
+        return get_response_for_google(
             textToSpeech=RESPONSES["illegal_move"]
         )
 
@@ -199,7 +199,7 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
         # TODO: Display image of board when game is over
         # image = get_image(board)
         delete_user(session_id)
-        return generate_response_for_google_assistant(
+        return get_response_for_google(
             textToSpeech=game_result, expectUserResponse=False
         )
 
@@ -210,11 +210,11 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
     if game_result:
         output = f"{output}. {game_result}"
         delete_user(session_id)
-        return generate_response_for_google_assistant(
+        return get_response_for_google(
             textToSpeech=output, expectUserResponse=False
         )
 
-    return generate_response_for_google_assistant(textToSpeech=output)
+    return get_response_for_google(textToSpeech=output)
 
 
 def resign(req: Dict[str, Any]) -> Dict[str, Any]:
@@ -223,7 +223,7 @@ def resign(req: Dict[str, Any]) -> Dict[str, Any]:
     delete_user(session_id)
 
     output = "GG! Thanks for playing."
-    return generate_response_for_google_assistant(textToSpeech=output)
+    return get_response_for_google(textToSpeech=output)
 
 
 def start_game_and_get_response(session_id: str, color: str):
@@ -253,7 +253,7 @@ def start_game_and_get_response(session_id: str, color: str):
         )
         output += f" My move is {speech}."
 
-    return generate_response_for_google_assistant(textToSpeech=output)
+    return get_response_for_google(textToSpeech=output)
 
 
 def get_result_comment(user: User) -> str:
