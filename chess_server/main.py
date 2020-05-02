@@ -3,6 +3,7 @@ from typing import Any, Dict
 
 import chess
 from flask import Flask, jsonify, make_response, request
+from werkzeug.exceptions import BadRequest
 
 from chess_server.chessgame import (
     Mediator,
@@ -37,7 +38,7 @@ RESPONSES = {
 mediator = Mediator()
 
 
-@app.route("/", methods=["POST"])
+@app.route("/webhook", methods=["POST"])
 def webhook():
 
     req = request.get_json()
@@ -61,7 +62,7 @@ def webhook():
 
     else:
         log.error(f"Bad request:\n{str(req)}")
-        res = "bad request"
+        raise BadRequest(f"Unknown intent action: {action}")
 
     return make_response(jsonify(res))
 
@@ -72,7 +73,7 @@ def welcome(req: Dict[str, Any]) -> Dict[str, Any]:
 
     if get_params_by_req(req)["color"]:
         color = get_params_by_req(req)["color"]
-        return initialize_game_by_session_and_color(session_id, color)
+        return start_game_and_get_response(session_id, color)
 
     response_text = "Howdy! Which color would you like to choose?"
     options = [
@@ -120,7 +121,7 @@ def choose_color(req: Dict[str, Any]) -> Dict[str, Any]:
             color = each["textValue"]
             break
 
-    return initialize_game_by_session_and_color(session_id, color)
+    return start_game_and_get_response(session_id, color)
 
 
 def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
@@ -225,7 +226,7 @@ def resign(req: Dict[str, Any]) -> Dict[str, Any]:
     return generate_response_for_google_assistant(textToSpeech=output)
 
 
-def initialize_game_by_session_and_color(session_id: str, color: str):
+def start_game_and_get_response(session_id: str, color: str):
     """Initializes game given session and color"""
 
     if color == "white":
