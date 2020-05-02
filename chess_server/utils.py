@@ -28,7 +28,7 @@ def get_params_by_req(req: Dict[str, Any]) -> Dict[str, str]:
     return req.get("queryResult").get("parameters")
 
 
-def get_response_template_for_google_assistant(
+def get_response_template_for_google(
     options: Optional[bool] = False,
 ) -> Dict[str, Any]:
     """Return template for response for Google Assistant"""
@@ -57,7 +57,7 @@ def get_response_template_for_google_assistant(
     return template
 
 
-def generate_response_for_google_assistant(
+def get_response_for_google(
     textToSpeech: str,
     expectUserResponse: Optional[bool] = True,
     options: Optional[List[Dict[str, Union[str, Dict[str, str]]]]] = None,
@@ -180,7 +180,7 @@ def generate_response_for_google_assistant(
     """
 
     # Get template for response
-    template = get_response_template_for_google_assistant(
+    template = get_response_template_for_google(
         options=bool(options)
     )
 
