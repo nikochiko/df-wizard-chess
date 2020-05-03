@@ -3,12 +3,14 @@ from unittest import TestCase, mock
 
 import chess
 
-from chess_server import main
 from chess_server.main import (
     RESPONSES,
     welcome,
+    castle,
     choose_color,
     two_squares,
+    resign,
+    get_result_comment,
     start_game_and_get_response,
 )
 from chess_server.utils import User
@@ -25,7 +27,7 @@ class TestGetResultComment(TestCase):
         user = User(board=chess.Board(), color=chess.WHITE)
 
         expected = None
-        result = main.get_result_comment(user)
+        result = get_result_comment(user=user)
 
         self.assertEqual(result, expected)
 
@@ -42,7 +44,7 @@ class TestGetResultComment(TestCase):
         )
 
         expected = None
-        result = main.get_result_comment(user)
+        result = get_result_comment(user=user)
 
         self.assertEqual(result, expected)
 
@@ -54,7 +56,7 @@ class TestGetResultComment(TestCase):
         )
 
         expected = RESPONSES["result_win"]
-        result = main.get_result_comment(user)
+        result = get_result_comment(user=user)
 
         self.assertEqual(result, expected)
 
@@ -68,7 +70,7 @@ class TestGetResultComment(TestCase):
         )
 
         expected = RESPONSES["result_win"]
-        result = main.get_result_comment(user=user)
+        result = get_result_comment(user=user)
 
         self.assertEqual(result, expected)
 
@@ -81,7 +83,7 @@ class TestGetResultComment(TestCase):
             board=chess.Board("7K/7P/7k/8/6q1/8/8/8 w - - 0 1"),
             color=chess.WHITE,
         )
-        result = main.get_result_comment(user=user)
+        result = get_result_comment(user=user)
 
         self.assertEqual(result, expected)
 
@@ -90,7 +92,7 @@ class TestGetResultComment(TestCase):
             board=chess.Board("7K/7P/7k/8/6q1/8/8/8 w - - 0 1"),
             color=chess.BLACK,
         )
-        result = main.get_result_comment(user=user)
+        result = get_result_comment(user=user)
 
         self.assertEqual(result, expected)
 
@@ -105,7 +107,7 @@ class TestGetResultComment(TestCase):
             board=chess.Board("4k3/8/8/8/8/5B2/8/4K3 w - - 0 1"),
             color=chess.WHITE,
         )
-        result = main.get_result_comment(user=user)
+        result = get_result_comment(user=user)
 
         self.assertEqual(result, expected)
 
@@ -114,7 +116,7 @@ class TestGetResultComment(TestCase):
             board=chess.Board("4k3/8/8/8/8/5B2/8/4K3 w - - 0 1"),
             color=chess.BLACK,
         )
-        result = main.get_result_comment(user=user)
+        result = get_result_comment(user=user)
 
         self.assertEqual(result, expected)
 
@@ -127,7 +129,7 @@ class TestGetResultComment(TestCase):
             board=chess.Board("4k3/8/6r1/8/8/8/2R5/4K3 w - - 120 1"),
             color=chess.WHITE,
         )
-        result = main.get_result_comment(user=user)
+        result = get_result_comment(user=user)
 
         self.assertEqual(result, expected)
 
@@ -136,7 +138,7 @@ class TestGetResultComment(TestCase):
             board=chess.Board("4k3/8/6r1/8/8/8/2R5/4K3 w - - 120 1"),
             color=chess.BLACK,
         )
-        result = main.get_result_comment(user=user)
+        result = get_result_comment(user=user)
 
         self.assertEqual(result, expected)
 
@@ -150,19 +152,19 @@ class TestGetResultComment(TestCase):
         board = chess.Board()
         user = User(board=board, color=chess.WHITE)
 
-        self.assertEqual(main.get_result_comment(user=user), None)
+        self.assertEqual(get_result_comment(user=user), None)
         board.push_san("Nf3")
         board.push_san("Nf6")
-        self.assertEqual(main.get_result_comment(user=user), None)
+        self.assertEqual(get_result_comment(user=user), None)
         board.push_san("Ng1")
         board.push_san("Ng8")
-        self.assertEqual(main.get_result_comment(user=user), None)
+        self.assertEqual(get_result_comment(user=user), None)
         board.push_san("Nf3")
         board.push_san("Nf6")
-        self.assertEqual(main.get_result_comment(user=user), None)
+        self.assertEqual(get_result_comment(user=user), None)
         board.push_san("Ng1")
 
-        result = main.get_result_comment(user=user)
+        result = get_result_comment(user=user)
 
         self.assertEqual(result, expected)
 
@@ -171,17 +173,17 @@ class TestGetResultComment(TestCase):
         user = User(board=board, color=chess.BLACK)
 
         board.push_san("Nf3")
-        self.assertEqual(main.get_result_comment(user=user), None)
+        self.assertEqual(get_result_comment(user=user), None)
         board.push_san("Nf6")
         board.push_san("Ng1")
-        self.assertEqual(main.get_result_comment(user=user), None)
+        self.assertEqual(get_result_comment(user=user), None)
         board.push_san("Ng8")
         board.push_san("Nf3")
-        self.assertEqual(main.get_result_comment(user=user), None)
+        self.assertEqual(get_result_comment(user=user), None)
         board.push_san("Nf6")
         board.push_san("Ng1")
 
-        result = main.get_result_comment(user=user)
+        result = get_result_comment(user=user)
 
         self.assertEqual(result, expected)
 
@@ -618,4 +620,175 @@ class TestTwoSquares:
         mock_get_response.assert_called_with(
             textToSpeech=f"spam ham and eggs. {self.result_lose}",
             expectUserResponse=False,
+        )
+
+
+class TestCastle:
+    def setup_method(self):
+        self.session_id = get_random_session_id()
+        self.result = {"foo": "bar"}
+
+        self.result_unfinished = None
+        self.result_win = RESPONSES["result_win"]
+        self.result_lose = RESPONSES["result_lose"]
+        self.result_draw = RESPONSES["result_draw"]
+
+    def test_castle_illegal_move(self, mocker):
+        user = User(board=chess.Board(), color=chess.WHITE)
+        queryText = "Castle short"
+
+        mock_get_user = mocker.patch(
+            "chess_server.main.get_user", return_value=user
+        )
+        mock_process_castle = mocker.patch(
+            "chess_server.main.process_castle_by_querytext",
+            return_value="illegal move",
+        )
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
+
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id,
+            action="castle",
+            intent="castle",
+            queryText=queryText,
+            parameters={},
+        )
+        value = castle(req_data)
+
+        assert value == self.result
+        mock_get_user.assert_called_with(self.session_id)
+        mock_process_castle.assert_called_with(
+            board=user.board, queryText=queryText
+        )
+        mock_get_response.assert_called_with(
+            textToSpeech=RESPONSES["illegal_move"]
+        )
+
+    def test_castle_game_ends_after_user_move(self, mocker):
+        user = User(board=chess.Board(), color=chess.BLACK)
+        queryText = "long castle check"
+        move_lan = "O-O-O#"
+
+        mock_get_user = mocker.patch(
+            "chess_server.main.get_user", return_value=user
+        )
+        mock_del_user = mocker.patch("chess_server.main.delete_user")
+        mock_process_castle = mocker.patch(
+            "chess_server.main.process_castle_by_querytext",
+            return_value=move_lan,
+        )
+        mock_get_result = mocker.patch(
+            "chess_server.main.get_result_comment",
+            return_value=self.result_win,
+        )
+        mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
+        mock_play_engine = mocker.patch(
+            "chess_server.main.Mediator.play_engine_move_and_get_speech",
+            return_value="spam ham and eggs",
+        )
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
+
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id,
+            action="castle",
+            intent="castle",
+            queryText=queryText,
+            parameters={},
+        )
+        value = castle(req_data)
+
+        assert value == self.result
+        mock_get_user.assert_called_with(self.session_id)
+        mock_del_user.assert_called_with(self.session_id)
+        mock_process_castle.assert_called_with(
+            board=user.board, queryText=queryText
+        )
+        mock_get_result.assert_called_with(user=user)
+        mock_play_lan.assert_called_with(
+            session_id=self.session_id, lan=move_lan
+        )
+        mock_play_engine.assert_not_called()
+        mock_get_response.assert_called_with(
+            textToSpeech=self.result_win, expectUserResponse=False
+        )
+
+    def test_castle_game_ends_after_engine_move(self, mocker):
+        user = User(board=chess.Board(), color=chess.BLACK)
+        queryText = "castle"
+        move_lan = "O-O"
+
+        mock_get_user = mocker.patch(
+            "chess_server.main.get_user", return_value=user
+        )
+        mock_del_user = mocker.patch("chess_server.main.delete_user")
+        mock_process_castle = mocker.patch(
+            "chess_server.main.process_castle_by_querytext",
+            return_value=move_lan,
+        )
+        mock_get_result = mocker.patch(
+            "chess_server.main.get_result_comment",
+            side_effect=[self.result_unfinished, self.result_lose],
+        )
+        mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
+        mock_play_engine = mocker.patch(
+            "chess_server.main.Mediator.play_engine_move_and_get_speech",
+            return_value="spam ham and eggs",
+        )
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
+
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id,
+            action="castle",
+            intent="castle",
+            queryText=queryText,
+            parameters={},
+        )
+        value = castle(req_data)
+
+        assert value == self.result
+        mock_get_user.assert_called_with(self.session_id)
+        mock_del_user.assert_called_with(self.session_id)
+        mock_process_castle.assert_called_with(
+            board=user.board, queryText=queryText
+        )
+        mock_get_result.assert_called_with(user=user)
+        mock_play_lan.assert_called_with(
+            session_id=self.session_id, lan=move_lan
+        )
+        mock_play_engine.assert_called_with(session_id=self.session_id)
+        mock_get_response.assert_called_with(
+            textToSpeech=f"spam ham and eggs. {self.result_lose}",
+            expectUserResponse=False,
+        )
+
+
+class TestResign:
+    def setup_method(self):
+        self.session_id = get_random_session_id()
+        self.result = {"foo": "bar"}
+
+    def test_resign(self, mocker):
+        mock_del_user = mocker.patch("chess_server.main.delete_user")
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id, action="resign", intent="resign"
+        )
+        value = resign(req_data)
+
+        assert value == self.result
+        mock_del_user.assert_called_with(self.session_id)
+        mock_get_response.assert_called_with(
+            textToSpeech=mocker.ANY, expectUserResponse=False
         )
