@@ -23,6 +23,7 @@ v0.1.1
 * Set up Travis CI
 * Set up coverage reporting with Codecov
 * Moved from using Dict in memory to sqlite3 DB on disk 🎉
+* Added testing to cover more than 90% of codebase 💪
 
 v0.1.0 - 27/04/2020
 -------------------
