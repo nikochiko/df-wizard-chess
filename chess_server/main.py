@@ -218,7 +218,7 @@ def resign(req: Dict[str, Any]) -> Dict[str, Any]:
 
     output = "GG! Thanks for playing."
 
-    return generate_response_for_google_assistant(
+    return get_response_for_google(
         textToSpeech=output, expectUserResponse=False
     )
 
