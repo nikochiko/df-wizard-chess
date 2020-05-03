@@ -3,6 +3,7 @@ from typing import Any, Dict
 
 import chess
 from flask import Flask, jsonify, make_response, request
+from werkzeug.exceptions import BadRequest
 
 from chess_server.chessgame import (
     Mediator,
@@ -16,7 +17,7 @@ from chess_server.utils import (
     get_user,
     get_session_by_req,
     get_params_by_req,
-    generate_response_for_google_assistant,
+    get_response_for_google,
 )
 
 
@@ -37,7 +38,7 @@ RESPONSES = {
 mediator = Mediator()
 
 
-@app.route("/", methods=["POST"])
+@app.route("/webhook", methods=["POST"])
 def webhook():
 
     req = request.get_json()
@@ -61,7 +62,7 @@ def webhook():
 
     else:
         log.error(f"Bad request:\n{str(req)}")
-        res = "bad request"
+        raise BadRequest(f"Unknown intent action: {action}")
 
     return make_response(jsonify(res))
 
@@ -72,7 +73,7 @@ def welcome(req: Dict[str, Any]) -> Dict[str, Any]:
 
     if get_params_by_req(req)["color"]:
         color = get_params_by_req(req)["color"]
-        return initialize_game_by_session_and_color(session_id, color)
+        return start_game_and_get_response(session_id, color)
 
     response_text = "Howdy! Which color would you like to choose?"
     options = [
@@ -93,9 +94,7 @@ def welcome(req: Dict[str, Any]) -> Dict[str, Any]:
         },
     ]
 
-    return generate_response_for_google_assistant(
-        textToSpeech=response_text, options=options
-    )
+    return get_response_for_google(textToSpeech=response_text, options=options)
 
 
 def choose_color(req: Dict[str, Any]) -> Dict[str, Any]:
@@ -120,7 +119,7 @@ def choose_color(req: Dict[str, Any]) -> Dict[str, Any]:
             color = each["textValue"]
             break
 
-    return initialize_game_by_session_and_color(session_id, color)
+    return start_game_and_get_response(session_id, color)
 
 
 def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
@@ -145,9 +144,7 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
 
     # TODO: Store this reply somewhere
     if lan == "illegal move":
-        return generate_response_for_google_assistant(
-            textToSpeech=RESPONSES["illegal_move"]
-        )
+        return get_response_for_google(textToSpeech=RESPONSES["illegal_move"])
 
     # Play move on board
     mediator.play_lan(session_id=session_id, lan=lan)
@@ -157,7 +154,7 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
         # TODO: Display image of board when game is over
         # image = get_image(board)
         delete_user(session_id)  # Free up memory
-        return generate_response_for_google_assistant(
+        return get_response_for_google(
             textToSpeech=game_result, expectUserResponse=False
         )
 
@@ -168,11 +165,11 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
     if game_result:
         output = f"{output}. {game_result}"
         delete_user(session_id)  # Free up memory
-        return generate_response_for_google_assistant(
+        return get_response_for_google(
             textToSpeech=output, expectUserResponse=False
         )
 
-    return generate_response_for_google_assistant(textToSpeech=output)
+    return get_response_for_google(textToSpeech=output)
 
 
 def castle(req: Dict[str, Any]) -> Dict[str, Any]:
@@ -187,9 +184,7 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
     lan = process_castle_by_querytext(board=user.board, queryText=queryText)
 
     if lan == "illegal move":
-        return generate_response_for_google_assistant(
-            textToSpeech=RESPONSES["illegal_move"]
-        )
+        return get_response_for_google(textToSpeech=RESPONSES["illegal_move"])
 
     mediator.play_lan(session_id=session_id, lan=lan)
 
@@ -198,7 +193,7 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
         # TODO: Display image of board when game is over
         # image = get_image(board)
         delete_user(session_id)
-        return generate_response_for_google_assistant(
+        return get_response_for_google(
             textToSpeech=game_result, expectUserResponse=False
         )
 
@@ -209,11 +204,11 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
     if game_result:
         output = f"{output}. {game_result}"
         delete_user(session_id)
-        return generate_response_for_google_assistant(
+        return get_response_for_google(
             textToSpeech=output, expectUserResponse=False
         )
 
-    return generate_response_for_google_assistant(textToSpeech=output)
+    return get_response_for_google(textToSpeech=output)
 
 
 def resign(req: Dict[str, Any]) -> Dict[str, Any]:
@@ -222,12 +217,13 @@ def resign(req: Dict[str, Any]) -> Dict[str, Any]:
     delete_user(session_id)
 
     output = "GG! Thanks for playing."
-    return generate_response_for_google_assistant(
+
+    return get_response_for_google(
         textToSpeech=output, expectUserResponse=False
     )
 
 
-def initialize_game_by_session_and_color(session_id: str, color: str):
+def start_game_and_get_response(session_id: str, color: str):
     """Initializes game given session and color"""
 
     if color == "white":
@@ -243,8 +239,7 @@ def initialize_game_by_session_and_color(session_id: str, color: str):
 
     output = f"Okay! You are playing with the {color} pieces."
 
-    # If player has white pieces
-    if get_user(session_id).color:
+    if color == "white":
         output += " Your turn."
 
     else:
@@ -254,7 +249,7 @@ def initialize_game_by_session_and_color(session_id: str, color: str):
         )
         output += f" My move is {speech}."
 
-    return generate_response_for_google_assistant(textToSpeech=output)
+    return get_response_for_google(textToSpeech=output)
 
 
 def get_result_comment(user: User) -> str:
