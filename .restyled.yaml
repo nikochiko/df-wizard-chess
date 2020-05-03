@@ -1,0 +1,8 @@
+image: restyled/restyler-black:v19.10b0
+command:
+- black
+arguments: []
+include:
+- "**/*.py"
+interpreters:
+- python
