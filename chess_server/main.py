@@ -222,7 +222,9 @@ def resign(req: Dict[str, Any]) -> Dict[str, Any]:
     delete_user(session_id)
 
     output = "GG! Thanks for playing."
-    return generate_response_for_google_assistant(textToSpeech=output)
+    return generate_response_for_google_assistant(
+        textToSpeech=output, expectUserResponse=False
+    )
 
 
 def initialize_game_by_session_and_color(session_id: str, color: str):
