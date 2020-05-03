@@ -1,6 +1,6 @@
 import random
 import string
-from typing import Any, Dict, Iterable, List, Optional, NamedTuple, Tuple
+from typing import Any, Dict, List, Optional, NamedTuple, Tuple
 
 
 def get_random_session_id(length: Optional[int] = 36) -> str:
@@ -235,7 +235,7 @@ def get_dummy_webhook_request_for_google(
             "rawInputs": [{"inputType": "TOUCH", "query": title}],
             "arguments": [
                 {"name": "OPTION", "textValue": key},
-                {"name": "text", "rawText": title, "textValue": title,},
+                {"name": "text", "rawText": title, "textValue": title},
             ],
         }
 

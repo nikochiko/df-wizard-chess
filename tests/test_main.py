@@ -2,10 +2,15 @@ import random
 from unittest import TestCase, mock
 
 import chess
-import pytest
 
 from chess_server import main
-from chess_server.main import RESPONSES, welcome, choose_color, two_squares, start_game_and_get_response
+from chess_server.main import (
+    RESPONSES,
+    welcome,
+    choose_color,
+    two_squares,
+    start_game_and_get_response,
+)
 from chess_server.utils import User
 from tests.utils import (
     GoogleOptionsList,
@@ -245,16 +250,16 @@ class TestStartGame:
     def test_start_game_random(self, mocker):
 
         mock_create_user = mocker.patch("chess_server.main.create_user")
-        mock_play_engine = mocker.patch(
-            "chess_server.main.Mediator.play_engine_move_and_get_speech",
-            return_value=self.engine_reply,
-        )
         mock_get_response = mocker.patch(
             "chess_server.main.get_response_for_google",
             return_value=self.result,
         )
         mock_random = mocker.patch(
             "chess_server.main.random.choice", side_effect=random.choice
+        )
+        mocker.patch(
+            "chess_server.main.Mediator.play_engine_move_and_get_speech",
+            return_value=self.engine_reply,
         )
 
         session_id = get_random_session_id()
@@ -370,12 +375,15 @@ class TestWelcome:
         mock_start_game.assert_called_once_with(self.session_id, color)
 
     def test_welcome_color_is_not_given(self, context, mocker):
-        mock_get_response = mocker.patch('chess_server.main.get_response_for_google', return_value=self.result)
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
 
         req_data = get_dummy_webhook_request_for_google(
             session_id=self.session_id,
             action="welcome",
-            parameters={"color": ""}
+            parameters={"color": ""},
         )
         value = welcome(req_data)
 
@@ -386,25 +394,33 @@ class TestWelcome:
         for key in ("white", "black", "random"):
             assert hasattr(options, key)
 
-class TestChooseColor:
 
+class TestChooseColor:
     def setup_method(self):
         self.session_id = get_random_session_id()
         self.result = {"foo": "bar"}
 
     def test_choose_color(self, mocker):
-        mock_start_game = mocker.patch('chess_server.main.start_game_and_get_response', return_value=self.result)
+        mock_start_game = mocker.patch(
+            "chess_server.main.start_game_and_get_response",
+            return_value=self.result,
+        )
         chosen_key = "chosen_key"
 
-        req_data = get_dummy_webhook_request_for_google(session_id=self.session_id, action="choose_color",
-        intent="choose_color", queryText="actions_intent_OPTION", option=("chosen_key", "title of that key"))
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id,
+            action="choose_color",
+            intent="choose_color",
+            queryText="actions_intent_OPTION",
+            option=("chosen_key", "title of that key"),
+        )
         value = choose_color(req_data)
 
         assert value == self.result
         mock_start_game.assert_called_with(self.session_id, chosen_key)
 
-class TestTwoSquares:
 
+class TestTwoSquares:
     def setup_method(self):
         self.session_id = get_random_session_id()
         self.result = {"foo": "bar"}
@@ -418,16 +434,32 @@ class TestTwoSquares:
         user = User(board=chess.Board(), color=chess.WHITE)
         params = {"squares": ["a1", "b5"], "piece": "rook"}
 
-        mock_get_user = mocker.patch('chess_server.main.get_user', return_value=user)
-        mock_two_squares_to_lan = mocker.patch('chess_server.main.two_squares_and_piece_to_lan', return_value="illegal move")
-        mock_get_response = mocker.patch('chess_server.main.get_response_for_google', return_value=self.result)
+        mock_get_user = mocker.patch(
+            "chess_server.main.get_user", return_value=user
+        )
+        mock_two_squares_to_lan = mocker.patch(
+            "chess_server.main.two_squares_and_piece_to_lan",
+            return_value="illegal move",
+        )
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
 
-        req_data = get_dummy_webhook_request_for_google(session_id=self.session_id, action="two_squares", intent="two_squares", queryText="rook from a1 to b5", parameters=params)
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id,
+            action="two_squares",
+            intent="two_squares",
+            queryText="rook from a1 to b5",
+            parameters=params,
+        )
         value = two_squares(req_data)
 
         assert value == self.result
         mock_get_user.assert_called_with(self.session_id)
-        mock_two_squares_to_lan.assert_called_with(board=user.board, squares=params["squares"], piece=params["piece"])
+        mock_two_squares_to_lan.assert_called_with(
+            board=user.board, squares=params["squares"], piece=params["piece"]
+        )
         mock_get_response.assert_called()
 
     def test_two_squares_game_does_not_end(self, mocker):
@@ -437,25 +469,49 @@ class TestTwoSquares:
         move_lan = "e2-e4"
         params = {"squares": squares, "piece": piece}
 
-        mock_get_user = mocker.patch('chess_server.main.get_user', return_value=user)
-        mock_del_user = mocker.patch('chess_server.main.delete_user')
-        mock_two_squares_to_lan = mocker.patch('chess_server.main.two_squares_and_piece_to_lan', return_value=move_lan)
-        mock_get_result = mocker.patch('chess_server.main.get_result_comment', return_value=self.result_unfinished)
-        mock_play_lan = mocker.patch('chess_server.main.Mediator.play_lan')
-        mock_play_engine = mocker.patch('chess_server.main.Mediator.play_engine_move_and_get_speech', return_value='spam ham and eggs')
-        mock_get_response = mocker.patch('chess_server.main.get_response_for_google', return_value=self.result)
+        mock_get_user = mocker.patch(
+            "chess_server.main.get_user", return_value=user
+        )
+        mock_del_user = mocker.patch("chess_server.main.delete_user")
+        mock_two_squares_to_lan = mocker.patch(
+            "chess_server.main.two_squares_and_piece_to_lan",
+            return_value=move_lan,
+        )
+        mock_get_result = mocker.patch(
+            "chess_server.main.get_result_comment",
+            return_value=self.result_unfinished,
+        )
+        mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
+        mock_play_engine = mocker.patch(
+            "chess_server.main.Mediator.play_engine_move_and_get_speech",
+            return_value="spam ham and eggs",
+        )
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
 
-        req_data = get_dummy_webhook_request_for_google(session_id=self.session_id, action="two_squares", intent="two_squares", queryText="Pawn from e2 to e4", parameters=params)
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id,
+            action="two_squares",
+            intent="two_squares",
+            queryText="Pawn from e2 to e4",
+            parameters=params,
+        )
         value = two_squares(req_data)
 
         assert value == self.result
         mock_get_user.assert_called_with(self.session_id)
         mock_del_user.assert_not_called()
-        mock_two_squares_to_lan.assert_called_with(board=user.board, squares=squares, piece=piece)
+        mock_two_squares_to_lan.assert_called_with(
+            board=user.board, squares=squares, piece=piece
+        )
         mock_get_result.assert_called()
-        mock_play_lan.assert_called_with(session_id=self.session_id, lan=move_lan)
+        mock_play_lan.assert_called_with(
+            session_id=self.session_id, lan=move_lan
+        )
         mock_play_engine.assert_called_with(session_id=self.session_id)
-        mock_get_response.assert_called_with(textToSpeech='spam ham and eggs')
+        mock_get_response.assert_called_with(textToSpeech="spam ham and eggs")
 
     def test_two_squares_game_ends_after_user_move(self, mocker):
         user = User(board=chess.Board(), color=chess.BLACK)
@@ -464,25 +520,51 @@ class TestTwoSquares:
         move_lan = "Qf6-e7#"
         params = {"squares": squares, "piece": piece}
 
-        mock_get_user = mocker.patch('chess_server.main.get_user', return_value=user)
-        mock_del_user = mocker.patch('chess_server.main.delete_user')
-        mock_two_squares_to_lan = mocker.patch('chess_server.main.two_squares_and_piece_to_lan', return_value=move_lan)
-        mock_get_result = mocker.patch('chess_server.main.get_result_comment', return_value=self.result_win)
-        mock_play_lan = mocker.patch('chess_server.main.Mediator.play_lan')
-        mock_play_engine = mocker.patch('chess_server.main.Mediator.play_engine_move_and_get_speech', return_value='spam ham and eggs')
-        mock_get_response = mocker.patch('chess_server.main.get_response_for_google', return_value=self.result)
+        mock_get_user = mocker.patch(
+            "chess_server.main.get_user", return_value=user
+        )
+        mock_del_user = mocker.patch("chess_server.main.delete_user")
+        mock_two_squares_to_lan = mocker.patch(
+            "chess_server.main.two_squares_and_piece_to_lan",
+            return_value=move_lan,
+        )
+        mock_get_result = mocker.patch(
+            "chess_server.main.get_result_comment",
+            return_value=self.result_win,
+        )
+        mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
+        mock_play_engine = mocker.patch(
+            "chess_server.main.Mediator.play_engine_move_and_get_speech",
+            return_value="spam ham and eggs",
+        )
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
 
-        req_data = get_dummy_webhook_request_for_google(session_id=self.session_id, action="two_squares", intent="two_squares", queryText="Pawn from e2 to e4", parameters=params)
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id,
+            action="two_squares",
+            intent="two_squares",
+            queryText="Pawn from e2 to e4",
+            parameters=params,
+        )
         value = two_squares(req_data)
 
         assert value == self.result
         mock_get_user.assert_called_with(self.session_id)
         mock_del_user.assert_called_with(self.session_id)
-        mock_two_squares_to_lan.assert_called_with(board=user.board, squares=squares, piece=piece)
+        mock_two_squares_to_lan.assert_called_with(
+            board=user.board, squares=squares, piece=piece
+        )
         mock_get_result.assert_called_with(user=user)
-        mock_play_lan.assert_called_with(session_id=self.session_id, lan=move_lan)
+        mock_play_lan.assert_called_with(
+            session_id=self.session_id, lan=move_lan
+        )
         mock_play_engine.assert_not_called()
-        mock_get_response.assert_called_with(textToSpeech=self.result_win, expectUserResponse=False)
+        mock_get_response.assert_called_with(
+            textToSpeech=self.result_win, expectUserResponse=False
+        )
 
     def test_two_squares_game_ends_after_engine_move(self, mocker):
         user = User(board=chess.Board(), color=chess.BLACK)
@@ -491,22 +573,49 @@ class TestTwoSquares:
         move_lan = "Qf6-e7#"
         params = {"squares": squares, "piece": piece}
 
-        mock_get_user = mocker.patch('chess_server.main.get_user', return_value=user)
-        mock_del_user = mocker.patch('chess_server.main.delete_user')
-        mock_two_squares_to_lan = mocker.patch('chess_server.main.two_squares_and_piece_to_lan', return_value=move_lan)
-        mock_get_result = mocker.patch('chess_server.main.get_result_comment', side_effect=[self.result_unfinished, self.result_lose])
-        mock_play_lan = mocker.patch('chess_server.main.Mediator.play_lan')
-        mock_play_engine = mocker.patch('chess_server.main.Mediator.play_engine_move_and_get_speech', return_value='spam ham and eggs')
-        mock_get_response = mocker.patch('chess_server.main.get_response_for_google', return_value=self.result)
+        mock_get_user = mocker.patch(
+            "chess_server.main.get_user", return_value=user
+        )
+        mock_del_user = mocker.patch("chess_server.main.delete_user")
+        mock_two_squares_to_lan = mocker.patch(
+            "chess_server.main.two_squares_and_piece_to_lan",
+            return_value=move_lan,
+        )
+        mock_get_result = mocker.patch(
+            "chess_server.main.get_result_comment",
+            side_effect=[self.result_unfinished, self.result_lose],
+        )
+        mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
+        mock_play_engine = mocker.patch(
+            "chess_server.main.Mediator.play_engine_move_and_get_speech",
+            return_value="spam ham and eggs",
+        )
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
 
-        req_data = get_dummy_webhook_request_for_google(session_id=self.session_id, action="two_squares", intent="two_squares", queryText="Pawn from e2 to e4", parameters=params)
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id,
+            action="two_squares",
+            intent="two_squares",
+            queryText="Pawn from e2 to e4",
+            parameters=params,
+        )
         value = two_squares(req_data)
 
         assert value == self.result
         mock_get_user.assert_called_with(self.session_id)
         mock_del_user.assert_called_with(self.session_id)
-        mock_two_squares_to_lan.assert_called_with(board=user.board, squares=squares, piece=piece)
+        mock_two_squares_to_lan.assert_called_with(
+            board=user.board, squares=squares, piece=piece
+        )
         mock_get_result.assert_called_with(user=user)
-        mock_play_lan.assert_called_with(session_id=self.session_id, lan=move_lan)
+        mock_play_lan.assert_called_with(
+            session_id=self.session_id, lan=move_lan
+        )
         mock_play_engine.assert_called_with(session_id=self.session_id)
-        mock_get_response.assert_called_with(textToSpeech=f"spam ham and eggs. {self.result_lose}", expectUserResponse=False)
+        mock_get_response.assert_called_with(
+            textToSpeech=f"spam ham and eggs. {self.result_lose}",
+            expectUserResponse=False,
+        )
