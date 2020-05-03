@@ -101,7 +101,7 @@ def get_response_for_google(
             'description': 'first description',
             'image': {
                 'url': '/assistant/images/badges/img.png',
-                accessibilityText: 'first alt',
+                'accessibilityText': 'first alt',
             },
             'title': 'first title',
         },
@@ -110,7 +110,7 @@ def get_response_for_google(
             'description': 'second description',
             'image': {
                 'url': 'https://test-url/image2.png',
-                accessibilityText: 'second alt',
+                'accessibilityText': 'second alt',
             },
             'title': 'second title',
         },
@@ -180,9 +180,7 @@ def get_response_for_google(
     """
 
     # Get template for response
-    template = get_response_template_for_google(
-        options=bool(options)
-    )
+    template = get_response_template_for_google(options=bool(options))
 
     # Modify the dict as per the arguments
     template["payload"]["google"]["expectUserResponse"] = expectUserResponse

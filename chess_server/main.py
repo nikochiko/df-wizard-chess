@@ -94,9 +94,7 @@ def welcome(req: Dict[str, Any]) -> Dict[str, Any]:
         },
     ]
 
-    return get_response_for_google(
-        textToSpeech=response_text, options=options
-    )
+    return get_response_for_google(textToSpeech=response_text, options=options)
 
 
 def choose_color(req: Dict[str, Any]) -> Dict[str, Any]:
@@ -146,9 +144,7 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
 
     # TODO: Store this reply somewhere
     if lan == "illegal move":
-        return get_response_for_google(
-            textToSpeech=RESPONSES["illegal_move"]
-        )
+        return get_response_for_google(textToSpeech=RESPONSES["illegal_move"])
 
     # Play move on board
     mediator.play_lan(session_id=session_id, lan=lan)
@@ -188,9 +184,7 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
     lan = process_castle_by_querytext(board=user.board, queryText=queryText)
 
     if lan == "illegal move":
-        return get_response_for_google(
-            textToSpeech=RESPONSES["illegal_move"]
-        )
+        return get_response_for_google(textToSpeech=RESPONSES["illegal_move"])
 
     mediator.play_lan(session_id=session_id, lan=lan)
 
@@ -242,7 +236,6 @@ def start_game_and_get_response(session_id: str, color: str):
 
     output = f"Okay! You are playing with the {color} pieces."
 
-    # If player has white pieces
     if color == "white":
         output += " Your turn."
 
