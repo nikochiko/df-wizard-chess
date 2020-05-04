@@ -7,8 +7,12 @@ from chess_server.db import init_app
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY") or os.urandom(16)
-    DATABASE = os.environ.get("DATABASE") or os.path.join(current_app.instance_path, "df-fulfillment.db")
-    IMG_DIR = os.environ.get("IMG_DIR") or os.path.join(current_app.instace_path, "img_dir")
+    DATABASE = os.environ.get("DATABASE") or os.path.join(
+        current_app.instance_path, "df-fulfillment.db"
+    )
+    IMG_DIR = os.environ.get("IMG_DIR") or os.path.join(
+        current_app.instace_path, "img_dir"
+    )
     ENGINE_PATH = os.environ.get("ENGINE_PATH") or "stockfish"
 
 
