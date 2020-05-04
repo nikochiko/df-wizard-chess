@@ -10,6 +10,7 @@ from chess_server.chessgame import (
     process_castle_by_querytext,
     two_squares_and_piece_to_lan,
 )
+from chess_server.config import configure_app
 from chess_server.utils import (
     User,
     create_user,
@@ -303,10 +304,7 @@ def main():
 
     mediator.activate_engine()
 
-    from chess_server import db
-
-    db.init_app(app)
-
+    configure_app(app)
     app.run(host="0.0.0.0")
 
 

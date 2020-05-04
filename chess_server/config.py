@@ -1,11 +1,17 @@
 import os
 
-# basedir = os.path.abspath(os.path.dirname(__file__))
-ENGINE_PATH = os.environ.get("ENGINE_PATH") or "stockfish"
+from flask import current_app
+
+from chess_server.db import init_app
 
 
-# class Config(object):
-#     SQLALCHEMY_DATABASE_URI = os.environ.get(
-#         "DATABASE_URL"
-#     ) or "sqlite:///" + os.path.join(basedir, "app.db")
-#     SQLALCHEMY_TRACK_MODIFICATIONS = False
+class Config:
+    SECRET_KEY = os.environ.get("SECRET_KEY") or os.urandom(16)
+    DATABASE = os.environ.get("DATABASE") or os.path.join(current_app.instance_path, "df-fulfillment.db")
+    IMG_DIR = os.environ.get("IMG_DIR") or os.path.join(current_app.instace_path, "img_dir")
+    ENGINE_PATH = os.environ.get("ENGINE_PATH") or "stockfish"
+
+
+def configure_app(app):
+    app.config.from_object(Config)
+    init_app(app)
