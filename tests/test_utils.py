@@ -1,3 +1,7 @@
+import os
+
+from flask import current_app
+
 from chess_server import utils
 from tests import data
 
@@ -32,3 +36,13 @@ def test_get_response_template_for_google_with_options():
 
     result = utils.get_response_template_for_google(options=True)
     assert result == data.sample_google_response_template_with_options
+
+
+class TestRenderPNG:
+    def setup_method(self):
+        # Create a directory
+        self.imgdir = os.path.join(current_app.instance_path, 'imgdir')
+
+    def teardown_method(self):
+        # Delete created directory
+        os.rmdir(self.imgdir)

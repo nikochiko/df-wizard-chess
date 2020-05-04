@@ -1,8 +1,16 @@
+import logging
+import os
 import sqlite3
 from typing import Any, Dict, List, NamedTuple, Optional, Union
 
 import chess
-from flask import g
+import chess.svg
+from cairosvg import svg2png
+from flask import g, current_app
+
+logger = logging.getLogger(__name__)
+
+IMG_DIR = os.path.join(current_app.instance_path, "img_dir")
 
 
 class User(NamedTuple):
@@ -289,3 +297,26 @@ def delete_user(session_id: str):
     c.execute("DELETE FROM users WHERE session_id=?", (session_id,))
 
     g.db.commit()
+
+
+def render_png(imgkey: str, board: chess.Board) -> str:
+    """Render the PNG of a board, save it on disk and return the location.
+
+    imgkey argument should be the identifier for the image like session id.
+    """
+
+    # Render SVG
+    svg = str(chess.svg.board(board))
+
+    # Path to png
+    pngfile = os.path.join(IMG_DIR, f"{imgkey}.png")
+
+    # Perform conversion
+    try:
+        svg2png(bytestring=svg, write_to=pngfile)
+        return pngfile
+    except Exception as exc:
+        # Log error and raise
+        logger.error(
+            f"Unable to process image. Failed with error:\n{exc}")
+        raise
