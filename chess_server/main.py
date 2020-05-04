@@ -10,7 +10,7 @@ from chess_server.chessgame import (
     process_castle_by_querytext,
     two_squares_and_piece_to_lan,
 )
-from chess_server.config import configure_app
+from chess_server.db import init_app
 from chess_server.utils import (
     User,
     create_user,
@@ -23,6 +23,8 @@ from chess_server.utils import (
 
 
 app = Flask(__name__)
+app.config.from_object("chess_server.config.Config")
+
 log = app.logger
 
 RESPONSES = {
@@ -304,7 +306,7 @@ def main():
 
     mediator.activate_engine()
 
-    configure_app(app)
+    init_app(app)
     app.run(host="0.0.0.0")
 
 

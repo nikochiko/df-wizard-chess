@@ -2,9 +2,14 @@ import logging
 from typing import List, Optional
 
 import chess.engine
+from flask import current_app
 
-from chess_server.config import ENGINE_PATH
 from chess_server.utils import get_user, update_user
+
+if current_app:
+    ENGINE_PATH = current_app.config["ENGINE_PATH"]
+else:
+    ENGINE_PATH = "testing"
 
 logger = logging.getLogger(__name__)
 logger.setLevel("WARNING")
