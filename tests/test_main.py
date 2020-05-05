@@ -1,8 +1,14 @@
+import os
 import random
+import tempfile
 from unittest import TestCase, mock
 
 import chess
+import pytest
+from flask import current_app, url_for
+from werkzeug.exceptions import NotFound
 
+from chess_server import main
 from chess_server.main import (
     RESPONSES,
     welcome,
@@ -11,6 +17,7 @@ from chess_server.main import (
     two_squares,
     resign,
     get_result_comment,
+    show_board,
     start_game_and_get_response,
 )
 from chess_server.utils import User
@@ -344,6 +351,16 @@ class TestWebhookForGoogle:
 
         assert resp.get_json() == self.result
         mock_resign.assert_called_with(req_data)
+
+    def test_webhook_show_board(self, client, mocker):
+        mock_show_board = mocker.patch('chess_server.main.show_board', return_value=self.result)
+
+        req_data = get_dummy_webhook_request_for_google(action="show_board")
+
+        resp = client.post("/webhook", json=req_data)
+
+        assert resp.get_json() == self.result
+        mock_show_board.assert_called_with(req_data)
 
     def test_webhook_unknown_intent(self, client, mocker):
         req_data = get_dummy_webhook_request_for_google(action="unknown")
@@ -792,3 +809,44 @@ class TestResign:
         mock_get_response.assert_called_with(
             textToSpeech=mocker.ANY, expectUserResponse=False
         )
+
+
+class TestShowBoard:
+    def setup_method(self):
+        self.session_id = get_random_session_id()
+        self.user = User(chess.Board(), color=chess.BLACK)
+        self.result = {'spam': 'eggs'}
+
+    def test_show_board_success(self, client, mocker):
+        mock_get_user = mocker.patch('chess_server.main.get_user', return_value=self.user)
+        mock_get_response = mocker.patch('chess_server.main.get_response_for_google', return_value=self.result)
+
+        req_data = get_dummy_webhook_request_for_google(session_id=self.session_id, action="show_board")
+        with main.app.app_context():
+            value = show_board(req_data)
+
+        assert value == self.result
+        mock_get_user.assert_called_with(self.session_id)
+        mock_get_response.assert_called()
+
+        imgpath = os.path.join(current_app.config["IMG_DIR"], f"{self.session_id}.png")
+        assert os.path.exists(imgpath)
+
+class TestPNGImage:
+    def setup_method(self):
+        self.session_id = get_random_session_id()
+        self.imgpath = os.path.join(main.app.config["IMG_DIR"], f"{self.session_id}.png")
+        self.file_content = b'file content'
+        self.url = f'/webhook/images/boards/{self.session_id}'
+
+    def test_png_image_success(self, client, mocker):
+        with open(self.imgpath, 'w') as fw:
+            fw.write(self.file_content)
+
+        r = client.get(self.url)
+
+        assert r.get_data() == self.file_content
+
+    def test_png_image_file_not_found(self, client, mocker):
+        with pytest.raises(NotFound):
+            r = client.get(self.url)
