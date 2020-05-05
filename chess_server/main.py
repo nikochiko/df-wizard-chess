@@ -1,9 +1,10 @@
+import os
 import random
 from typing import Any, Dict
 
 import chess
-from flask import Flask, jsonify, make_response, request
-from werkzeug.exceptions import BadRequest
+from flask import Flask, current_app, jsonify, make_response, request, send_file
+from werkzeug.exceptions import BadRequest, NotFound
 
 from chess_server.chessgame import (
     Mediator,
@@ -11,6 +12,8 @@ from chess_server.chessgame import (
     two_squares_and_piece_to_lan,
 )
 from chess_server.utils import (
+    BasicCard,
+    Image,
     User,
     create_user,
     delete_user,
@@ -18,6 +21,7 @@ from chess_server.utils import (
     get_session_by_req,
     get_params_by_req,
     get_response_for_google,
+    save_board_as_png,
 )
 
 
@@ -60,11 +64,25 @@ def webhook():
     elif action == "resign":
         res = resign(req)
 
+    elif action == "show_board":
+        res = show_board(req)
+
     else:
         log.error(f"Bad request:\n{str(req)}")
         raise BadRequest(f"Unknown intent action: {action}")
 
     return make_response(jsonify(res))
+
+
+@app.route('/webhook/images/boards/<session_id>', methods=["GET"])
+def png_image(session_id):
+
+    img_path = os.path.join(app.config["IMG_DIR"], f"{session_id}.png")
+
+    if os.path.exists(img_path):
+        return send_file(img_path, mimetype="images/png")
+    else:
+        return NotFound()
 
 
 def welcome(req: Dict[str, Any]) -> Dict[str, Any]:
@@ -222,6 +240,26 @@ def resign(req: Dict[str, Any]) -> Dict[str, Any]:
         textToSpeech=output, expectUserResponse=False
     )
 
+
+def show_board(req: Dict[str, Any]) -> Dict[str, Any]:
+    """Show the board to player as a PNG image"""
+    session_id = get_session_by_req(req)
+    board = get_user(session_id).board
+
+    # Save board to <IMG_DIR>/<session_id>.png
+    save_board_as_png(session_id, board)
+    img_dir = current_app.config["IMG_DIR"]
+
+    url = url_for('png_image', session_id=session_id)
+    alt = str(board)
+
+    image = Image(url=url, accessibilityText=alt)
+    formatted_text = f"**Moves played: {board.fullmove_number}**"
+    card = BasicCard(image=image, formattedText=formatted_text)
+
+    resp = get_response_for_google(textToSpeech="Cool! Here's the board for you.", basicCard=card)
+
+    return resp
 
 def start_game_and_get_response(session_id: str, color: str):
     """Initializes game given session and color"""

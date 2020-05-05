@@ -24,6 +24,56 @@ class User(NamedTuple):
     color: chess.Color
 
 
+class Image(NamedTuple):
+    url: str
+    accessibilityText: str
+    width: Optional[int] = None
+    height: Optional[int] = None
+
+    def make_image(self) -> Dict[str, Any]:
+        image = {}
+
+        image["url"] = self.url
+        image["accessibilityText"] = self.accessibilityText
+
+        if self.width:
+            image["width"] = self.width
+
+        if self.height:
+            image["height"] = self.height
+
+
+class BasicCard(NamedTuple):
+    """Basic card for response.
+
+    Note: At least one of image and formattedText is required.
+    """
+    # One is required:
+    image: Optional[Image] = None
+    formattedText: Optional[str] = None
+
+    # All optional:
+    title: Optional[str] = None
+    subtitle: Optional[str] = None
+
+    def make_card(self) -> Dict[str, Any]:
+        card = {}
+
+        if self.image:
+            card["image"] = self.image.make_image()
+
+        if self.formattedText:
+            card["formattedText"] = self.formattedText
+
+        if self.title is not None:
+            card["title"] = self.title
+
+        if self.subtitle is not None:
+            card["subtitle"] = self.subtitle
+
+        return card
+
+
 def get_session_by_req(req: Dict[str, Any]) -> str:
     """Get Session ID by DialogFlow request"""
     return req.get("session").split("/")[-1]
@@ -66,6 +116,7 @@ def get_response_template_for_google(
 def get_response_for_google(
     textToSpeech: str,
     expectUserResponse: Optional[bool] = True,
+    basicCard: Optional[BasicCard] = None,
     options: Optional[List[Dict[str, Union[str, Dict[str, str]]]]] = None,
 ) -> Dict[str, Any]:
     """
@@ -201,6 +252,11 @@ def get_response_for_google(
             "items"
         ] = options
 
+    # If basicCard is given
+    if basicCard:
+        card = basicCard.make_card()
+        template["payload"]["google"]["richResponse"]["items"].append(card)
+
     # Return DICT
     return template
 
@@ -297,7 +353,7 @@ def delete_user(session_id: str):
     g.db.commit()
 
 
-def render_png(imgkey: str, board: chess.Board) -> str:
+def save_board_as_png(imgkey: str, board: chess.Board) -> str:
     """Render the PNG of a board, save it on disk and return the location.
 
     imgkey argument should be the identifier for the image like session id.
