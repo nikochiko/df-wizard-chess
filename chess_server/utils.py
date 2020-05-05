@@ -10,8 +10,6 @@ from flask import g, current_app
 
 logger = logging.getLogger(__name__)
 
-IMG_DIR = os.path.join(current_app.instance_path, "img_dir")
-
 
 class User(NamedTuple):
     """Simple structure to store game and user data
@@ -304,12 +302,20 @@ def render_png(imgkey: str, board: chess.Board) -> str:
 
     imgkey argument should be the identifier for the image like session id.
     """
+    img_dir = current_app.config["IMG_DIR"]
+
+    try:
+        # Get last move on the board
+        lastmove = board.peek()
+    except IndexError:
+        # This is the first move
+        lastmove = None
 
     # Render SVG
-    svg = str(chess.svg.board(board))
+    svg = str(chess.svg.board(board, lastmove=lastmove))
 
     # Path to png
-    pngfile = os.path.join(IMG_DIR, f"{imgkey}.png")
+    pngfile = os.path.join(img_dir, f"{imgkey}.png")
 
     # Perform conversion
     try:
@@ -318,5 +324,5 @@ def render_png(imgkey: str, board: chess.Board) -> str:
     except Exception as exc:
         # Log error and raise
         logger.error(
-            f"Unable to process image. Failed with error:\n{exc}")
+            f"Unable to process image. Failed with error:\n{str(exc)}")
         raise
