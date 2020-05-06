@@ -630,7 +630,7 @@ class TestImage:
     def test_make_dict(self):
         expected_img_dict = {
             "url": self.url,
-            "accessibilityText": self.accessibilityText
+            "accessibilityText": self.accessibilityText,
         }
 
         img = Image(url=self.url, accessibilityText=self.accessibilityText)
@@ -642,10 +642,15 @@ class TestImage:
             "url": self.url,
             "accessibilityText": self.accessibilityText,
             "width": self.width,
-            "height": self.height
+            "height": self.height,
         }
 
-        img = Image(url=self.url, accessibilityText=self.accessibilityText, width=self.width, height=self.height)
+        img = Image(
+            url=self.url,
+            accessibilityText=self.accessibilityText,
+            width=self.width,
+            height=self.height,
+        )
 
         assert img.make_dict() == expected_img_dict
 
@@ -654,16 +659,17 @@ class TestBasicCard:
     def setup_method(self):
         self.url = "http://testserver/img"
         self.accessibilityText = "spam ham and eggs"
-        self.image = Image(url=self.url, accessibilityText=self.accessibilityText)
+        self.image = Image(
+            url=self.url, accessibilityText=self.accessibilityText
+        )
         self.formattedText = "**more spam and more eggs**"
         self.title = "Foo"
         self.subtitle = "Bar"
 
-
     def test_make_card(self):
         expected_card_dict = {
             "image": self.image.make_dict(),
-            "formattedText": self.formattedText
+            "formattedText": self.formattedText,
         }
 
         card = BasicCard(image=self.image, formattedText=self.formattedText)
@@ -675,9 +681,14 @@ class TestBasicCard:
             "image": self.image.make_dict(),
             "formattedText": self.formattedText,
             "title": self.title,
-            "subtitle": self.subtitle
+            "subtitle": self.subtitle,
         }
 
-        card = BasicCard(image=self.image, formattedText=self.formattedText, title=self.title, subtitle=self.subtitle)
+        card = BasicCard(
+            image=self.image,
+            formattedText=self.formattedText,
+            title=self.title,
+            subtitle=self.subtitle,
+        )
 
         assert card.make_dict() == expected_card_dict

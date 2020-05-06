@@ -623,6 +623,55 @@ class TestCastle:
             textToSpeech=RESPONSES["illegal_move"]
         )
 
+    def test_castle_game_does_not_end(self, mocker):
+        user = User(board=chess.Board(), color=chess.BLACK)
+        queryText = "Castle short"
+        move_lan = "O-O"
+
+        mock_get_user = mocker.patch(
+            "chess_server.main.get_user", return_value=user
+        )
+        mock_del_user = mocker.patch("chess_server.main.delete_user")
+        mock_process_castle = mocker.patch(
+            "chess_server.main.process_castle_by_querytext",
+            return_value=move_lan,
+        )
+        mock_get_result = mocker.patch(
+            "chess_server.main.get_result_comment",
+            return_value=self.result_unfinished,
+        )
+        mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
+        mock_play_engine = mocker.patch(
+            "chess_server.main.Mediator.play_engine_move_and_get_speech",
+            return_value="spam ham and eggs",
+        )
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
+
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id,
+            action="castle",
+            intent="castle",
+            queryText=queryText,
+            parameters={},
+        )
+        value = castle(req_data)
+
+        assert value == self.result
+        mock_get_user.assert_called_with(self.session_id)
+        mock_del_user.assert_not_called()
+        mock_process_castle.assert_called_with(
+            board=user.board, queryText=queryText
+        )
+        mock_get_result.assert_called()
+        mock_play_lan.assert_called_with(
+            session_id=self.session_id, lan=move_lan
+        )
+        mock_play_engine.assert_called_with(session_id=self.session_id)
+        mock_get_response.assert_called_with(textToSpeech="spam ham and eggs")
+
     def test_castle_game_ends_after_user_move(self, mocker):
         user = User(board=chess.Board(), color=chess.BLACK)
         queryText = "long castle check"
