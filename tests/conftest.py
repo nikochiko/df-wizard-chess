@@ -1,4 +1,5 @@
 import os
+import shutil
 import tempfile
 
 import pytest
@@ -16,6 +17,7 @@ def app():
 @pytest.fixture
 def client(app):
     db_fd, app.config["DATABASE"] = tempfile.mkstemp()
+    app.config["IMG_DIR"] = tempfile.mkdtemp()
     app.config["TESTING"] = True
 
     with app.test_client() as client:
@@ -26,11 +28,13 @@ def client(app):
 
     os.close(db_fd)
     os.unlink(app.config["DATABASE"])
+    shutil.rmtree(app.config["IMG_DIR"])
 
 
 @pytest.fixture
 def context(app):
     db_fd, app.config["DATABASE"] = tempfile.mkstemp()
+    app.config["IMG_DIR"] = tempfile.mkdtemp()
     app.config["TESTING"] = True
 
     with app.test_request_context():
@@ -40,3 +44,4 @@ def context(app):
 
     os.close(db_fd)
     os.unlink(app.config["DATABASE"])
+    shutil.rmtree(app.config["IMG_DIR"])

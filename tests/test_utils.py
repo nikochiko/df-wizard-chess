@@ -1,15 +1,26 @@
+import os
+
 import chess
+import chess.svg
+import pytest
+from flask import current_app, url_for
 
 from chess_server.utils import (
+    User,
+    BasicCard,
+    Image,
     get_session_by_req,
     get_params_by_req,
     get_response_for_google,
     get_response_template_for_google,
     lan_to_speech,
     process_castle_by_querytext,
+    save_board_as_png,
+    save_board_as_png_and_get_image_card,
     two_squares_and_piece_to_lan,
 )
 from tests import data
+from tests.utils import get_random_session_id
 
 
 def test_get_session_by_req():
@@ -522,3 +533,162 @@ class TestProcessCastleByQueryText:
         result = process_castle_by_querytext(board, queryText)
 
         assert result == expected
+
+
+class TestSaveBoardAsPNG:
+    def setup_method(self):
+        self.session_id = get_random_session_id()
+
+    def test_save_board_as_png_success(self, mocker, context):
+        mock_svg2png = mocker.patch("chess_server.utils.svg2png")
+
+        expected_pngfile = os.path.join(
+            current_app.config["IMG_DIR"], f"{self.session_id}.png"
+        )
+
+        # With an empty board (lastmove=None)
+        board = chess.Board()
+        svg = str(chess.svg.board(board))
+
+        value = save_board_as_png(self.session_id, board)
+
+        assert value == expected_pngfile
+        mock_svg2png.assert_called_with(
+            bytestring=str(svg), write_to=expected_pngfile
+        )
+
+    def test_save_board_as_png_success_lastmove(self, config, context, mocker):
+        mock_svg2png = mocker.patch("chess_server.utils.svg2png")
+
+        expected_pngfile = os.path.join(
+            config["IMG_DIR"], f"{self.session_id}.png"
+        )
+
+        # With a move played (lastmove must be highlighted on board)
+        board = chess.Board()
+        board.push_san("e4")
+        lastmove = chess.Move.from_uci("e2e4")
+        svg = str(chess.svg.board(board, lastmove=lastmove))
+
+        value = save_board_as_png(self.session_id, board)
+
+        assert value == expected_pngfile
+        mock_svg2png.assert_called_with(
+            bytestring=str(svg), write_to=expected_pngfile
+        )
+
+    def test_save_board_as_png_error(self, config, context, mocker):
+        mock_logger = mocker.patch.object(current_app.logger, "error")
+        mock_svg2png = mocker.patch(
+            "chess_server.utils.svg2png",
+            side_effect=Exception("Example error"),
+        )
+        expected_pngfile = os.path.join(
+            config["IMG_DIR"], f"{self.session_id}.png"
+        )
+
+        board = chess.Board()
+        svg = str(chess.svg.board(board))
+
+        with pytest.raises(Exception, match="Example error"):
+            save_board_as_png(self.session_id, board)
+
+        mock_svg2png.assert_called_with(
+            bytestring=svg, write_to=expected_pngfile
+        )
+        mock_logger.assert_called_with(
+            f"Unable to process image. Failed with error:\nExample error"
+        )
+
+
+class TestSaveBoardAsPngAndGetCard:
+    def setup_method(self):
+        self.session_id = get_random_session_id()
+        self.user = User(board=chess.Board(), color=chess.WHITE)
+
+        self.user.board.push_san("e4")
+        self.user.board.push_san("e5")
+
+    def test_save_board_as_png_and_get_card(self, client, mocker):
+        mocker.patch("chess_server.utils.get_user", return_value=self.user)
+        mocker.patch("chess_server.utils.save_board_as_png")
+
+        url = url_for("webhook_bp.png_image", session_id=self.session_id)
+
+        card = save_board_as_png_and_get_image_card(self.session_id)
+
+        assert card.image.url == url
+
+
+class TestImage:
+    def setup_method(self):
+        self.url = "http://testserver/img"
+        self.accessibilityText = "spam ham and eggs"
+        self.width = 192
+        self.height = 192
+
+    def test_make_dict(self):
+        expected_img_dict = {
+            "url": self.url,
+            "accessibilityText": self.accessibilityText,
+        }
+
+        img = Image(url=self.url, accessibilityText=self.accessibilityText)
+
+        assert img.make_dict() == expected_img_dict
+
+    def test_make_image_with_optionals(self):
+        expected_img_dict = {
+            "url": self.url,
+            "accessibilityText": self.accessibilityText,
+            "width": self.width,
+            "height": self.height,
+        }
+
+        img = Image(
+            url=self.url,
+            accessibilityText=self.accessibilityText,
+            width=self.width,
+            height=self.height,
+        )
+
+        assert img.make_dict() == expected_img_dict
+
+
+class TestBasicCard:
+    def setup_method(self):
+        self.url = "http://testserver/img"
+        self.accessibilityText = "spam ham and eggs"
+        self.image = Image(
+            url=self.url, accessibilityText=self.accessibilityText
+        )
+        self.formattedText = "**more spam and more eggs**"
+        self.title = "Foo"
+        self.subtitle = "Bar"
+
+    def test_make_card(self):
+        expected_card_dict = {
+            "image": self.image.make_dict(),
+            "formattedText": self.formattedText,
+        }
+
+        card = BasicCard(image=self.image, formattedText=self.formattedText)
+
+        assert card.make_dict() == expected_card_dict
+
+    def test_make_card_with_optionals(self):
+        expected_card_dict = {
+            "image": self.image.make_dict(),
+            "formattedText": self.formattedText,
+            "title": self.title,
+            "subtitle": self.subtitle,
+        }
+
+        card = BasicCard(
+            image=self.image,
+            formattedText=self.formattedText,
+            title=self.title,
+            subtitle=self.subtitle,
+        )
+
+        assert card.make_dict() == expected_card_dict

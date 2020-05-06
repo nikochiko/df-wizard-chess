@@ -1,6 +1,8 @@
+import os
+
 from flask import current_app as app
-from flask import Blueprint, make_response, jsonify, request
-from werkzeug.exceptions import BadRequest
+from flask import Blueprint, make_response, jsonify, request, send_file
+from werkzeug.exceptions import BadRequest, NotFound
 
 from chess_server.main import (
     welcome,
@@ -43,3 +45,14 @@ def webhook():
         raise BadRequest(f"Unknown intent action: {action}")
 
     return make_response(jsonify(res))
+
+
+@webhook_bp.route("/webhook/images/boards/<session_id>", methods=["GET"])
+def png_image(session_id):
+
+    img_path = os.path.join(app.config["IMG_DIR"], f"{session_id}.png")
+
+    if os.path.exists(img_path):
+        return send_file(img_path, mimetype="images/png")
+    else:
+        return NotFound()

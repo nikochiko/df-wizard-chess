@@ -1,12 +1,14 @@
-import logging
 import random
 from typing import Any, Dict
 
 import chess
+from flask import url_for
 
 from chess_server.chessgame import Mediator
 from chess_server.utils import (
     User,
+    BasicCard,
+    Image,
     create_user,
     delete_user,
     get_user,
@@ -14,10 +16,10 @@ from chess_server.utils import (
     get_params_by_req,
     get_response_for_google,
     process_castle_by_querytext,
+    save_board_as_png,
+    save_board_as_png_and_get_image_card,
     two_squares_and_piece_to_lan,
 )
-
-log = logging.getLogger(__name__)
 
 RESPONSES = {
     "result_win": "Congratulations! You have won the game."
@@ -117,11 +119,10 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
 
     game_result = get_result_comment(user=user)
     if game_result:
-        # TODO: Display image of board when game is over
-        # image = get_image(board)
+        card = save_board_as_png_and_get_image_card(session_id)
         delete_user(session_id)  # Free up memory
         return get_response_for_google(
-            textToSpeech=game_result, expectUserResponse=False
+            textToSpeech=game_result, expectUserResponse=False, basicCard=card
         )
 
     # Play engine's move
@@ -130,9 +131,10 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
     game_result = get_result_comment(user=user)
     if game_result:
         output = f"{output}. {game_result}"
+        card = save_board_as_png_and_get_image_card(session_id)
         delete_user(session_id)  # Free up memory
         return get_response_for_google(
-            textToSpeech=output, expectUserResponse=False
+            textToSpeech=output, expectUserResponse=False, basicCard=card
         )
 
     return get_response_for_google(textToSpeech=output)
@@ -156,11 +158,10 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
 
     game_result = get_result_comment(user=user)
     if game_result:
-        # TODO: Display image of board when game is over
-        # image = get_image(board)
+        card = save_board_as_png_and_get_image_card(session_id)
         delete_user(session_id)
         return get_response_for_google(
-            textToSpeech=game_result, expectUserResponse=False
+            textToSpeech=game_result, expectUserResponse=False, basicCard=card
         )
 
     # Play engine's move
@@ -169,9 +170,10 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
     game_result = get_result_comment(user=user)
     if game_result:
         output = f"{output}. {game_result}"
+        card = save_board_as_png_and_get_image_card(session_id)
         delete_user(session_id)
         return get_response_for_google(
-            textToSpeech=output, expectUserResponse=False
+            textToSpeech=output, expectUserResponse=False, basicCard=card
         )
 
     return get_response_for_google(textToSpeech=output)
@@ -180,13 +182,36 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
 def resign(req: Dict[str, Any]) -> Dict[str, Any]:
     """Delete the player from the database and return a conclusion response"""
     session_id = get_session_by_req(req)
+    card = save_board_as_png_and_get_image_card(session_id)
     delete_user(session_id)
 
     output = "GG! Thanks for playing."
 
     return get_response_for_google(
-        textToSpeech=output, expectUserResponse=False
+        textToSpeech=output, expectUserResponse=False, basicCard=card
     )
+
+
+def show_board(req: Dict[str, Any]) -> Dict[str, Any]:
+    """Show the board to player as a PNG image"""
+    session_id = get_session_by_req(req)
+    board = get_user(session_id).board
+
+    # Save board to <IMG_DIR>/<session_id>.png
+    save_board_as_png(session_id, board)
+
+    url = url_for("webhook_bp.png_image", session_id=session_id)
+    alt = str(board)
+
+    image = Image(url=url, accessibilityText=alt)
+    formatted_text = f"**Moves played: {board.fullmove_number}**"
+    card = BasicCard(image=image, formattedText=formatted_text)
+
+    resp = get_response_for_google(
+        textToSpeech="Cool! Here's the board for you.", basicCard=card
+    )
+
+    return resp
 
 
 def start_game_and_get_response(session_id: str, color: str):
