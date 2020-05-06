@@ -3,34 +3,40 @@ import tempfile
 
 import pytest
 
-from chess_server import main
+from chess_server import create_app
 from chess_server.db import init_db
 
 
 @pytest.fixture
-def client():
-    db_fd, main.app.config["DATABASE"] = tempfile.mkstemp()
-    main.app.config["TESTING"] = True
+def app():
+    app = create_app()
+    return app
 
-    with main.app.test_client() as client:
-        with main.app.app_context():
+
+@pytest.fixture
+def client(app):
+    db_fd, app.config["DATABASE"] = tempfile.mkstemp()
+    app.config["TESTING"] = True
+
+    with app.test_client() as client:
+        with app.app_context():
             init_db()
 
         yield client
 
     os.close(db_fd)
-    os.unlink(main.app.config["DATABASE"])
+    os.unlink(app.config["DATABASE"])
 
 
 @pytest.fixture
-def context():
-    db_fd, main.app.config["DATABASE"] = tempfile.mkstemp()
-    main.app.config["TESTING"] = True
+def context(app):
+    db_fd, app.config["DATABASE"] = tempfile.mkstemp()
+    app.config["TESTING"] = True
 
-    with main.app.test_request_context():
+    with app.test_request_context():
         init_db()
 
         yield
 
     os.close(db_fd)
-    os.unlink(main.app.config["DATABASE"])
+    os.unlink(app.config["DATABASE"])
