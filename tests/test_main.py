@@ -1,3 +1,4 @@
+import os
 import random
 from unittest import TestCase, mock
 
@@ -10,6 +11,7 @@ from chess_server.main import (
     choose_color,
     two_squares,
     resign,
+    show_board,
     get_result_comment,
     start_game_and_get_response,
 )
@@ -719,3 +721,24 @@ class TestResign:
         mock_get_response.assert_called_with(
             textToSpeech=mocker.ANY, expectUserResponse=False
         )
+
+
+class TestShowBoard:
+    def setup_method(self):
+        self.session_id = get_random_session_id()
+        self.user = User(chess.Board(), color=chess.BLACK)
+        self.result = {'spam': 'eggs'}
+
+    def test_show_board_success(self, client, config, mocker):
+        mock_get_user = mocker.patch('chess_server.main.get_user', return_value=self.user)
+        mock_get_response = mocker.patch('chess_server.main.get_response_for_google', return_value=self.result)
+
+        req_data = get_dummy_webhook_request_for_google(session_id=self.session_id, action="show_board")
+        value = show_board(req_data)
+
+        assert value == self.result
+        mock_get_user.assert_called_with(self.session_id)
+        mock_get_response.assert_called()
+
+        imgpath = os.path.join(config["IMG_DIR"], f"{self.session_id}.png")
+        assert os.path.exists(imgpath)

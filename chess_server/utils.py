@@ -1,8 +1,11 @@
+import os
 import sqlite3
 from typing import Any, Dict, List, NamedTuple, Optional, Union
 
 import chess
-from flask import g
+import chess.svg
+from cairosvg import svg2png
+from flask import current_app, g
 
 pieces = {
     "K": "King",
@@ -32,6 +35,55 @@ class User(NamedTuple):
 
     board: chess.Board
     color: chess.Color
+
+
+class Image(NamedTuple):
+    url: str
+    accessibilityText: str
+    width: Optional[int] = None
+    height: Optional[int] = None
+
+    def make_image(self) -> Dict[str, Any]:
+        image = {}
+
+        image["url"] = self.url
+        image["accessibilityText"] = self.accessibilityText
+
+        if self.width:
+            image["width"] = self.width
+
+        if self.height:
+            image["height"] = self.height
+
+
+class BasicCard(NamedTuple):
+    """Basic card for response.
+    Note: At least one of image and formattedText is required.
+    """
+    # One is required:
+    image: Optional[Image] = None
+    formattedText: Optional[str] = None
+
+    # All optional:
+    title: Optional[str] = None
+    subtitle: Optional[str] = None
+
+    def make_card(self) -> Dict[str, Any]:
+        card = {}
+
+        if self.image:
+            card["image"] = self.image.make_image()
+
+        if self.formattedText:
+            card["formattedText"] = self.formattedText
+
+        if self.title is not None:
+            card["title"] = self.title
+
+        if self.subtitle is not None:
+            card["subtitle"] = self.subtitle
+
+        return card
 
 
 def get_session_by_req(req: Dict[str, Any]) -> str:
@@ -433,3 +485,33 @@ def process_castle_by_querytext(board: chess.Board, queryText: str) -> str:
         result = "illegal move"
 
     return result
+
+
+def save_board_as_png(imgkey: str, board: chess.Board) -> str:
+    """Render the PNG of a board, save it on disk and return the location.
+    imgkey argument should be the identifier for the image like session id.
+    """
+    img_dir = current_app.config["IMG_DIR"]
+
+    try:
+        # Get last move on the board
+        lastmove = board.peek()
+    except IndexError:
+        # This is the first move
+        lastmove = None
+
+    # Render SVG
+    svg = str(chess.svg.board(board, lastmove=lastmove))
+
+    # Path to png
+    pngfile = os.path.join(img_dir, f"{imgkey}.png")
+
+    # Perform conversion
+    try:
+        svg2png(bytestring=svg, write_to=pngfile)
+        return pngfile
+    except Exception as exc:
+        # Log error and raise
+        current_app.logger.error(
+            f"Unable to process image. Failed with error:\n{str(exc)}")
+        raise

@@ -1,12 +1,14 @@
-import logging
 import random
 from typing import Any, Dict
 
 import chess
+from flask import url_for
 
 from chess_server.chessgame import Mediator
 from chess_server.utils import (
     User,
+    BasicCard,
+    Image,
     create_user,
     delete_user,
     get_user,
@@ -14,10 +16,9 @@ from chess_server.utils import (
     get_params_by_req,
     get_response_for_google,
     process_castle_by_querytext,
+    save_board_as_png,
     two_squares_and_piece_to_lan,
 )
-
-log = logging.getLogger(__name__)
 
 RESPONSES = {
     "result_win": "Congratulations! You have won the game."
@@ -187,6 +188,26 @@ def resign(req: Dict[str, Any]) -> Dict[str, Any]:
     return get_response_for_google(
         textToSpeech=output, expectUserResponse=False
     )
+
+
+def show_board(req: Dict[str, Any]) -> Dict[str, Any]:
+    """Show the board to player as a PNG image"""
+    session_id = get_session_by_req(req)
+    board = get_user(session_id).board
+
+    # Save board to <IMG_DIR>/<session_id>.png
+    save_board_as_png(session_id, board)
+
+    url = url_for('webhook_bp.png_image', session_id=session_id)
+    alt = str(board)
+
+    image = Image(url=url, accessibilityText=alt)
+    formatted_text = f"**Moves played: {board.fullmove_number}**"
+    card = BasicCard(image=image, formattedText=formatted_text)
+
+    resp = get_response_for_google(textToSpeech="Cool! Here's the board for you.", basicCard=card)
+
+    return resp
 
 
 def start_game_and_get_response(session_id: str, color: str):
