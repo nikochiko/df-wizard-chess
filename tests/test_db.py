@@ -3,9 +3,9 @@ from typing import Any, List, Tuple
 
 import chess
 import pytest
+from flask import current_app as app
 from flask import g
 
-from chess_server import main
 from chess_server.utils import (
     User,
     create_user,
@@ -19,7 +19,7 @@ from tests.utils import get_random_session_id
 
 def get_all_entries_from_db() -> List[Tuple[Any]]:
     """Fetches all entries from table users from the database"""
-    conn = sqlite3.connect(main.app.config["DATABASE"])
+    conn = sqlite3.connect(app.config["DATABASE"])
     cur = conn.cursor()
 
     # Run query
@@ -34,13 +34,13 @@ def get_all_entries_from_db() -> List[Tuple[Any]]:
     return res
 
 
-def test_setup(context):
-    assert "DATABASE" in main.app.config
-    assert main.app.config["TESTING"] is True
+def test_setup(client):
+    assert "DATABASE" in app.config
+    assert app.config["TESTING"] is True
     assert "db" in g
 
 
-def test_create_user(context):
+def test_create_user(client):
     # Creating a random session id of length 36
     session_id = get_random_session_id()
 
@@ -60,7 +60,7 @@ def test_create_user(context):
     assert data[0] == (session_id, board.fen(), color)
 
 
-def test_create_user_multiple_entries(context):
+def test_create_user_multiple_entries(client):
     session_id1 = get_random_session_id()
     board1 = chess.Board()
     board1.push_san("Nf3")
@@ -91,7 +91,7 @@ def test_create_user_multiple_entries(context):
     assert (session_id2, board2.fen(), color2) in data
 
 
-def test_create_user_when_entry_with_key_already_exists(context):
+def test_create_user_when_entry_with_key_already_exists(client):
     session_id = get_random_session_id()
     board = chess.Board()
     color = chess.WHITE
@@ -120,11 +120,11 @@ def test_create_user_db_does_not_exist():
     board.push_san("Nf6")
 
     with pytest.raises(Exception, match="Database not found."):
-        with main.app.test_request_context():
+        with app.test_request_context():
             create_user(session_id, board, color)
 
 
-def test_get_user(context):
+def test_get_user(client):
     session_id = get_random_session_id()
     board = chess.Board()
     color = chess.BLACK
@@ -134,7 +134,7 @@ def test_get_user(context):
     assert get_user(session_id) == User(board, color)
 
 
-def test_get_user_when_multiple_entries_exist(context):
+def test_get_user_when_multiple_entries_exist(client):
     session_id = get_random_session_id()
     board = chess.Board()
     color = chess.WHITE
@@ -160,11 +160,11 @@ def test_get_user_db_does_not_exist():
     session_id = get_random_session_id()
 
     with pytest.raises(Exception, match="Database not found."):
-        with main.app.test_request_context():
+        with app.test_request_context():
             get_user(session_id)
 
 
-def test_get_user_entry_does_not_exist(context):
+def test_get_user_entry_does_not_exist(client):
     session_id = get_random_session_id()
 
     # Skipping create_user() step
@@ -172,7 +172,7 @@ def test_get_user_entry_does_not_exist(context):
         get_user(session_id)
 
 
-def test_update_user(context):
+def test_update_user(client):
     session_id = get_random_session_id()
     board = chess.Board()
     color = chess.BLACK
@@ -188,7 +188,7 @@ def test_update_user(context):
     assert get_user(session_id) == User(board, color)
 
 
-def test_update_user_multiple_entries(context):
+def test_update_user_multiple_entries(client):
     session_id = get_random_session_id()
     board = chess.Board()
     color = chess.WHITE
@@ -218,11 +218,11 @@ def test_update_user_db_does_not_exist():
     board = chess.Board()
 
     with pytest.raises(Exception, match="Database not found."):
-        with main.app.test_request_context():
+        with app.test_request_context():
             update_user(session_id, board)
 
 
-def test_update_user_entry_does_not_exist(context):
+def test_update_user_entry_does_not_exist(client):
     session_id = get_random_session_id()
     board = chess.Board()
 
@@ -240,7 +240,7 @@ def test_update_user_entry_does_not_exist(context):
         update_user(session_id, board)
 
 
-def test_delete_user(context):
+def test_delete_user(client):
     session_id = get_random_session_id()
     board = chess.Board()
     color = chess.BLACK
@@ -260,7 +260,7 @@ def test_delete_user(context):
     assert len(data) == 0
 
 
-def test_delete_user_multiple_entries(context):
+def test_delete_user_multiple_entries(client):
     session_id = get_random_session_id()
     board = chess.Board()
     color = chess.WHITE
@@ -291,5 +291,5 @@ def test_delete_user_db_does_not_exist():
     session_id = get_random_session_id()
 
     with pytest.raises(Exception, match="Database not found."):
-        with main.app.test_request_context():
+        with app.test_request_context():
             delete_user(session_id)

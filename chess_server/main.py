@@ -2,7 +2,8 @@ import random
 from typing import Any, Dict
 
 import chess
-from flask import Flask, jsonify, make_response, request
+from flask import current_app as app
+from flask import jsonify, request, make_response
 from werkzeug.exceptions import BadRequest
 
 from chess_server.chessgame import (
@@ -21,12 +22,6 @@ from chess_server.utils import (
     get_response_for_google,
 )
 
-
-app = Flask(__name__)
-app.config.from_object("chess_server.config.Config")
-
-log = app.logger
-
 RESPONSES = {
     "result_win": "Congratulations! You have won the game."
     " Thanks for playing.",
@@ -39,36 +34,6 @@ RESPONSES = {
 }
 
 mediator = Mediator()
-
-
-@app.route("/webhook", methods=["POST"])
-def webhook():
-
-    req = request.get_json()
-
-    action = req["queryResult"].get("action")
-
-    if action == "welcome":
-        res = welcome(req)
-
-    elif action == "choose_color":
-        res = choose_color(req)
-
-    elif action == "two_squares":
-        res = two_squares(req)
-
-    elif action == "castle":
-        res = castle(req)
-
-    elif action == "resign":
-        res = resign(req)
-
-    else:
-        log.error(f"Bad request:\n{str(req)}")
-        raise BadRequest(f"Unknown intent action: {action}")
-
-    return make_response(jsonify(res))
-
 
 def welcome(req: Dict[str, Any]) -> Dict[str, Any]:
 

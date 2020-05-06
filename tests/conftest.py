@@ -4,38 +4,40 @@ import tempfile
 
 import pytest
 
-from chess_server import main
+from chess_server import create_app
 from chess_server.db import init_db
 
 
 @pytest.fixture
-def client():
-    db_fd, main.app.config["DATABASE"] = tempfile.mkstemp()
-    main.app.config["IMG_DIR"] = tempfile.mkdtemp()
-    main.app.config["TESTING"] = True
+def app():
+    """Create and configure a new app instance for each test."""
+    # create a temporary file to isolate the database for each test
+    db_fd, db_path = tempfile.mkstemp()
+    img_dir = tempfile.mkdtemp()
 
-    with main.app.test_client() as client:
-        with main.app.app_context():
-            init_db()
+    # create the app with common test config
+    app = create_app({"TESTING": True, "DATABASE": db_path, "IMG_DIR": img_dir})
 
-        yield client
+    # create the database and load test data
+    with app.app_context():
+        init_db()
 
+    yield app
+
+    # close and remove the temporary db/dir
     os.close(db_fd)
-    os.unlink(main.app.config["DATABASE"])
-    shutil.rmtree(main.app.config["IMG_DIR"])
+    os.unlink(db_path)
+    shutil.rmtree(img_dir)
 
 
 @pytest.fixture
-def context():
-    db_fd, main.app.config["DATABASE"] = tempfile.mkstemp()
-    main.app.config["IMG_DIR"] = tempfile.mkdtemp()
-    main.app.config["TESTING"] = True
+def client(app):
+    """A test client for the app."""
+    with app.app_context():
+        return app.test_client()
 
-    with main.app.test_request_context():
-        init_db()
-
+@pytest.fixture
+def context(app):
+    """A fixture which provides the patched test with application context."""
+    with app.app_context():
         yield
-
-    os.close(db_fd)
-    os.unlink(main.app.config["DATABASE"])
-    shutil.rmtree(main.app.config["IMG_DIR"])

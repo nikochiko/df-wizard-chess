@@ -7,7 +7,7 @@ from flask import current_app
 from chess_server.utils import get_user, update_user
 
 if current_app:
-    ENGINE_PATH = current_app.config["ENGINE_PATH"]
+    ENGINE_PATH = current_app.config.get("ENGINE_PATH")
 else:
     ENGINE_PATH = "testing"
 
