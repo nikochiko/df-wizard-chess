@@ -181,12 +181,24 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
 def resign(req: Dict[str, Any]) -> Dict[str, Any]:
     """Delete the player from the database and return a conclusion response"""
     session_id = get_session_by_req(req)
+    board = get_user(session_id).board
+
+    # Saves board to disk
+    save_board_as_png(session_id, board)
+
+    url = url_for("webhook_bp.png_image", session_id=session_id)
+    alt = str(board)
+
+    image = Image(url=url, accessibilityText=alt)
+    formattedText = f"**Moves played: {board.fullmove_number}**"
+    card = BasicCard(image=image, formattedText=formattedText)
+
     delete_user(session_id)
 
     output = "GG! Thanks for playing."
 
     return get_response_for_google(
-        textToSpeech=output, expectUserResponse=False
+        textToSpeech=output, expectUserResponse=False, basicCard=card
     )
 
 
@@ -198,14 +210,16 @@ def show_board(req: Dict[str, Any]) -> Dict[str, Any]:
     # Save board to <IMG_DIR>/<session_id>.png
     save_board_as_png(session_id, board)
 
-    url = url_for('webhook_bp.png_image', session_id=session_id)
+    url = url_for("webhook_bp.png_image", session_id=session_id)
     alt = str(board)
 
     image = Image(url=url, accessibilityText=alt)
     formatted_text = f"**Moves played: {board.fullmove_number}**"
     card = BasicCard(image=image, formattedText=formatted_text)
 
-    resp = get_response_for_google(textToSpeech="Cool! Here's the board for you.", basicCard=card)
+    resp = get_response_for_google(
+        textToSpeech="Cool! Here's the board for you.", basicCard=card
+    )
 
     return resp
 

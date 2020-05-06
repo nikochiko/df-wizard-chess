@@ -3,7 +3,10 @@ import os
 import pytest
 from flask import url_for
 
-from tests.utils import get_dummy_webhook_request_for_google, get_random_session_id
+from tests.utils import (
+    get_dummy_webhook_request_for_google,
+    get_random_session_id,
+)
 
 
 class TestWebhookForGoogle:
@@ -79,18 +82,18 @@ class TestWebhookForGoogle:
         assert "Unknown intent action: unknown" in str(resp.get_data())
 
 
-@pytest.mark.usefixtures('client_class')
+@pytest.mark.usefixtures("client_class")
 class TestPNGImage:
     def setup_method(self):
         self.session_id = get_random_session_id()
-        self.file_content = b'file content'
+        self.file_content = b"file content"
 
     def test_png_image_success(self, client, config, mocker):
-        url = url_for('webhook_bp.png_image', session_id=self.session_id)
+        url = url_for("webhook_bp.png_image", session_id=self.session_id)
 
         imgpath = os.path.join(config["IMG_DIR"], f"{self.session_id}.png")
 
-        with open(imgpath, 'wb') as fw:
+        with open(imgpath, "wb") as fw:
             fw.write(self.file_content)
 
         r = client.get(url)
@@ -98,9 +101,7 @@ class TestPNGImage:
         assert r.get_data() == self.file_content
 
     def test_png_image_file_not_found(self, client, config, mocker):
-        url = url_for('webhook_bp.png_image', session_id=self.session_id)
-
-        imgpath = os.path.join(config["IMG_DIR"], f"{self.session_id}.png")
+        url = url_for("webhook_bp.png_image", session_id=self.session_id)
 
         r = client.get(url)
 

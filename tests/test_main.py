@@ -703,14 +703,17 @@ class TestCastle:
 class TestResign:
     def setup_method(self):
         self.session_id = get_random_session_id()
+        self.user = User(board=chess.Board(), color=chess.WHITE)
         self.result = {"foo": "bar"}
 
-    def test_resign(self, mocker):
+    def test_resign(self, context, mocker):
         mock_del_user = mocker.patch("chess_server.main.delete_user")
         mock_get_response = mocker.patch(
             "chess_server.main.get_response_for_google",
             return_value=self.result,
         )
+        mocker.patch("chess_server.main.get_user", return_value=self.user)
+
         req_data = get_dummy_webhook_request_for_google(
             session_id=self.session_id, action="resign", intent="resign"
         )
@@ -719,7 +722,9 @@ class TestResign:
         assert value == self.result
         mock_del_user.assert_called_with(self.session_id)
         mock_get_response.assert_called_with(
-            textToSpeech=mocker.ANY, expectUserResponse=False
+            textToSpeech=mocker.ANY,
+            expectUserResponse=False,
+            basicCard=mocker.ANY,
         )
 
 
@@ -727,13 +732,20 @@ class TestShowBoard:
     def setup_method(self):
         self.session_id = get_random_session_id()
         self.user = User(chess.Board(), color=chess.BLACK)
-        self.result = {'spam': 'eggs'}
+        self.result = {"spam": "eggs"}
 
     def test_show_board_success(self, client, config, mocker):
-        mock_get_user = mocker.patch('chess_server.main.get_user', return_value=self.user)
-        mock_get_response = mocker.patch('chess_server.main.get_response_for_google', return_value=self.result)
+        mock_get_user = mocker.patch(
+            "chess_server.main.get_user", return_value=self.user
+        )
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
 
-        req_data = get_dummy_webhook_request_for_google(session_id=self.session_id, action="show_board")
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id, action="show_board"
+        )
         value = show_board(req_data)
 
         assert value == self.result

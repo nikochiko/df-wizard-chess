@@ -60,6 +60,7 @@ class BasicCard(NamedTuple):
     """Basic card for response.
     Note: At least one of image and formattedText is required.
     """
+
     # One is required:
     image: Optional[Image] = None
     formattedText: Optional[str] = None
@@ -513,5 +514,6 @@ def save_board_as_png(imgkey: str, board: chess.Board) -> str:
     except Exception as exc:
         # Log error and raise
         current_app.logger.error(
-            f"Unable to process image. Failed with error:\n{str(exc)}")
+            f"Unable to process image. Failed with error:\n{str(exc)}"
+        )
         raise

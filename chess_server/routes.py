@@ -47,7 +47,7 @@ def webhook():
     return make_response(jsonify(res))
 
 
-@webhook_bp.route('/webhook/images/boards/<session_id>', methods=["GET"])
+@webhook_bp.route("/webhook/images/boards/<session_id>", methods=["GET"])
 def png_image(session_id):
 
     img_path = os.path.join(app.config["IMG_DIR"], f"{session_id}.png")
