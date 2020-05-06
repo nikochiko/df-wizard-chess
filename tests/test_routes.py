@@ -8,7 +8,7 @@ class TestWebhook:
     @classmethod
     def setup_class(cls):
         app = create_app()
-        cls.url = '/webhook'
+        cls.url = "/webhook"
 
     def setup_method(self):
         self.result = {"spam": "eggs"}

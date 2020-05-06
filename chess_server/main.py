@@ -35,6 +35,7 @@ RESPONSES = {
 
 mediator = Mediator()
 
+
 def welcome(req: Dict[str, Any]) -> Dict[str, Any]:
 
     session_id = get_session_by_req(req)

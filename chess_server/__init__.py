@@ -11,9 +11,9 @@ def create_app(test_config=None, prod=False):
     """Initialize the Flask app"""
     app = Flask(__name__, instance_relative_config=True)
     if prod:
-        app.config.from_object('config.ProdConfig')
+        app.config.from_object("config.ProdConfig")
     else:
-        app.config.from_object('config.DevConfig')
+        app.config.from_object("config.DevConfig")
 
     # Update config if test_config is provided
     app.config.update(test_config or {})

@@ -16,7 +16,9 @@ def app():
     img_dir = tempfile.mkdtemp()
 
     # create the app with common test config
-    app = create_app({"TESTING": True, "DATABASE": db_path, "IMG_DIR": img_dir})
+    app = create_app(
+        {"TESTING": True, "DATABASE": db_path, "IMG_DIR": img_dir}
+    )
 
     # create the database and load test data
     with app.app_context():
@@ -35,6 +37,7 @@ def client(app):
     """A test client for the app."""
     with app.app_context():
         return app.test_client()
+
 
 @pytest.fixture
 def context(app):

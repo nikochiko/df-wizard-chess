@@ -2,7 +2,13 @@ from flask import request, make_response, jsonify
 from flask import current_app as app
 from werkzeug.exceptions import BadRequest
 
-from chess_server.main import welcome, choose_color, two_squares, castle, resign
+from chess_server.main import (
+    welcome,
+    choose_color,
+    two_squares,
+    castle,
+    resign,
+)
 
 log = app.logger
 
