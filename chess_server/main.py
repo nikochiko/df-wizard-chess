@@ -3,7 +3,6 @@ import random
 from typing import Any, Dict
 
 import chess
-from flask import current_app as app
 
 from chess_server.chessgame import Mediator
 from chess_server.utils import (
@@ -264,18 +263,3 @@ def get_result_comment(user: User) -> str:
         output = RESPONSES["result_lose"]
 
     return output
-
-
-def main():
-
-    mediator.activate_engine()
-
-    from chess_server import db
-
-    db.init_app(app)
-
-    app.run(host="0.0.0.0")
-
-
-if __name__ == "__main__":
-    main()
