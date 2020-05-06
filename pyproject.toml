@@ -11,6 +11,7 @@ gunicorn = "^20.0.4"
 python-chess = "^0.31.0"
 python-dotenv = "^0.13.0"
 pytest-flask = "^1.0.0"
+cairosvg = "^2.4.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
