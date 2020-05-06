@@ -1,11 +1,34 @@
-import os
+from os import environ, path, urandom
+from dotenv import load_dotenv
 
-# basedir = os.path.abspath(os.path.dirname(__file__))
-ENGINE_PATH = os.environ.get("ENGINE_PATH") or "stockfish"
+basedir = path.abspath(path.dirname(__file__))
+load_dotenv(path.join(basedir, ".env"))
 
 
-# class Config(object):
-#     SQLALCHEMY_DATABASE_URI = os.environ.get(
-#         "DATABASE_URL"
-#     ) or "sqlite:///" + os.path.join(basedir, "app.db")
-#     SQLALCHEMY_TRACK_MODIFICATIONS = False
+class Config:
+    """Base config"""
+
+    FLASK_APP = "wsgi.py"
+    SECRET_KEY = environ.get("SECRET_KEY", urandom(16))
+
+
+class DevConfig(Config):
+    DEBUG = True
+    TESTING = True
+    SERVER_NAME = "https://testserver/"
+
+    IMG_DIR = path.join(basedir, "dev-imgdir")
+    DATABASE = path.join(basedir, "dev-db.db")
+
+    ENGINE_PATH = "test-engine"
+
+
+class ProdConfig(Config):
+    DEBUG = False
+    TESTING = False
+    SERVER_NAME = environ.get("SERVER_NAME")
+
+    IMG_DIR = path.join(basedir, environ.get("IMG_DIR"))
+    DATABASE = path.join(basedir, environ.get("DATABASE"))
+
+    ENGINE_PATH = environ.get("ENGINE_PATH")
