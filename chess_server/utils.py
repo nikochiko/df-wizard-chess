@@ -5,7 +5,7 @@ from typing import Any, Dict, List, NamedTuple, Optional, Union
 import chess
 import chess.svg
 from cairosvg import svg2png
-from flask import current_app, g
+from flask import current_app, g, url_for
 
 pieces = {
     "K": "King",
@@ -517,3 +517,19 @@ def save_board_as_png(imgkey: str, board: chess.Board) -> str:
             f"Unable to process image. Failed with error:\n{str(exc)}"
         )
         raise
+
+
+def save_board_as_png_and_get_image_card(session_id: str):
+    board = get_user(session_id).board
+
+    # Saves board to disk
+    save_board_as_png(session_id, board)
+
+    url = url_for("webhook_bp.png_image", session_id=session_id)
+    alt = str(board)
+
+    image = Image(url=url, accessibilityText=alt)
+    formattedText = f"**Moves played: {board.fullmove_number}**"
+    card = BasicCard(image=image, formattedText=formattedText)
+
+    return card

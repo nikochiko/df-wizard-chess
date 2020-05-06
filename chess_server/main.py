@@ -17,6 +17,7 @@ from chess_server.utils import (
     get_response_for_google,
     process_castle_by_querytext,
     save_board_as_png,
+    save_board_as_png_and_get_image_card,
     two_squares_and_piece_to_lan,
 )
 
@@ -118,11 +119,10 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
 
     game_result = get_result_comment(user=user)
     if game_result:
-        # TODO: Display image of board when game is over
-        # image = get_image(board)
+        card = save_board_as_png_and_get_image_card(session_id)
         delete_user(session_id)  # Free up memory
         return get_response_for_google(
-            textToSpeech=game_result, expectUserResponse=False
+            textToSpeech=game_result, expectUserResponse=False, basicCard=card
         )
 
     # Play engine's move
@@ -131,9 +131,10 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
     game_result = get_result_comment(user=user)
     if game_result:
         output = f"{output}. {game_result}"
+        card = save_board_as_png_and_get_image_card(session_id)
         delete_user(session_id)  # Free up memory
         return get_response_for_google(
-            textToSpeech=output, expectUserResponse=False
+            textToSpeech=output, expectUserResponse=False, basicCard=card
         )
 
     return get_response_for_google(textToSpeech=output)
@@ -157,11 +158,10 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
 
     game_result = get_result_comment(user=user)
     if game_result:
-        # TODO: Display image of board when game is over
-        # image = get_image(board)
+        card = save_board_as_png_and_get_image_card(session_id)
         delete_user(session_id)
         return get_response_for_google(
-            textToSpeech=game_result, expectUserResponse=False
+            textToSpeech=game_result, expectUserResponse=False, basicCard=card
         )
 
     # Play engine's move
@@ -170,9 +170,10 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
     game_result = get_result_comment(user=user)
     if game_result:
         output = f"{output}. {game_result}"
+        card = save_board_as_png_and_get_image_card(session_id)
         delete_user(session_id)
         return get_response_for_google(
-            textToSpeech=output, expectUserResponse=False
+            textToSpeech=output, expectUserResponse=False, basicCard=card
         )
 
     return get_response_for_google(textToSpeech=output)
@@ -181,18 +182,7 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
 def resign(req: Dict[str, Any]) -> Dict[str, Any]:
     """Delete the player from the database and return a conclusion response"""
     session_id = get_session_by_req(req)
-    board = get_user(session_id).board
-
-    # Saves board to disk
-    save_board_as_png(session_id, board)
-
-    url = url_for("webhook_bp.png_image", session_id=session_id)
-    alt = str(board)
-
-    image = Image(url=url, accessibilityText=alt)
-    formattedText = f"**Moves played: {board.fullmove_number}**"
-    card = BasicCard(image=image, formattedText=formattedText)
-
+    card = save_board_as_png_and_get_image_card(session_id)
     delete_user(session_id)
 
     output = "GG! Thanks for playing."

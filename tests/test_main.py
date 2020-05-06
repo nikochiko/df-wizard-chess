@@ -15,7 +15,7 @@ from chess_server.main import (
     get_result_comment,
     start_game_and_get_response,
 )
-from chess_server.utils import User
+from chess_server.utils import User, Image, BasicCard
 from tests.utils import (
     GoogleOptionsList,
     get_dummy_webhook_request_for_google,
@@ -356,6 +356,13 @@ class TestTwoSquares:
         self.session_id = get_random_session_id()
         self.result = {"foo": "bar"}
 
+        self.image = Image(
+            url="http://testserver/img.png", accessibilityText="Hello World"
+        )
+        self.card = BasicCard(
+            image=self.image, formattedText="spam ham and eggs"
+        )
+
         self.result_unfinished = None
         self.result_win = RESPONSES["result_win"]
         self.result_lose = RESPONSES["result_lose"]
@@ -472,6 +479,10 @@ class TestTwoSquares:
             "chess_server.main.get_response_for_google",
             return_value=self.result,
         )
+        mock_save_board_image = mocker.patch(
+            "chess_server.main.save_board_as_png_and_get_image_card",
+            return_value=self.card,
+        )
 
         req_data = get_dummy_webhook_request_for_google(
             session_id=self.session_id,
@@ -493,8 +504,11 @@ class TestTwoSquares:
             session_id=self.session_id, lan=move_lan
         )
         mock_play_engine.assert_not_called()
+        mock_save_board_image.assert_called_with(self.session_id)
         mock_get_response.assert_called_with(
-            textToSpeech=self.result_win, expectUserResponse=False
+            textToSpeech=self.result_win,
+            expectUserResponse=False,
+            basicCard=self.card,
         )
 
     def test_two_squares_game_ends_after_engine_move(self, mocker):
@@ -525,6 +539,10 @@ class TestTwoSquares:
             "chess_server.main.get_response_for_google",
             return_value=self.result,
         )
+        mock_save_board_image = mocker.patch(
+            "chess_server.main.save_board_as_png_and_get_image_card",
+            return_value=self.card,
+        )
 
         req_data = get_dummy_webhook_request_for_google(
             session_id=self.session_id,
@@ -546,9 +564,11 @@ class TestTwoSquares:
             session_id=self.session_id, lan=move_lan
         )
         mock_play_engine.assert_called_with(session_id=self.session_id)
+        mock_save_board_image.assert_called_with(self.session_id)
         mock_get_response.assert_called_with(
             textToSpeech=f"spam ham and eggs. {self.result_lose}",
             expectUserResponse=False,
+            basicCard=self.card,
         )
 
 
@@ -556,6 +576,13 @@ class TestCastle:
     def setup_method(self):
         self.session_id = get_random_session_id()
         self.result = {"foo": "bar"}
+
+        self.image = Image(
+            url="http://testserver/img.png", accessibilityText="Hello World"
+        )
+        self.card = BasicCard(
+            image=self.image, formattedText="spam ham and eggs"
+        )
 
         self.result_unfinished = None
         self.result_win = RESPONSES["result_win"]
@@ -622,6 +649,10 @@ class TestCastle:
             "chess_server.main.get_response_for_google",
             return_value=self.result,
         )
+        mock_save_board_image = mocker.patch(
+            "chess_server.main.save_board_as_png_and_get_image_card",
+            return_value=self.card,
+        )
 
         req_data = get_dummy_webhook_request_for_google(
             session_id=self.session_id,
@@ -643,8 +674,11 @@ class TestCastle:
             session_id=self.session_id, lan=move_lan
         )
         mock_play_engine.assert_not_called()
+        mock_save_board_image.assert_called_with(self.session_id)
         mock_get_response.assert_called_with(
-            textToSpeech=self.result_win, expectUserResponse=False
+            textToSpeech=self.result_win,
+            expectUserResponse=False,
+            basicCard=self.card,
         )
 
     def test_castle_game_ends_after_engine_move(self, mocker):
@@ -673,6 +707,10 @@ class TestCastle:
             "chess_server.main.get_response_for_google",
             return_value=self.result,
         )
+        mock_save_board_image = mocker.patch(
+            "chess_server.main.save_board_as_png_and_get_image_card",
+            return_value=self.card,
+        )
 
         req_data = get_dummy_webhook_request_for_google(
             session_id=self.session_id,
@@ -694,9 +732,11 @@ class TestCastle:
             session_id=self.session_id, lan=move_lan
         )
         mock_play_engine.assert_called_with(session_id=self.session_id)
+        mock_save_board_image.assert_called_with(self.session_id)
         mock_get_response.assert_called_with(
             textToSpeech=f"spam ham and eggs. {self.result_lose}",
             expectUserResponse=False,
+            basicCard=self.card,
         )
 
 
@@ -706,6 +746,13 @@ class TestResign:
         self.user = User(board=chess.Board(), color=chess.WHITE)
         self.result = {"foo": "bar"}
 
+        self.image = Image(
+            url="http://testserver/img.png", accessibilityText="Hello World"
+        )
+        self.card = BasicCard(
+            image=self.image, formattedText="spam ham and eggs"
+        )
+
     def test_resign(self, context, mocker):
         mock_del_user = mocker.patch("chess_server.main.delete_user")
         mock_get_response = mocker.patch(
@@ -713,6 +760,10 @@ class TestResign:
             return_value=self.result,
         )
         mocker.patch("chess_server.main.get_user", return_value=self.user)
+        mock_save_board_image = mocker.patch(
+            "chess_server.main.save_board_as_png_and_get_image_card",
+            return_value=self.card,
+        )
 
         req_data = get_dummy_webhook_request_for_google(
             session_id=self.session_id, action="resign", intent="resign"
@@ -721,10 +772,11 @@ class TestResign:
 
         assert value == self.result
         mock_del_user.assert_called_with(self.session_id)
+        mock_save_board_image.assert_called_with(self.session_id)
         mock_get_response.assert_called_with(
             textToSpeech=mocker.ANY,
             expectUserResponse=False,
-            basicCard=mocker.ANY,
+            basicCard=self.card,
         )
 
 

@@ -3,9 +3,10 @@ import os
 import chess
 import chess.svg
 import pytest
-from flask import current_app
+from flask import current_app, url_for
 
 from chess_server.utils import (
+    User,
     get_session_by_req,
     get_params_by_req,
     get_response_for_google,
@@ -13,6 +14,7 @@ from chess_server.utils import (
     lan_to_speech,
     process_castle_by_querytext,
     save_board_as_png,
+    save_board_as_png_and_get_image_card,
     two_squares_and_piece_to_lan,
 )
 from tests import data
@@ -595,3 +597,22 @@ class TestSaveBoardAsPNG:
         mock_logger.assert_called_with(
             f"Unable to process image. Failed with error:\nExample error"
         )
+
+
+class TestSaveBoardAsPngAndGetCard:
+    def setup_method(self):
+        self.session_id = get_random_session_id()
+        self.user = User(board=chess.Board(), color=chess.WHITE)
+
+        self.user.board.push_san("e4")
+        self.user.board.push_san("e5")
+
+    def test_save_board_as_png_and_get_card(self, client, mocker):
+        mocker.patch("chess_server.utils.get_user", return_value=self.user)
+        mocker.patch("chess_server.utils.save_board_as_png")
+
+        url = url_for("webhook_bp.png_image", session_id=self.session_id)
+
+        card = save_board_as_png_and_get_image_card(self.session_id)
+
+        assert card.image.url == url
