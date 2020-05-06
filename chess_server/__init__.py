@@ -1,19 +1,17 @@
 from flask import Flask
 
-from chess_server.db import init_app
+from chess_server import db
 
 __version__ = "0.1.0"
 
 
-def create_app(test_config=None, env="dev"):
+def create_app(env="dev"):
     app = Flask(__name__)
 
     if env == "prod":
         app.config.from_object("config.ProdConfig")
     else:
         app.config.from_object("config.DevConfig")
-
-    app.config.update(test_config or {})
 
     db.init_app(app)
 

@@ -1,3 +1,5 @@
+import chess
+
 from chess_server.utils import (
     get_session_by_req,
     get_params_by_req,

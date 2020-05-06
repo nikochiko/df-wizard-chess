@@ -2,14 +2,16 @@ from unittest import TestCase, mock
 
 import chess
 import chess.engine
+import pytest
+from flask import current_app
 
-from chess_server import chessgame
 from chess_server.chessgame import Mediator
 from chess_server.utils import User
 from tests.utils import get_random_session_id
 
 
-class TestMediatorBaseClass(TestCase):
+@pytest.mark.usefixtures("context")
+class TestMediator(TestCase):
     def setUp(self):
         self.mock_engine_path = "engine_path"
         self.mock_engine = mock.MagicMock()
@@ -54,11 +56,9 @@ class TestMediatorBaseClass(TestCase):
 
     def test_activate_engine_from_config(self):
 
-        # Mock the ENGINE_PATH set in config
-        with mock.patch(
-            "chess_server.chessgame.ENGINE_PATH", self.mock_engine_path
-        ):
-            self.mediator.activate_engine()
+        # Edit the engine path in config
+        current_app.config["ENGINE_PATH"] = self.mock_engine_path
+        self.mediator.activate_engine()
 
         self.mock_popen_uci.assert_called_with(self.mock_engine_path)
         self.assertEqual(self.mediator.engine, self.mock_engine)

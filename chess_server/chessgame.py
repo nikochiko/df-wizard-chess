@@ -1,22 +1,20 @@
 import logging
-from typing import List, Optional
+from typing import Optional
 
 import chess.engine
-from flask import current_app, g
+from flask import current_app
 
-from chess_server.utils import get_user, update_user
+from chess_server.utils import get_user, update_user, lan_to_speech
 
 logger = logging.getLogger(__name__)
 
 
 class Mediator:
-    def __init__(self):
-        self.engine_path = current_app.config["ENGINE_PATH"]
-
     def activate_engine(self, engine_path: Optional[str] = None):
 
         # If engine path is not given, check if it is mentioned in config file
-        engine_path = engine_path or self.engine_path
+        if not engine_path:
+            engine_path = current_app.config["ENGINE_PATH"]
 
         try:
             # Load engine

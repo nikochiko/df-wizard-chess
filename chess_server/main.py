@@ -3,9 +3,7 @@ import random
 from typing import Any, Dict
 
 import chess
-from flask import Flask, jsonify, make_response, request
 from flask import current_app as app
-from werkzeug.exceptions import BadRequest
 
 from chess_server.chessgame import Mediator
 from chess_server.utils import (
