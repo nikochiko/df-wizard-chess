@@ -24,6 +24,7 @@ v0.1.1
 * Set up coverage reporting with Codecov
 * Moved from using Dict in memory to sqlite3 DB on disk 🎉
 * Added testing to cover more than 90% of codebase 💪
+* Add show board intent to see the board, now the board will be shown after completion of each game 👀
 
 v0.1.0 - 27/04/2020
 -------------------
