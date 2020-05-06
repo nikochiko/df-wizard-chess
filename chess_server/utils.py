@@ -43,7 +43,7 @@ class Image(NamedTuple):
     width: Optional[int] = None
     height: Optional[int] = None
 
-    def make_image(self) -> Dict[str, Any]:
+    def make_dict(self) -> Dict[str, Any]:
         image = {}
 
         image["url"] = self.url
@@ -54,6 +54,8 @@ class Image(NamedTuple):
 
         if self.height:
             image["height"] = self.height
+
+        return image
 
 
 class BasicCard(NamedTuple):
@@ -69,11 +71,11 @@ class BasicCard(NamedTuple):
     title: Optional[str] = None
     subtitle: Optional[str] = None
 
-    def make_card(self) -> Dict[str, Any]:
+    def make_dict(self) -> Dict[str, Any]:
         card = {}
 
         if self.image:
-            card["image"] = self.image.make_image()
+            card["image"] = self.image.make_dict()
 
         if self.formattedText:
             card["formattedText"] = self.formattedText

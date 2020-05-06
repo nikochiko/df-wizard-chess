@@ -7,6 +7,8 @@ from flask import current_app, url_for
 
 from chess_server.utils import (
     User,
+    BasicCard,
+    Image,
     get_session_by_req,
     get_params_by_req,
     get_response_for_google,
@@ -616,3 +618,66 @@ class TestSaveBoardAsPngAndGetCard:
         card = save_board_as_png_and_get_image_card(self.session_id)
 
         assert card.image.url == url
+
+
+class TestImage:
+    def setup_method(self):
+        self.url = "http://testserver/img"
+        self.accessibilityText = "spam ham and eggs"
+        self.width = 192
+        self.height = 192
+
+    def test_make_dict(self):
+        expected_img_dict = {
+            "url": self.url,
+            "accessibilityText": self.accessibilityText
+        }
+
+        img = Image(url=self.url, accessibilityText=self.accessibilityText)
+
+        assert img.make_dict() == expected_img_dict
+
+    def test_make_image_with_optionals(self):
+        expected_img_dict = {
+            "url": self.url,
+            "accessibilityText": self.accessibilityText,
+            "width": self.width,
+            "height": self.height
+        }
+
+        img = Image(url=self.url, accessibilityText=self.accessibilityText, width=self.width, height=self.height)
+
+        assert img.make_dict() == expected_img_dict
+
+
+class TestBasicCard:
+    def setup_method(self):
+        self.url = "http://testserver/img"
+        self.accessibilityText = "spam ham and eggs"
+        self.image = Image(url=self.url, accessibilityText=self.accessibilityText)
+        self.formattedText = "**more spam and more eggs**"
+        self.title = "Foo"
+        self.subtitle = "Bar"
+
+
+    def test_make_card(self):
+        expected_card_dict = {
+            "image": self.image.make_dict(),
+            "formattedText": self.formattedText
+        }
+
+        card = BasicCard(image=self.image, formattedText=self.formattedText)
+
+        assert card.make_dict() == expected_card_dict
+
+    def test_make_card_with_optionals(self):
+        expected_card_dict = {
+            "image": self.image.make_dict(),
+            "formattedText": self.formattedText,
+            "title": self.title,
+            "subtitle": self.subtitle
+        }
+
+        card = BasicCard(image=self.image, formattedText=self.formattedText, title=self.title, subtitle=self.subtitle)
+
+        assert card.make_dict() == expected_card_dict
