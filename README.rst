@@ -8,9 +8,9 @@ Wizard Chess w/ Dialogflow
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/ambv/black
 
-🤔 What is this?
-================
-To truly understand what Wizard Chess is, I will have you read this
+🤔 What is Wizard Chess?
+=======================
+To truly understand, I will have you read this
 
     **What do you do when you really want to play blindfold chess but you're stuck at home? 🏠**
     
@@ -30,15 +30,27 @@ To truly understand what Wizard Chess is, I will have you read this
     
     **I have to do something about this.. 👨‍🔧🍳**
     
-That right there - was the birth of this project. Wizard Chess is in the spirit (if not *the spirit* 👻) of
-blindfold chess. Keeping that in mind, the vision is to support playing *real* blindfold chess the best way, while
-also being just as pleasant to the learner and the amateur 😄.
+Wizard Chess is **that** something. The goal is to provide the best blindfold chess experience.
+That is, to have anything you might need while playing blindfold chess - be it a platform to play, 
+a platform to learn, or a platform to further develop your prowess. Look `below <🧐 How do you do it?>`_
+for the technical details.
+
+The app will first be made available as a Google Action.
 
 🧐 How do you do it?
 ====================
-	When the spirit 👻 of blindfold chess interacts with the wizardry 🔮 of AI assistants,
-	
-	> **the matrix has you** 😎
+We use the wizardry 🔮 of AI assistants and chatbots to interact with the user. When a user talks to
+our AI asssistant, the messsage is forwarded to `Dialogflow <http://dialogflow.com/>`_. It
+processes the request from the assistant - intelligently, with machine learning - and sends it to our
+`webhook <https://sendgrid.com/blog/whats-webhook/>`_. Now our server uses this cooked data to generate
+a response and sends it back to Dialogflow which in turn sends it to the assistant. The whole process 
+basically looks like this:
+::
+    User ======= |AI assistant/chatbot| <-------> |Dialogflow| <-------> |THIS SERVER| 💪
+
+Examples of operations done on our end are creating a new chess game, or receiving a move, updating the
+game board on our side and giving back a response. Or say a user has forgotten the board, in that case
+we save an image of the board and show it to the user.
 
 ⏰ Changelog
 ============
