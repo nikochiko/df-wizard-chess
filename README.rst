@@ -10,6 +10,26 @@ Wizard Chess w/ Dialogflow
 
 🤔 What is this?
 ================
+    **What do you do when you really want to play blindfold chess but you're stuck at home? 🏠**
+    
+    *Ask your chess friends - easy 👨‍👨‍👧‍👦*
+    
+    **They don't like blindfold 🤷**
+    
+    *Google for an online solution 💻, there are so many chess apps. There has to be one about blindfold chess.*
+    
+    **Pbbt 👅 There ain't one.**
+    
+    *What about.. the popular ones?*
+    
+    **They say "hide your pieces, it's just like blindfold chess 😇"**
+    
+    *Ugh - that's a scam*
+    
+    **I have to do something about this.. 👨‍🔧🍳**
+    
+
+
 Wizard Chess is a new idea to provide the best blindfold chess experience and training. This repo is the
 source code of what serves as the backend to our chatbots. We are using Dialogflow as the framework for
 our chatbots. It processes the user's request using NLP and then sends that to our server. Our server (this repo!!)
