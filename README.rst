@@ -4,19 +4,19 @@ Wizard Chess w/ Dialogflow
 .. image:: https://travis-ci.com/nikochiko/chess-server.svg?token=Tv6EyBGSze8NLsac3zQC&branch=master
     :target: https://travis-ci.com/nikochiko/chess-server
 .. image:: https://codecov.io/gh/nikochiko/chess-server/branch/master/graph/badge.svg?token=HMjzAbiZU1
-		:target: https://codecov.io/gh/nikochiko/chess-server
+    :target: https://codecov.io/gh/nikochiko/chess-server
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-		:target: https://github.com/ambv/black
+    :target: https://github.com/ambv/black
 
-What is this?
-=============
+🤔 What is this?
+================
 Wizard Chess is a new idea to provide the best blindfold chess experience and training. This repo is the
 source code of what serves as the backend to our chatbots. We are using Dialogflow as the framework for
 our chatbots. It processes the user's request using NLP and then sends that to our server. Our server (this repo!!)
 handles that request and allows users to play chess with just their voice.
 
-Changelog
-=========
+⏰ Changelog
+============
 
 v0.1.1
 ------
@@ -24,7 +24,9 @@ v0.1.1
 * Set up coverage reporting with Codecov
 * Moved from using Dict in memory to sqlite3 DB on disk 🎉
 * Added testing to cover more than 90% of codebase 💪
-* Add show board intent to see the board, now the board will be shown after completion of each game 👀
+* Added feature to see board at any time 👁️
+* Board image will be shown after completion of games 📜
+
 
 v0.1.0 - 27/04/2020
 -------------------
