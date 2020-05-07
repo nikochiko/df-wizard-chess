@@ -32,13 +32,13 @@ To truly understand, I will have you read this
     
 Wizard Chess is **that** something. The goal is to provide the best blindfold chess experience.
 That is, to have anything you might need while playing blindfold chess - be it a platform to play, 
-a platform to learn, or a platform to further develop your prowess. Look `below <🧐 How do you do it?>`_
+a platform to learn, or a platform to further develop your prowess. See `🧐 How do you do it?`_
 for the technical details.
 
 The app will first be made available as a Google Action.
 
 🧐 How do you do it?
-====================
+===================
 We use the wizardry 🔮 of AI assistants and chatbots to interact with the user. When a user talks to
 our AI asssistant, the message is forwarded to `Dialogflow <http://dialogflow.com/>`_. It
 processes the request from the assistant - intelligently, with machine learning - and sends it to our
