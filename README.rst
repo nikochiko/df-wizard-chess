@@ -40,7 +40,7 @@ The app will first be made available as a Google Action.
 🧐 How do you do it?
 ====================
 We use the wizardry 🔮 of AI assistants and chatbots to interact with the user. When a user talks to
-our AI asssistant, the messsage is forwarded to `Dialogflow <http://dialogflow.com/>`_. It
+our AI asssistant, the message is forwarded to `Dialogflow <http://dialogflow.com/>`_. It
 processes the request from the assistant - intelligently, with machine learning - and sends it to our
 `webhook <https://sendgrid.com/blog/whats-webhook/>`_. Now our server uses this cooked data to generate
 a response and sends it back to Dialogflow which in turn sends it to the assistant. The whole process 
