@@ -55,8 +55,8 @@ we save an image of the board and show it to the user.
 ⏰ Changelog
 ============
 
-v0.1.1
-------
+v0.1.1 - 07/05/2020
+-------------------
 * Set up Travis CI
 * Set up coverage reporting with Codecov
 * Moved from using Dict in memory to sqlite3 DB on disk 🎉
@@ -73,9 +73,9 @@ v0.1.0 - 27/04/2020
 * Works with games stored in memory as `Dict` data type. Considering move to sqlite in future versions
 * Unit tests added for most basic functions. More tests required for functions which handle intents.
 * TODOs for next minor:
-	* Add show_board intent to display the current board as an image.
-	* Display board after game has ended
-	* Store games in a database instead of Dict
-	* Add support for simple SAN notation - intent, entity, intent-handler
-	* Add support for when one piece and one square are mentioned - tell the user if move is ambiguous
-	* Setup Travis CI with flake8 and coverage tools and cover at least 80% with unit tests
+    * Add show_board intent to display the current board as an image.
+    * Display board after game has ended
+    * Store games in a database instead of Dict
+    * Add support for simple SAN notation - intent, entity, intent-handler
+    * Add support for when one piece and one square are mentioned - tell the user if move is ambiguous
+    * Setup Travis CI with flake8 and coverage tools and cover at least 80% with unit tests
