@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "chess-server"
-version = "0.1.1-alpha.0"
+version = "0.1.1"
 description = ""
 authors = ["nikochiko <kaustubh299792458@gmail.com>"]
 

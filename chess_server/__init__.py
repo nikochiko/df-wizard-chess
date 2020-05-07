@@ -4,7 +4,7 @@ from flask import Flask
 
 from chess_server import db
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 
 def create_app(env="dev"):
