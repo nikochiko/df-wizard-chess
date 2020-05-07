@@ -15,7 +15,6 @@ class Config:
 class DevConfig(Config):
     DEBUG = True
     TESTING = True
-    # SERVER_NAME = "https://testserver/"
 
     IMG_DIR = path.join(basedir, "dev-imgdir")
     DATABASE = path.join(basedir, "dev-db.db")
@@ -26,7 +25,7 @@ class DevConfig(Config):
 class ProdConfig(Config):
     DEBUG = False
     TESTING = False
-    # SERVER_NAME = environ.get("SERVER_NAME")
+    SERVER_NAME = environ.get("SERVER_NAME")
 
     IMG_DIR = path.join(basedir, environ.get("IMG_DIR", "img"))
     DATABASE = path.join(basedir, environ.get("DATABASE", "prod.db"))
