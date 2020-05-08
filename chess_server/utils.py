@@ -1,11 +1,14 @@
 import os
-import sqlite3
 from typing import Any, Dict, List, NamedTuple, Optional, Union
 
 import chess
 import chess.svg
 from cairosvg import svg2png
-from flask import current_app, g, url_for
+from flask import current_app, url_for
+from sqlalchemy.exc import IntegrityError
+
+from chess_server import db
+from chess_server.models import UserModel
 
 pieces = {
     "K": "King",
@@ -273,93 +276,75 @@ def get_response_for_google(
 def exists_in_db(session_id: str) -> bool:
     """Returns boolean indicating whether the entry exists in db"""
 
-    c = g.db.cursor()
-
-    res = c.execute("SELECT * FROM users WHERE session_id=?", (session_id,))
-
-    # res.fetchone() is None if entry does not exist
-    return res.fetchone() is not None
+    q = UserModel.query.filter_by(session_id=session_id)
+    return not q.count() == 0
 
 
 def create_user(session_id: str, board: chess.Board, color: chess.Color):
     """Creates a new entry in table with given data"""
 
-    if "db" not in g:
-        raise Exception("Database not found.")
-
-    c = g.db.cursor()
-
-    fen = board.fen()
-
     try:
-        c.execute(
-            "INSERT INTO users (session_id, fen, color) VALUES (?,?,?)",
-            (session_id, fen, color),
+        new_user = UserModel(
+            session_id=session_id, fen=board.fen(), color=color
         )
-    except sqlite3.IntegrityError:
-        if exists_in_db(session_id):
-            raise Exception(f"Entry with key {session_id} already exists.")
+        db.session.add(new_user)
+        db.session.commit()
 
-        raise
-
-    g.db.commit()
+    except IntegrityError as err:
+        # TODO: Handle this better
+        # IDEA: Prompt to confirm overwrite of current game
+        current_app.logger.error(
+            "Integrity Error - Maybe the user entry already exists:"
+            f"\n{str(err)}"
+        )
+        raise Exception(f"Entry with key {session_id} already exists.")
 
 
 def get_user(session_id: str) -> User:
     """Gets the required user from database when its session id is given"""
-    if "db" not in g:
-        raise Exception("Database not found.")
 
-    # Get cursor on the database
-    c = g.db.cursor()
-
-    # Find user by session_id
-    res = c.execute("SELECT * FROM users WHERE session_id=?", (session_id,))
-
-    # Get first (and only) result
-    res = res.fetchone()
+    # Get object by pk
+    res = UserModel.query.get(session_id)
 
     if res is None:
         # When entry does not exist
+        # TODO: Handle this case better
+        # IDEA: Reteurn a flag like None when user does not exist
+        current_app.logger.error(f"No result found for provided query.")
         raise Exception("Entry not found.")
 
-    board = chess.Board(res["fen"])
-    color = chess.WHITE if res["color"] else chess.BLACK
+    board = chess.Board(res.fen)
+    color = chess.WHITE if res.color else chess.BLACK
 
     return User(board=board, color=color)
 
 
 def update_user(session_id: str, board: chess.Board):
     """Updates an existing entry for user with session id session_id"""
-    if "db" not in g:
-        raise Exception("Database not found.")
 
-    c = g.db.cursor()
+    res = UserModel.query.get(session_id)
 
-    fen = board.fen()
-
-    if exists_in_db(session_id):
-        c.execute(
-            "UPDATE users SET fen=? WHERE session_id=?", (fen, session_id)
-        )
-
-    else:
-        # Throw entry not found exception
+    if res is None:
+        # IDEA: Start a new game in this case?
+        current_app.logger.error(f"No result found for provided query.")
         raise Exception("Entry not found.")
 
-    g.db.commit()
+    res.fen = board.fen()
+    db.session.commit()
 
 
 def delete_user(session_id: str):
     """Deletes a user entry from db"""
-    if "db" not in g:
-        raise Exception("Database not found.")
 
-    c = g.db.cursor()
+    res = UserModel.query.get(session_id)
 
-    c.execute("DELETE FROM users WHERE session_id=?", (session_id,))
+    if res is None:
+        # IDEA: Start a new game in this case?
+        current_app.logger.error(f"No result found for provided query.")
+        raise Exception("Entry not found.")
 
-    g.db.commit()
+    db.session.delete(res)
+    db.session.commit()
 
 
 def lan_to_speech(lan: str) -> str:

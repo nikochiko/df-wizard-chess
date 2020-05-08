@@ -1,17 +1,21 @@
 import os
 
 from flask import Flask
-
-from chess_server import db
+from flask_sqlalchemy import SQLAlchemy
 
 __version__ = "0.1.1"
 
+db = SQLAlchemy()
 
-def create_app(env="dev"):
+
+def create_app(env="dev", test_config=None):
     app = Flask(__name__)
 
     if env == "prod":
         app.config.from_object("config.ProdConfig")
+    elif env == "test":
+        app.config.from_object("config.TestConfig")
+        app.config.update(test_config or {})
     else:
         app.config.from_object("config.DevConfig")
 
@@ -24,5 +28,8 @@ def create_app(env="dev"):
         from chess_server import routes
 
         app.register_blueprint(routes.webhook_bp)
+
+        # Initialize database
+        db.create_all()
 
     return app

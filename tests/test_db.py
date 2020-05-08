@@ -1,11 +1,7 @@
-import sqlite3
-from typing import Any, List, Tuple
-
 import chess
 import pytest
-from flask import g
-from flask import current_app
 
+from chess_server.models import UserModel
 from chess_server.utils import (
     User,
     create_user,
@@ -15,29 +11,6 @@ from chess_server.utils import (
     exists_in_db,
 )
 from tests.utils import get_random_session_id
-
-
-def get_all_entries_from_db() -> List[Tuple[Any]]:
-    """Fetches all entries from table users from the database"""
-    conn = sqlite3.connect(current_app.config["DATABASE"])
-    cur = conn.cursor()
-
-    # Run query
-    res = cur.execute(f"SELECT * FROM users")
-
-    # Convert to list
-    res = res.fetchall()
-
-    # Close connection before returning
-    conn.close()
-
-    return res
-
-
-def test_setup(context):
-    assert "DATABASE" in current_app.config
-    assert current_app.config["TESTING"] is True
-    assert "db" in g
 
 
 def test_create_user(context):
@@ -50,14 +23,9 @@ def test_create_user(context):
 
     create_user(session_id, board, color)
 
-    # Read from database
-    data = get_all_entries_from_db()
-
     # Only one user was created
-    assert len(data) == 1
-
-    # Check parameters
-    assert data[0] == (session_id, board.fen(), color)
+    assert UserModel.query.count() == 1
+    assert UserModel.query.get(session_id) is not None
 
 
 def test_create_user_multiple_entries(context):
@@ -75,20 +43,16 @@ def test_create_user_multiple_entries(context):
     # Inserting one at a time
     create_user(session_id1, board1, color1)
 
-    data = get_all_entries_from_db()
-
     # Only one entry should be present
-    assert len(data) == 1
-    assert data[0] == (session_id1, board1.fen(), color1)
+    assert UserModel.query.count() == 1
+    assert UserModel.query.get(session_id1) is not None
 
     # Insert second entry
     create_user(session_id2, board2, color2)
 
-    data = get_all_entries_from_db()
-
-    assert len(data) == 2
-    assert (session_id1, board1.fen(), color1) in data
-    assert (session_id2, board2.fen(), color2) in data
+    assert UserModel.query.count() == 2
+    assert UserModel.query.get(session_id1) is not None
+    assert UserModel.query.get(session_id2) is not None
 
 
 def test_create_user_when_entry_with_key_already_exists(context):
@@ -106,22 +70,6 @@ def test_create_user_when_entry_with_key_already_exists(context):
         Exception, match=f"Entry with key {session_id} already exists."
     ):
         create_user(session_id, board, color)
-
-
-def test_create_user_db_does_not_exist(app):
-    # Not using context fixture so db does not exist prior to this test
-
-    session_id = get_random_session_id()
-    board = chess.Board()
-    color = chess.BLACK
-
-    # Play some random moves
-    board.push_san("Nf3")
-    board.push_san("Nf6")
-
-    with pytest.raises(Exception, match="Database not found."):
-        with app.app_context():
-            create_user(session_id, board, color)
 
 
 def test_get_user(context):
@@ -154,14 +102,6 @@ def test_get_user_when_multiple_entries_exist(context):
     create_user(session_id2, board2, color2)
 
     assert get_user(session_id) == User(board, color)
-
-
-def test_get_user_db_does_not_exist(app):
-    session_id = get_random_session_id()
-
-    with pytest.raises(Exception, match="Database not found."):
-        with app.app_context():
-            get_user(session_id)
 
 
 def test_get_user_entry_does_not_exist(context):
@@ -213,15 +153,6 @@ def test_update_user_multiple_entries(context):
     assert get_user(session_id2) == User(board2, color2)
 
 
-def test_update_user_db_does_not_exist(app):
-    session_id = get_random_session_id()
-    board = chess.Board()
-
-    with pytest.raises(Exception, match="Database not found."):
-        with app.app_context():
-            update_user(session_id, board)
-
-
 def test_update_user_entry_does_not_exist(context):
     session_id = get_random_session_id()
     board = chess.Board()
@@ -256,8 +187,7 @@ def test_delete_user(context):
     assert exists_in_db(session_id) is False
 
     # Verify that no other operation has been performed
-    data = get_all_entries_from_db()
-    assert len(data) == 0
+    assert UserModel.query.count() == 0
 
 
 def test_delete_user_multiple_entries(context):
@@ -283,13 +213,5 @@ def test_delete_user_multiple_entries(context):
     assert exists_in_db(session_id) is False
 
     # Verify that no other changes were made
-    assert len(get_all_entries_from_db()) == 1
+    assert UserModel.query.count() == 1
     assert get_user(session_id2) == User(board2, color2)
-
-
-def test_delete_user_db_does_not_exist(app):
-    session_id = get_random_session_id()
-
-    with pytest.raises(Exception, match="Database not found."):
-        with app.app_context():
-            delete_user(session_id)

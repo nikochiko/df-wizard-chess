@@ -1,10 +1,14 @@
 language: python
 python:
 - 3.6
+services:
+- postgresql
 before_install:
 - pip install poetry flake8 pytest pytest-cov
 install:
 - poetry install
+before_script:
+- psql -c 'create database wizardchess;' -U postgres
 script:
 - poetry run flake8
 - poetry run pytest tests/ --cov=./

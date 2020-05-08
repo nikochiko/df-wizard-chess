@@ -1,7 +1,0 @@
-DROP TABLE IF EXISTS users;
-
-CREATE TABLE users (
-  session_id VARCHAR(36) NOT NULL PRIMARY KEY,
-  fen VARCHAR(92) NOT NULL,
-  color BOOLEAN NOT NULL
-);
