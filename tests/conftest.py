@@ -20,6 +20,8 @@ def client(app):
     with app.test_client() as client:
         yield client
 
+    db.session.close()
+    # db.session.commit()
     db.drop_all()
     shutil.rmtree(app.config["IMG_DIR"])
 
@@ -30,5 +32,7 @@ def context(app):
     with app.test_request_context():
         yield
 
+    db.session.close()
+    # db.session.commit()
     db.drop_all()
     shutil.rmtree(app.config["IMG_DIR"])

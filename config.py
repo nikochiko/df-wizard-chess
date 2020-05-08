@@ -24,7 +24,11 @@ class DevConfig(Config):
     POSTGRES_HOST = environ.get("POSTGRES_HOST", "localhost")
     POSTGRES_PORT = environ.get("POSTGRES_PORT", "5432")
 
-    SQLALCHEMY_DATABASE_URI = environ.get("DATABASE_URL")
+    SQLALCHEMY_DATABASE_URI = environ.get(
+        "DATABASE_URL",
+        f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}"
+        f":{POSTGRES_PORT}/{POSTGRES_NAME}",
+    )
 
     IMG_DIR = path.join(basedir, "dev-imgdir")
 

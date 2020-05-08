@@ -5,7 +5,7 @@ import chess
 import chess.svg
 from cairosvg import svg2png
 from flask import current_app, url_for
-from sqlalchemy.exc import OperationalError, IntegrityError
+from sqlalchemy.exc import IntegrityError
 
 from chess_server import db
 from chess_server.models import UserModel
@@ -277,7 +277,7 @@ def exists_in_db(session_id: str) -> bool:
     """Returns boolean indicating whether the entry exists in db"""
 
     q = UserModel.query.filter_by(session_id=session_id)
-    return q.exists()
+    return not q.count() == 0
 
 
 def create_user(session_id: str, board: chess.Board, color: chess.Color):
@@ -299,28 +299,12 @@ def create_user(session_id: str, board: chess.Board, color: chess.Color):
         )
         raise Exception(f"Entry with key {session_id} already exists.")
 
-    except OperationalError as err:
-        current_app.logger.error(
-            "Operational Error - Maybe the database does not exist:"
-            f"\n{str(err)}"
-        )
-        raise Exception("Database not found.")
-
 
 def get_user(session_id: str) -> User:
     """Gets the required user from database when its session id is given"""
 
-    try:
-        # Get object by pk
-        res = UserModel.query.get(session_id)
-
-    except OperationalError as err:
-        # When DB was not found - probable cause is misconfiguration
-        current_app.logger.error(
-            "Operational Error - Maybe the database does not exist:"
-            f"\n{str(err)}"
-        )
-        raise Exception("Database not found.")
+    # Get object by pk
+    res = UserModel.query.get(session_id)
 
     if res is None:
         # When entry does not exist
@@ -338,16 +322,7 @@ def get_user(session_id: str) -> User:
 def update_user(session_id: str, board: chess.Board):
     """Updates an existing entry for user with session id session_id"""
 
-    try:
-        res = UserModel.query.get(session_id)
-
-    except OperationalError as err:
-        # When DB was not found - probable cause is misconfiguration
-        current_app.logger.error(
-            "Operational Error - Maybe the database does not exist:"
-            f"\n{str(err)}"
-        )
-        raise Exception("Database not found.")
+    res = UserModel.query.get(session_id)
 
     if res is None:
         # IDEA: Start a new game in this case?
@@ -360,16 +335,8 @@ def update_user(session_id: str, board: chess.Board):
 
 def delete_user(session_id: str):
     """Deletes a user entry from db"""
-    try:
-        res = UserModel.query.get(session_id)
 
-    except OperationalError as err:
-        # When DB was not found - probable cause is misconfiguration
-        current_app.logger.error(
-            "Operational Error - Maybe the database does not exist:"
-            f"\n{str(err)}"
-        )
-        raise Exception("Database not found.")
+    res = UserModel.query.get(session_id)
 
     if res is None:
         # IDEA: Start a new game in this case?
@@ -377,7 +344,7 @@ def delete_user(session_id: str):
         raise Exception("Entry not found.")
 
     db.session.delete(res)
-    db.commit()
+    db.session.commit()
 
 
 def lan_to_speech(lan: str) -> str:
