@@ -12,6 +12,8 @@ python-chess = "^0.31.0"
 python-dotenv = "^0.13.0"
 pytest-flask = "^1.0.0"
 cairosvg = "^2.4.2"
+flask-sqlalchemy = "^2.4.1"
+psycopg2-binary = "^2.8.5"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
