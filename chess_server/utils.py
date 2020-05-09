@@ -48,6 +48,7 @@ class BasicCard(NamedTuple):
 
     Note: At least one of image and formattedText is required.
     """
+
     # One is required:
     image: Optional[Image] = None
     formattedText: Optional[str] = None
@@ -93,9 +94,7 @@ def get_response_template_for_google(
         "payload": {
             "google": {
                 "expectUserResponse": True,
-                "richResponse": {
-                    "items": [{"simpleResponse": {"textToSpeech": ""}}],
-                },
+                "richResponse": {"items": [{"simpleResponse": {"textToSpeech": ""}}],},
             }
         }
     }
@@ -104,8 +103,7 @@ def get_response_template_for_google(
         template["payload"]["google"]["systemIntent"] = {
             "intent": "actions.intent.OPTION",
             "data": {
-                "@type": "type.googleapis.com/"
-                "google.actions.v2.OptionValueSpec",
+                "@type": "type.googleapis.com/" "google.actions.v2.OptionValueSpec",
                 "listSelect": {"items": []},
             },
         }
@@ -241,9 +239,9 @@ def get_response_for_google(
 
     # Modify the dict as per the arguments
     template["payload"]["google"]["expectUserResponse"] = expectUserResponse
-    template["payload"]["google"]["richResponse"]["items"][0][
-        "simpleResponse"
-    ]["textToSpeech"] = textToSpeech
+    template["payload"]["google"]["richResponse"]["items"][0]["simpleResponse"][
+        "textToSpeech"
+    ] = textToSpeech
 
     # If options List is given
     if options:
@@ -330,9 +328,7 @@ def update_user(session_id: str, board: chess.Board):
     fen = board.fen()
 
     if exists_in_db(session_id):
-        c.execute(
-            "UPDATE users SET fen=? WHERE session_id=?", (fen, session_id)
-        )
+        c.execute("UPDATE users SET fen=? WHERE session_id=?", (fen, session_id))
 
     else:
         # Throw entry not found exception
@@ -379,6 +375,5 @@ def save_board_as_png(imgkey: str, board: chess.Board) -> str:
         return pngfile
     except Exception as exc:
         # Log error and raise
-        logger.error(
-            f"Unable to process image. Failed with error:\n{str(exc)}")
+        logger.error(f"Unable to process image. Failed with error:\n{str(exc)}")
         raise

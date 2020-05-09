@@ -5,7 +5,13 @@ import chess.svg
 import pytest
 from flask import current_app
 
-from chess_server.utils import get_session_by_req, get_params_by_req, get_response_template_for_google, get_response_for_google, save_board_as_png
+from chess_server.utils import (
+    get_session_by_req,
+    get_params_by_req,
+    get_response_template_for_google,
+    get_response_for_google,
+    save_board_as_png,
+)
 from tests import data
 from tests.utils import get_random_session_id
 
@@ -47,10 +53,11 @@ class TestRenderPNG:
         self.session_id = get_random_session_id()
 
     def test_save_board_as_png_success(self, mocker, context):
-        mock_svg2png = mocker.patch('chess_server.utils.svg2png')
+        mock_svg2png = mocker.patch("chess_server.utils.svg2png")
 
         expected_pngfile = os.path.join(
-            current_app.config['IMG_DIR'], f"{self.session_id}.png")
+            current_app.config["IMG_DIR"], f"{self.session_id}.png"
+        )
 
         # With an empty board (lastmove=None)
         board = chess.Board()
@@ -59,38 +66,39 @@ class TestRenderPNG:
         value = save_board_as_png(self.session_id, board)
 
         assert value == expected_pngfile
-        mock_svg2png.assert_called_with(
-            bytestring=str(svg), write_to=expected_pngfile)
+        mock_svg2png.assert_called_with(bytestring=str(svg), write_to=expected_pngfile)
 
     def test_save_board_as_png_success_lastmove(self, mocker, context):
-        mock_svg2png = mocker.patch('chess_server.utils.svg2png')
+        mock_svg2png = mocker.patch("chess_server.utils.svg2png")
 
         expected_pngfile = os.path.join(
-            current_app.config["IMG_DIR"], f"{self.session_id}.png")
+            current_app.config["IMG_DIR"], f"{self.session_id}.png"
+        )
 
         # With a move played (lastmove must be highlighted on board)
         board = chess.Board()
-        board.push_san('e4')
-        lastmove = chess.Move.from_uci('e2e4')
+        board.push_san("e4")
+        lastmove = chess.Move.from_uci("e2e4")
         svg = str(chess.svg.board(board, lastmove=lastmove))
 
         value = save_board_as_png(self.session_id, board)
 
         assert value == expected_pngfile
-        mock_svg2png.assert_called_with(
-            bytestring=str(svg), write_to=expected_pngfile)
+        mock_svg2png.assert_called_with(bytestring=str(svg), write_to=expected_pngfile)
 
     def test_save_board_as_png_error(self, mocker, context):
-        mock_logger = mocker.patch('chess_server.utils.logger.error')
+        mock_logger = mocker.patch("chess_server.utils.logger.error")
         mock_svg2png = mocker.patch(
-            'chess_server.utils.svg2png', side_effect=Exception('Example error'))
+            "chess_server.utils.svg2png", side_effect=Exception("Example error")
+        )
 
         board = chess.Board()
         svg = str(chess.svg.board(board))
 
-        with pytest.raises(Exception, match='Example error'):
+        with pytest.raises(Exception, match="Example error"):
             value = save_board_as_png(self.session_id, board)
 
         mock_svg2png.assert_called()
         mock_logger.assert_called_with(
-            f"Unable to process image. Failed with error:\nExample error")
+            f"Unable to process image. Failed with error:\nExample error"
+        )
