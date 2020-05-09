@@ -17,6 +17,7 @@ class Config:
 class DevConfig(Config):
     DEBUG = True
     TESTING = True
+    SERVER_NAME = environ.get("SERVER_NAME")
 
     POSTGRES_NAME = environ.get("POSTGRES_NAME", "wizardchess")  # DB Name
     POSTGRES_USER = environ.get("POSTGRES_USER", "postgres")

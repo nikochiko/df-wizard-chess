@@ -134,6 +134,7 @@ def get_response_template_for_google(
 def get_response_for_google(
     textToSpeech: str,
     expectUserResponse: Optional[bool] = True,
+    basicCard: Optional[BasicCard] = None,
     options: Optional[List[Dict[str, Union[str, Dict[str, str]]]]] = None,
 ) -> Dict[str, Any]:
     """
@@ -268,6 +269,13 @@ def get_response_for_google(
         template["payload"]["google"]["systemIntent"]["data"]["listSelect"][
             "items"
         ] = options
+
+    # If basicCard is given
+    if basicCard:
+        card = basicCard.make_dict()
+        template["payload"]["google"]["richResponse"]["items"].append(
+            {"basicCard": card}
+        )
 
     # Return DICT
     return template
@@ -508,15 +516,21 @@ def save_board_as_png(imgkey: str, board: chess.Board) -> str:
 
 def save_board_as_png_and_get_image_card(session_id: str):
     board = get_user(session_id).board
+    move_number = board.fullmove_number
 
     # Saves board to disk
     save_board_as_png(session_id, board)
 
-    url = url_for("webhook_bp.png_image", session_id=session_id)
+    url = url_for(
+        "webhook_bp.png_image",
+        session_id=session_id,
+        move_number=move_number,
+        _external=True,
+    )
     alt = str(board)
 
     image = Image(url=url, accessibilityText=alt)
-    formattedText = f"**Moves played: {board.fullmove_number}**"
+    formattedText = f"**Moves played: {move_number}**"
     card = BasicCard(image=image, formattedText=formattedText)
 
     return card

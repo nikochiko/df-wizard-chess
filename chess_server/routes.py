@@ -26,7 +26,7 @@ def webhook():
 
     # DEBUG:
     print(f"Got POST request at /webhook:\n{str(req)}")
-    # DEBUG: 
+    # DEBUG:
 
     action = req["queryResult"].get("action")
 
@@ -59,12 +59,16 @@ def webhook():
     return make_response(jsonify(res))
 
 
-@webhook_bp.route("/webhook/images/boards/<session_id>", methods=["GET"])
-def png_image(session_id):
+@webhook_bp.route(
+    "/webhook/images/boards/<session_id>/<move_number>", methods=["GET"]
+)
+def png_image(session_id, move_number):
+    """Note: Move number is added in URL to prevent use of outdated cached
+    images on the client's side"""
 
     img_path = os.path.join(app.config["IMG_DIR"], f"{session_id}.png")
 
     if os.path.exists(img_path):
-        return send_file(img_path, mimetype="images/png")
+        return send_file(img_path, mimetype="image/png", cache_timeout=0)
     else:
         return NotFound()

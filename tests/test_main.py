@@ -1,4 +1,3 @@
-import os
 import random
 from unittest import TestCase, mock
 
@@ -832,12 +831,18 @@ class TestResign:
 class TestShowBoard:
     def setup_method(self):
         self.session_id = get_random_session_id()
-        self.user = User(chess.Board(), color=chess.BLACK)
+        self.image = Image(
+            url="http://testserver/img.png", accessibilityText="Hello World"
+        )
+        self.card = BasicCard(
+            image=self.image, formattedText="spam ham and eggs"
+        )
         self.result = {"spam": "eggs"}
 
     def test_show_board_success(self, client, config, mocker):
-        mock_get_user = mocker.patch(
-            "chess_server.main.get_user", return_value=self.user
+        mock_save_board_and_get_card = mocker.patch(
+            "chess_server.main.save_board_as_png_and_get_image_card",
+            return_value=self.card,
         )
         mock_get_response = mocker.patch(
             "chess_server.main.get_response_for_google",
@@ -850,8 +855,5 @@ class TestShowBoard:
         value = show_board(req_data)
 
         assert value == self.result
-        mock_get_user.assert_called_with(self.session_id)
-        mock_get_response.assert_called()
-
-        imgpath = os.path.join(config["IMG_DIR"], f"{self.session_id}.png")
-        assert os.path.exists(imgpath)
+        mock_save_board_and_get_card.assert_called_with(self.session_id)
+        assert mock_get_response.call_args[1]["basicCard"] == self.card
