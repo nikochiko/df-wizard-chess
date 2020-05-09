@@ -31,10 +31,16 @@ app = Flask(__name__)
 log = app.logger
 
 RESPONSES = {
-    "result_win": "Congratulations! You have won the game." " Thanks for playing.",
-    "result_lose": "Oops, you were checkmated. Thanks for playing.",
-    "result_draw": "The game has been drawn due to {reason}. " "Thanks for playing.",
-    "illegal_move": "The move is not legal, please try once again."
+    "result_win":
+    "Congratulations! You have won the game."
+    " Thanks for playing.",
+    "result_lose":
+    "Oops, you were checkmated. Thanks for playing.",
+    "result_draw":
+    "The game has been drawn due to {reason}. "
+    "Thanks for playing.",
+    "illegal_move":
+    "The move is not legal, please try once again."
     " Just an FYI, you can say Show Board to see the"
     " current position on the board.",
 }
@@ -96,17 +102,23 @@ def welcome(req: Dict[str, Any]) -> Dict[str, Any]:
     response_text = "Howdy! Which color would you like to choose?"
     options = [
         {
-            "optionInfo": {"key": "white"},
+            "optionInfo": {
+                "key": "white"
+            },
             "description": "I like white!",
             "title": "White",
         },
         {
-            "optionInfo": {"key": "black"},
+            "optionInfo": {
+                "key": "black"
+            },
             "description": "I'll choose black.",
             "title": "Black",
         },
         {
-            "optionInfo": {"key": "random"},
+            "optionInfo": {
+                "key": "random"
+            },
             "description": "Choose randomly",
             "title": "Anything works!",
         },
@@ -122,7 +134,8 @@ def choose_color(req: Dict[str, Any]) -> Dict[str, Any]:
     session_id = get_session_by_req(req)
 
     # Extract the key of chosen list item
-    arguments = req["originalDetectIntentRequest"]["payload"]["inputs"]  # Is a list
+    arguments = req["originalDetectIntentRequest"]["payload"][
+        "inputs"]  # Is a list
 
     for each in arguments:
         if each["intent"] == "actions.intent.OPTION":
@@ -154,7 +167,9 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
     user = get_user(session_id)
 
     # Get LAN move
-    lan = two_squares_and_piece_to_lan(board=user.board, squares=squares, piece=piece)
+    lan = two_squares_and_piece_to_lan(board=user.board,
+                                       squares=squares,
+                                       piece=piece)
 
     # TODO: Store this reply somewhere
     if lan == "illegal move":
@@ -168,9 +183,8 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
         # TODO: Display image of board when game is over
         # image = get_image(board)
         delete_user(session_id)  # Free up memory
-        return get_response_for_google(
-            textToSpeech=game_result, expectUserResponse=False
-        )
+        return get_response_for_google(textToSpeech=game_result,
+                                       expectUserResponse=False)
 
     # Play engine's move
     output = mediator.play_engine_move_and_get_speech(session_id=session_id)
@@ -179,7 +193,8 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
     if game_result:
         output = f"{output}. {game_result}"
         delete_user(session_id)  # Free up memory
-        return get_response_for_google(textToSpeech=output, expectUserResponse=False)
+        return get_response_for_google(textToSpeech=output,
+                                       expectUserResponse=False)
 
     return get_response_for_google(textToSpeech=output)
 
@@ -205,9 +220,8 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
         # TODO: Display image of board when game is over
         # image = get_image(board)
         delete_user(session_id)
-        return get_response_for_google(
-            textToSpeech=game_result, expectUserResponse=False
-        )
+        return get_response_for_google(textToSpeech=game_result,
+                                       expectUserResponse=False)
 
     # Play engine's move
     output = mediator.play_engine_move_and_get_speech(session_id=session_id)
@@ -216,7 +230,8 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
     if game_result:
         output = f"{output}. {game_result}"
         delete_user(session_id)
-        return get_response_for_google(textToSpeech=output, expectUserResponse=False)
+        return get_response_for_google(textToSpeech=output,
+                                       expectUserResponse=False)
 
     return get_response_for_google(textToSpeech=output)
 
@@ -228,7 +243,8 @@ def resign(req: Dict[str, Any]) -> Dict[str, Any]:
 
     output = "GG! Thanks for playing."
 
-    return get_response_for_google(textToSpeech=output, expectUserResponse=False)
+    return get_response_for_google(textToSpeech=output,
+                                   expectUserResponse=False)
 
 
 def show_board(req: Dict[str, Any]) -> Dict[str, Any]:
@@ -248,8 +264,7 @@ def show_board(req: Dict[str, Any]) -> Dict[str, Any]:
     card = BasicCard(image=image, formattedText=formatted_text)
 
     resp = get_response_for_google(
-        textToSpeech="Cool! Here's the board for you.", basicCard=card
-    )
+        textToSpeech="Cool! Here's the board for you.", basicCard=card)
 
     return resp
 
@@ -275,7 +290,8 @@ def start_game_and_get_response(session_id: str, color: str):
 
     else:
         # Play engine's move and append that move's speech to output
-        speech = mediator.play_engine_move_and_get_speech(session_id=session_id)
+        speech = mediator.play_engine_move_and_get_speech(
+            session_id=session_id)
         output += f" My move is {speech}."
 
     return get_response_for_google(textToSpeech=output)

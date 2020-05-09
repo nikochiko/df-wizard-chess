@@ -90,16 +90,21 @@ def get_params_by_req(req: Dict[str, Any]) -> Dict[str, str]:
     return req.get("queryResult").get("parameters")
 
 
-def get_response_template_for_google(
-    options: Optional[bool] = False,
-) -> Dict[str, Any]:
+def get_response_template_for_google(options: Optional[bool] = False,
+                                     ) -> Dict[str, Any]:
     """Return template for response for Google Assistant"""
 
     template = {
         "payload": {
             "google": {
                 "expectUserResponse": True,
-                "richResponse": {"items": [{"simpleResponse": {"textToSpeech": ""}}],},
+                "richResponse": {
+                    "items": [{
+                        "simpleResponse": {
+                            "textToSpeech": ""
+                        }
+                    }],
+                },
             }
         }
     }
@@ -108,8 +113,11 @@ def get_response_template_for_google(
         template["payload"]["google"]["systemIntent"] = {
             "intent": "actions.intent.OPTION",
             "data": {
-                "@type": "type.googleapis.com/" "google.actions.v2.OptionValueSpec",
-                "listSelect": {"items": []},
+                "@type": "type.googleapis.com/"
+                "google.actions.v2.OptionValueSpec",
+                "listSelect": {
+                    "items": []
+                },
             },
         }
 
@@ -117,10 +125,10 @@ def get_response_template_for_google(
 
 
 def get_response_for_google(
-    textToSpeech: str,
-    expectUserResponse: Optional[bool] = True,
-    basicCard: Optional[BasicCard] = None,
-    options: Optional[List[Dict[str, Union[str, Dict[str, str]]]]] = None,
+        textToSpeech: str,
+        expectUserResponse: Optional[bool] = True,
+        basicCard: Optional[BasicCard] = None,
+        options: Optional[List[Dict[str, Union[str, Dict[str, str]]]]] = None,
 ) -> Dict[str, Any]:
     """
     Generate response from given data.
@@ -244,16 +252,14 @@ def get_response_for_google(
 
     # Modify the dict as per the arguments
     template["payload"]["google"]["expectUserResponse"] = expectUserResponse
-    template["payload"]["google"]["richResponse"]["items"][0]["simpleResponse"][
-        "textToSpeech"
-    ] = textToSpeech
+    template["payload"]["google"]["richResponse"]["items"][0][
+        "simpleResponse"]["textToSpeech"] = textToSpeech
 
     # If options List is given
     if options:
         print(template)
         template["payload"]["google"]["systemIntent"]["data"]["listSelect"][
-            "items"
-        ] = options
+            "items"] = options
 
     # If basicCard is given
     if basicCard:
@@ -269,7 +275,7 @@ def exists_in_db(session_id: str) -> bool:
 
     c = g.db.cursor()
 
-    res = c.execute("SELECT * FROM users WHERE session_id=?", (session_id,))
+    res = c.execute("SELECT * FROM users WHERE session_id=?", (session_id, ))
 
     # res.fetchone() is None if entry does not exist
     return res.fetchone() is not None
@@ -308,7 +314,7 @@ def get_user(session_id: str) -> User:
     c = g.db.cursor()
 
     # Find user by session_id
-    res = c.execute("SELECT * FROM users WHERE session_id=?", (session_id,))
+    res = c.execute("SELECT * FROM users WHERE session_id=?", (session_id, ))
 
     # Get first (and only) result
     res = res.fetchone()
@@ -333,7 +339,8 @@ def update_user(session_id: str, board: chess.Board):
     fen = board.fen()
 
     if exists_in_db(session_id):
-        c.execute("UPDATE users SET fen=? WHERE session_id=?", (fen, session_id))
+        c.execute("UPDATE users SET fen=? WHERE session_id=?",
+                  (fen, session_id))
 
     else:
         # Throw entry not found exception
@@ -349,7 +356,7 @@ def delete_user(session_id: str):
 
     c = g.db.cursor()
 
-    c.execute("DELETE FROM users WHERE session_id=?", (session_id,))
+    c.execute("DELETE FROM users WHERE session_id=?", (session_id, ))
 
     g.db.commit()
 
@@ -380,5 +387,6 @@ def save_board_as_png(imgkey: str, board: chess.Board) -> str:
         return pngfile
     except Exception as exc:
         # Log error and raise
-        logger.error(f"Unable to process image. Failed with error:\n{str(exc)}")
+        logger.error(
+            f"Unable to process image. Failed with error:\n{str(exc)}")
         raise
