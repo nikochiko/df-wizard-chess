@@ -6,7 +6,7 @@ from typing import Any, Dict, List, NamedTuple, Optional, Union
 import chess
 import chess.svg
 from cairosvg import svg2png
-from flask import g, current_app
+from flask import current_app, g
 
 logger = logging.getLogger(__name__)
 

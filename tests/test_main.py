@@ -5,27 +5,17 @@ from unittest import TestCase, mock
 
 import chess
 import pytest
-from flask import current_app, url_for
-from werkzeug.exceptions import NotFound
-
 from chess_server import main
-from chess_server.main import (
-    RESPONSES,
-    welcome,
-    castle,
-    choose_color,
-    two_squares,
-    resign,
-    get_result_comment,
-    show_board,
-    start_game_and_get_response,
-)
+from chess_server.main import (RESPONSES, castle, choose_color,
+                               get_result_comment, resign, show_board,
+                               start_game_and_get_response, two_squares,
+                               welcome)
 from chess_server.utils import User
-from tests.utils import (
-    GoogleOptionsList,
-    get_dummy_webhook_request_for_google,
-    get_random_session_id,
-)
+from flask import current_app, url_for
+from tests.utils import (GoogleOptionsList,
+                         get_dummy_webhook_request_for_google,
+                         get_random_session_id)
+from werkzeug.exceptions import NotFound
 
 
 class TestGetResultComment(TestCase):

@@ -3,7 +3,6 @@ import shutil
 import tempfile
 
 import pytest
-
 from chess_server import main
 from chess_server.db import init_db
 
