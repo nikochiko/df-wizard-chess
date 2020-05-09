@@ -257,9 +257,11 @@ def show_board(req: Dict[str, Any]) -> Dict[str, Any]:
     formatted_text = f"**Moves played: {board.fullmove_number}**"
     card = BasicCard(image=image, formattedText=formatted_text)
 
-    resp = get_response_for_google(textToSpeech="Cool! Here's the board for you.", basicCard=card)
+    resp = get_response_for_google(
+        textToSpeech="Cool! Here's the board for you.", basicCard=card)
 
     return resp
+
 
 def start_game_and_get_response(session_id: str, color: str):
     """Initializes game given session and color"""

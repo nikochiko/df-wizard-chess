@@ -353,7 +353,8 @@ class TestWebhookForGoogle:
         mock_resign.assert_called_with(req_data)
 
     def test_webhook_show_board(self, client, mocker):
-        mock_show_board = mocker.patch('chess_server.main.show_board', return_value=self.result)
+        mock_show_board = mocker.patch(
+            'chess_server.main.show_board', return_value=self.result)
 
         req_data = get_dummy_webhook_request_for_google(action="show_board")
 
@@ -818,10 +819,13 @@ class TestShowBoard:
         self.result = {'spam': 'eggs'}
 
     def test_show_board_success(self, client, mocker):
-        mock_get_user = mocker.patch('chess_server.main.get_user', return_value=self.user)
-        mock_get_response = mocker.patch('chess_server.main.get_response_for_google', return_value=self.result)
+        mock_get_user = mocker.patch(
+            'chess_server.main.get_user', return_value=self.user)
+        mock_get_response = mocker.patch(
+            'chess_server.main.get_response_for_google', return_value=self.result)
 
-        req_data = get_dummy_webhook_request_for_google(session_id=self.session_id, action="show_board")
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id, action="show_board")
         with main.app.app_context():
             value = show_board(req_data)
 
@@ -829,13 +833,16 @@ class TestShowBoard:
         mock_get_user.assert_called_with(self.session_id)
         mock_get_response.assert_called()
 
-        imgpath = os.path.join(current_app.config["IMG_DIR"], f"{self.session_id}.png")
+        imgpath = os.path.join(
+            current_app.config["IMG_DIR"], f"{self.session_id}.png")
         assert os.path.exists(imgpath)
+
 
 class TestPNGImage:
     def setup_method(self):
         self.session_id = get_random_session_id()
-        self.imgpath = os.path.join(main.app.config["IMG_DIR"], f"{self.session_id}.png")
+        self.imgpath = os.path.join(
+            main.app.config["IMG_DIR"], f"{self.session_id}.png")
         self.file_content = b'file content'
         self.url = f'/webhook/images/boards/{self.session_id}'
 
