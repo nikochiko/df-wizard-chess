@@ -1,21 +1,29 @@
 import os
 import random
 import tempfile
-from unittest import TestCase, mock
+from unittest import mock
+from unittest import TestCase
 
 import chess
 import pytest
-from chess_server import main
-from chess_server.main import (RESPONSES, castle, choose_color,
-                               get_result_comment, resign, show_board,
-                               start_game_and_get_response, two_squares,
-                               welcome)
-from chess_server.utils import User
-from flask import current_app, url_for
-from tests.utils import (GoogleOptionsList,
-                         get_dummy_webhook_request_for_google,
-                         get_random_session_id)
+from flask import current_app
+from flask import url_for
 from werkzeug.exceptions import NotFound
+
+from chess_server import main
+from chess_server.main import castle
+from chess_server.main import choose_color
+from chess_server.main import get_result_comment
+from chess_server.main import resign
+from chess_server.main import RESPONSES
+from chess_server.main import show_board
+from chess_server.main import start_game_and_get_response
+from chess_server.main import two_squares
+from chess_server.main import welcome
+from chess_server.utils import User
+from tests.utils import get_dummy_webhook_request_for_google
+from tests.utils import get_random_session_id
+from tests.utils import GoogleOptionsList
 
 
 class TestGetResultComment(TestCase):

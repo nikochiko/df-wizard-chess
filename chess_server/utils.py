@@ -1,12 +1,17 @@
 import logging
 import os
 import sqlite3
-from typing import Any, Dict, List, NamedTuple, Optional, Union
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import NamedTuple
+from typing import Optional
+from typing import Union
 
-import chess
 import chess.svg
 from cairosvg import svg2png
-from flask import current_app, g
+from flask import current_app
+from flask import g
 
 logger = logging.getLogger(__name__)
 

@@ -1,12 +1,14 @@
 import os
 
-import chess
 import chess.svg
 import pytest
-from chess_server.utils import (get_params_by_req, get_response_for_google,
-                                get_response_template_for_google,
-                                get_session_by_req, save_board_as_png)
 from flask import current_app
+
+from chess_server.utils import get_params_by_req
+from chess_server.utils import get_response_for_google
+from chess_server.utils import get_response_template_for_google
+from chess_server.utils import get_session_by_req
+from chess_server.utils import save_board_as_png
 from tests import data
 from tests.utils import get_random_session_id
 

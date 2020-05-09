@@ -1,17 +1,31 @@
 import os
 import random
-from typing import Any, Dict
+from typing import Any
+from typing import Dict
 
 import chess
-from chess_server.chessgame import (Mediator, process_castle_by_querytext,
-                                    two_squares_and_piece_to_lan)
-from chess_server.utils import (BasicCard, Image, User, create_user,
-                                delete_user, get_params_by_req,
-                                get_response_for_google, get_session_by_req,
-                                get_user, save_board_as_png)
-from flask import (Flask, current_app, jsonify, make_response, request,
-                   send_file)
-from werkzeug.exceptions import BadRequest, NotFound
+from flask import current_app
+from flask import Flask
+from flask import jsonify
+from flask import make_response
+from flask import request
+from flask import send_file
+from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import NotFound
+
+from chess_server.chessgame import Mediator
+from chess_server.chessgame import process_castle_by_querytext
+from chess_server.chessgame import two_squares_and_piece_to_lan
+from chess_server.utils import BasicCard
+from chess_server.utils import create_user
+from chess_server.utils import delete_user
+from chess_server.utils import get_params_by_req
+from chess_server.utils import get_response_for_google
+from chess_server.utils import get_session_by_req
+from chess_server.utils import get_user
+from chess_server.utils import Image
+from chess_server.utils import save_board_as_png
+from chess_server.utils import User
 
 app = Flask(__name__)
 log = app.logger
