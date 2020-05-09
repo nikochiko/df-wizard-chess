@@ -10,6 +10,7 @@ from chess_server.main import (
     two_squares,
     castle,
     resign,
+    show_board,
 )
 
 
@@ -22,6 +23,10 @@ log = app.logger
 def webhook():
 
     req = request.get_json()
+
+    # DEBUG:
+    print(f"Got POST request at /webhook:\n{str(req)}")
+    # DEBUG: 
 
     action = req["queryResult"].get("action")
 
@@ -40,9 +45,16 @@ def webhook():
     elif action == "resign":
         res = resign(req)
 
+    elif action == "show_board":
+        res = show_board(req)
+
     else:
         log.error(f"Bad request:\n{str(req)}")
         raise BadRequest(f"Unknown intent action: {action}")
+
+    # DEBUG:
+    print(f"\nRESPONSE:\n{res}\n")
+    # DEBUG:
 
     return make_response(jsonify(res))
 

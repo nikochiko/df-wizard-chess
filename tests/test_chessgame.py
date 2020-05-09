@@ -3,7 +3,7 @@ from unittest import TestCase, mock
 import chess
 import chess.engine
 import pytest
-from flask import current_app
+from flask import current_app, g
 
 from chess_server.chessgame import Mediator
 from chess_server.utils import User

@@ -10,6 +10,9 @@ logger = logging.getLogger(__name__)
 
 
 class Mediator:
+    def __init__(self):
+        self.engine = None
+
     def activate_engine(self, engine_path: Optional[str] = None):
 
         # If engine path is not given, check if it is mentioned in config file
@@ -32,6 +35,9 @@ class Mediator:
 
     def play_engine_move_and_get_speech(self, session_id: str) -> str:
         """Play engine's move and return the speech conversion of the move"""
+
+        if not self.engine:
+            self.activate_engine()
 
         user = get_user(session_id)
 
