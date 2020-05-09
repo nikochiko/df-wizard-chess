@@ -613,7 +613,13 @@ class TestSaveBoardAsPngAndGetCard:
         mocker.patch("chess_server.utils.get_user", return_value=self.user)
         mocker.patch("chess_server.utils.save_board_as_png")
 
-        url = url_for("webhook_bp.png_image", session_id=self.session_id)
+        move_number = self.user.board.fullmove_number
+        url = url_for(
+            "webhook_bp.png_image",
+            session_id=self.session_id,
+            move_number=move_number,
+            _external=True,
+        )
 
         card = save_board_as_png_and_get_image_card(self.session_id)
 

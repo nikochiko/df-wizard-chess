@@ -17,6 +17,7 @@ class Config:
 class DevConfig(Config):
     DEBUG = True
     TESTING = True
+    SERVER_NAME = environ.get("SERVER_NAME")
 
     POSTGRES_NAME = environ.get("POSTGRES_NAME", "wizardchess")  # DB Name
     POSTGRES_USER = environ.get("POSTGRES_USER", "postgres")
@@ -32,7 +33,7 @@ class DevConfig(Config):
 
     IMG_DIR = path.join(basedir, "dev-imgdir")
 
-    ENGINE_PATH = "test-engine"
+    ENGINE_PATH = environ.get("ENGINE_PATH", "stockfish")
 
 
 class ProdConfig(Config):
