@@ -448,7 +448,7 @@ class TestTwoSquares:
         mock_play_lan.assert_called_with(
             session_id=self.session_id, lan=move_lan
         )
-        mock_play_engine.assert_called_with(session_id=self.session_id)
+        mock_play_engine.assert_called_with(self.session_id)
         mock_get_response.assert_called_with(textToSpeech="spam ham and eggs")
 
     def test_two_squares_game_ends_after_user_move(self, mocker):
@@ -563,7 +563,7 @@ class TestTwoSquares:
         mock_play_lan.assert_called_with(
             session_id=self.session_id, lan=move_lan
         )
-        mock_play_engine.assert_called_with(session_id=self.session_id)
+        mock_play_engine.assert_called_with(self.session_id)
         mock_save_board_image.assert_called_with(self.session_id)
         mock_get_response.assert_called_with(
             textToSpeech=f"spam ham and eggs. {self.result_lose}",
@@ -669,7 +669,7 @@ class TestCastle:
         mock_play_lan.assert_called_with(
             session_id=self.session_id, lan=move_lan
         )
-        mock_play_engine.assert_called_with(session_id=self.session_id)
+        mock_play_engine.assert_called_with(self.session_id)
         mock_get_response.assert_called_with(textToSpeech="spam ham and eggs")
 
     def test_castle_game_ends_after_user_move(self, mocker):
@@ -780,7 +780,7 @@ class TestCastle:
         mock_play_lan.assert_called_with(
             session_id=self.session_id, lan=move_lan
         )
-        mock_play_engine.assert_called_with(session_id=self.session_id)
+        mock_play_engine.assert_called_with(self.session_id)
         mock_save_board_image.assert_called_with(self.session_id)
         mock_get_response.assert_called_with(
             textToSpeech=f"spam ham and eggs. {self.result_lose}",
