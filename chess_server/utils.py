@@ -1,4 +1,5 @@
 import os
+import re
 from typing import Any, Dict, List, NamedTuple, Optional, Union
 
 import chess
@@ -481,6 +482,33 @@ def process_castle_by_querytext(board: chess.Board, queryText: str) -> str:
         result = "illegal move"
 
     return result
+
+
+def get_san_description(board: chess.Board, san: str) -> str:
+    """
+    Describes a valid SAN move as either legal, illegal, ambiguous or invalid.
+
+    Note: Works for overspecified moves (including LAN)
+    """
+    try:
+        # Move is legal if parse_san doesn't raise ValueError
+        board.parse_san(san)
+        status = "legal"
+
+    except ValueError as err:
+        # Infer status of move from error message
+        msg = str(err)
+
+        if re.match(r"^illegal san: .*", msg):
+            status = "illegal"
+
+        elif re.match(r"^ambiguous san: .*", msg):
+            status = "ambiguous"
+
+        elif re.match(r"^invalid san: .*", msg):
+            status = "invalid"
+
+    return status
 
 
 def save_board_as_png(imgkey: str, board: chess.Board) -> str:

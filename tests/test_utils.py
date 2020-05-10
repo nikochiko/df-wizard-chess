@@ -13,6 +13,7 @@ from chess_server.utils import (
     get_params_by_req,
     get_response_for_google,
     get_response_template_for_google,
+    get_san_description,
     lan_to_speech,
     process_castle_by_querytext,
     save_board_as_png,
@@ -533,6 +534,77 @@ class TestProcessCastleByQueryText:
         result = process_castle_by_querytext(board, queryText)
 
         assert result == expected
+
+
+class TestGetSanDescription:
+    def test_get_san_description_legal_move(self):
+        fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+        board = chess.Board(fen)
+        move = "e4"
+
+        value = get_san_description(board, move)
+
+        assert value == "legal"
+        assert board.fen() == fen
+
+    def test_get_san_description_ambiguous_move(self):
+        fen = (
+            "r1bqkbnr/pp1ppppp/2n5/2p5/4P3/2N5/PPPP1PPP/R1BQKBNR w KQkq - 0 1"
+        )
+        board = chess.Board(fen)
+        move = "Ne2"  # Both Nge2 and Nce2 are possible
+
+        value = get_san_description(board, move)
+
+        assert value == "ambiguous"
+        assert board.fen() == fen
+
+        move = "Nge2"
+
+        value = get_san_description(board, move)
+
+        assert value == "legal"
+        assert board.fen() == fen
+
+    def test_get_san_description_illegal_move(self):
+        fen = (
+            "r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 1"
+        )
+        board = chess.Board(fen)
+        move = "d5"
+
+        value = get_san_description(board, move)
+
+        assert value == "illegal"
+        assert board.fen() == fen
+
+    def test_get_san_description_illegal_move_promotion(self):
+        fen = "rnbqkbnr/pppp1ppp/8/8/2B1P3/2N5/Pp3PPP/R1BQK1NR b KQkq - 0 1"
+        board = chess.Board(fen)
+        move = "bxc1=K"
+
+        value = get_san_description(board, move)
+
+        assert value == "illegal"
+        assert board.fen() == fen
+
+        move = "b1"  # Promotion piece not mentioned
+        value = get_san_description(board, move)
+
+        assert value == "illegal"
+        assert board.fen() == fen
+
+    def test_get_san_description_invalid_move(self):
+        fen = (
+            "rnbqk2r/pp2bppp/2p2n2/3p2B1/3P4/2NBP3/PP3PPP/R2QK1NR b KQkq - 0 1"
+        )
+        board = chess.Board(fen)
+        move = "a9"
+
+        value = get_san_description(board, move)
+
+        assert value == "invalid"
+        assert board.fen() == fen
 
 
 class TestSaveBoardAsPNG:
