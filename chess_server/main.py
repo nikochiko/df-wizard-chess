@@ -12,6 +12,7 @@ from chess_server.utils import (
     get_session_by_req,
     get_params_by_req,
     get_response_for_google,
+    get_san_description,
     process_castle_by_querytext,
     save_board_as_png_and_get_image_card,
     two_squares_and_piece_to_lan,
@@ -171,6 +172,66 @@ def castle(req: Dict[str, Any]) -> Dict[str, Any]:
         return get_response_for_google(
             textToSpeech=output, expectUserResponse=False, basicCard=card
         )
+
+    return get_response_for_google(textToSpeech=output)
+
+
+def simply_san(req: Dict[str, Any]) -> Dict[str, Any]:
+    """Intent handler for simply SAN moves
+
+    Note: Accepts overspecified SAN (including LAN)
+    """
+    session_id = get_session_by_req(req)
+    san = get_params_by_req(req)["san"]
+    user = get_user(session_id)
+    board = user.board
+
+    status = get_san_description(board, san)
+
+    if status == "ambiguous":
+        output = (
+            f"The move {san} is ambiguous. Please clarify by giving more "
+            "details about the move."
+        )
+
+    elif status == "illegal":
+        output = (
+            f"The move {san} is not legal. Please try again. You can "
+            "always ask me to 'show the board' if you feel lost."
+        )
+
+    elif status == "invalid":
+        output = f"The move {san} is not valid."
+
+    if status == "legal":
+        # Convert SAN to LAN
+        move = board.parse_san(san)
+        lan = board.lan(move)
+
+        mediator.play_lan(session_id, lan)
+
+        # TODO: Refactor required
+        game_result = get_result_comment(user=user)
+        if game_result:
+            card = save_board_as_png_and_get_image_card(session_id)
+            delete_user(session_id)
+            return get_response_for_google(
+                textToSpeech=game_result,
+                expectUserResponse=False,
+                basicCard=card,
+            )
+
+        output = mediator.play_engine_move_and_get_speech(session_id)
+
+        game_result = get_result_comment(user=user)
+        if game_result:
+            card = save_board_as_png_and_get_image_card(session_id)
+            delete_user(session_id)
+            return get_response_for_google(
+                textToSpeech=game_result,
+                expectUserResponse=False,
+                basicCard=card,
+            )
 
     return get_response_for_google(textToSpeech=output)
 

@@ -60,6 +60,7 @@ Next release (v0.2.0)
 * Moved from SQLite to Postgres with SQLAlchemy
 * Bug fixes in show_board
 * Bug fixes with session_id handling
+* Add feature to accept SAN (or overspecified SAN) moves
 
 v0.1.1 - 07/05/2020
 -------------------

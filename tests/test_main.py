@@ -11,6 +11,7 @@ from chess_server.main import (
     two_squares,
     resign,
     show_board,
+    simply_san,
     get_result_comment,
     start_game_and_get_response,
 )
@@ -786,6 +787,124 @@ class TestCastle:
             expectUserResponse=False,
             basicCard=self.card,
         )
+
+
+class TestSimplySAN:
+    def setup_method(self):
+        self.session_id = get_random_session_id()
+        self.result = {"spam": "eggs"}
+        self.engine_reply = "engine reply"
+
+    def test_simply_san_ambiguous_move(self, mocker):
+        fen = (
+            "rnbqk2r/pp2bppp/4pn2/1N1p4/2Pp4/4PN2/PP3PPP/R1BQKB1R w KQkq - 0 1"
+        )
+        user = User(board=chess.Board(fen), color=chess.WHITE)
+        san = "Nxd4"
+
+        mocker.patch("chess_server.main.get_user", return_value=user)
+        mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
+
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id,
+            action="simply_san",
+            intent="simply_san",
+            queryText=san,
+            parameters={"san": san},
+        )
+        value = simply_san(req_data)
+
+        assert value == self.result
+        assert "ambiguous" in mock_get_response.call_args[1]["textToSpeech"]
+        mock_play_lan.assert_not_called()
+
+    def test_simply_san_illegal_move(self, mocker):
+        fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+        user = User(board=chess.Board(fen), color=chess.WHITE)
+        san = "Ng3"
+
+        mocker.patch("chess_server.main.get_user", return_value=user)
+        mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
+
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id,
+            action="simply_san",
+            intent="simply_san",
+            queryText=san,
+            parameters={"san": san},
+        )
+        value = simply_san(req_data)
+
+        assert value == self.result
+        assert "not legal" in mock_get_response.call_args[1]["textToSpeech"]
+        mock_play_lan.assert_not_called()
+
+    def test_simply_san_invalid_move(self, mocker):
+        fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+        user = User(board=chess.Board(fen), color=chess.WHITE)
+        san = "Ki4+"
+
+        mocker.patch("chess_server.main.get_user", return_value=user)
+        mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
+
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id,
+            action="simply_san",
+            intent="simply_san",
+            queryText=san,
+            parameters={"san": san},
+        )
+        value = simply_san(req_data)
+
+        assert value == self.result
+        assert "not valid" in mock_get_response.call_args[1]["textToSpeech"]
+        mock_play_lan.assert_not_called()
+
+    def test_simply_san_legal_move(self, mocker):
+        fen = (
+            "rnbqk2r/pp2bppp/2p2n2/3p2B1/3P4/2NBP3/PP3PPP/R2QK1NR b KQkq - 0 1"
+        )
+        user = User(board=chess.Board(fen), color=chess.BLACK)
+        san = "O-O"
+
+        mocker.patch("chess_server.main.get_user", return_value=user)
+        mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
+        mock_play_engine = mocker.patch(
+            "chess_server.main.Mediator.play_engine_move_and_get_speech",
+            return_value=self.engine_reply,
+        )
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
+
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id,
+            action="simply_san",
+            intent="simply_san",
+            queryText=san,
+            parameters={"san": san},
+        )
+        value = simply_san(req_data)
+
+        assert value == self.result
+        assert (
+            mock_get_response.call_args[1]["textToSpeech"] == self.engine_reply
+        )
+        mock_play_lan.assert_called_with(self.session_id, san)
+        mock_play_engine.assert_called_with(self.session_id)
 
 
 class TestResign:
