@@ -61,6 +61,7 @@ Next release (v0.2.0)
 * Bug fixes in show_board
 * Bug fixes with session_id handling
 * Add feature to accept SAN (or overspecified SAN) moves
+* Fix bug which stale result comment after engine's move
 
 v0.1.1 - 07/05/2020
 -------------------
