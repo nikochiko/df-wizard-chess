@@ -33,7 +33,7 @@ class DevConfig(Config):
 
     IMG_DIR = path.join(basedir, "dev-imgdir")
 
-    ENGINE_PATH = environ.get("ENGINE_PATH", "stockfish")
+    ENGINE_PATH = environ.get("DEV_ENGINE_PATH", "stockfish")
 
 
 class ProdConfig(Config):
