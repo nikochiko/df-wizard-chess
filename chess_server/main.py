@@ -151,51 +151,29 @@ def simply_san(req: Dict[str, Any]) -> Dict[str, Any]:
     status = get_san_description(board, san)
 
     if status == "ambiguous":
-        output = (
-            f"The move {san} is ambiguous. Please clarify by giving more "
-            "details about the move."
-        )
+        kwargs = {
+            "textToSpeech": f"The move {san} is ambiguous. Please clarify by"
+            " giving more details about the move."
+        }
 
     elif status == "illegal":
-        output = (
-            f"The move {san} is not legal. Please try again. You can "
-            "always ask me to 'show the board' if you feel lost."
-        )
+        kwargs = {
+            "textToSpeech": f"The move {san} is not legal. Please try again."
+            " You can always ask me to 'show the board' if you feel lost."
+        }
 
     elif status == "invalid":
-        output = f"The move {san} is not valid."
+        kwargs = {"textToSpeech": f"The move {san} is not valid."}
 
-    if status == "legal":
+    elif status == "legal":
         # Convert SAN to LAN
         move = board.parse_san(san)
         lan = board.lan(move)
 
         mediator.play_lan(session_id, lan)
+        kwargs = get_response_kwargs(session_id)
 
-        # TODO: Refactor required
-        game_result = get_result_comment(user=user)
-        if game_result:
-            card = save_board_as_png_and_get_image_card(session_id)
-            delete_user(session_id)
-            return get_response_for_google(
-                textToSpeech=game_result,
-                expectUserResponse=False,
-                basicCard=card,
-            )
-
-        output = mediator.play_engine_move_and_get_speech(session_id)
-
-        game_result = get_result_comment(user=user)
-        if game_result:
-            card = save_board_as_png_and_get_image_card(session_id)
-            delete_user(session_id)
-            return get_response_for_google(
-                textToSpeech=game_result,
-                expectUserResponse=False,
-                basicCard=card,
-            )
-
-    return get_response_for_google(textToSpeech=output)
+    return get_response_for_google(**kwargs)
 
 
 def resign(req: Dict[str, Any]) -> Dict[str, Any]:
@@ -319,14 +297,12 @@ def get_response_kwargs(session_id: str):
         # TODO: Archive the game instead of deleting
         delete_user(session_id)
         kwargs.update(
-            textToSpeech=game_result,
-            expectUserResponse=False,
-            basicCard=card
+            textToSpeech=game_result, expectUserResponse=False, basicCard=card
         )
 
     else:
         # Play engine's move
-        output = mediator.play_engine_move_and_get_speech(session_id=session_id)
+        output = mediator.play_engine_move_and_get_speech(session_id)
         kwargs["textToSpeech"] = output
 
         user = get_user(session_id)
@@ -337,9 +313,7 @@ def get_response_kwargs(session_id: str):
             card = save_board_as_png_and_get_image_card(session_id)
             delete_user(session_id)
             kwargs.update(
-                textToSpeech=output,
-                expectUserResponse=False,
-                basicCard=card
+                textToSpeech=output, expectUserResponse=False, basicCard=card
             )
 
     return kwargs
