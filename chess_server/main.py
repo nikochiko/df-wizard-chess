@@ -176,6 +176,23 @@ def simply_san(req: Dict[str, Any]) -> Dict[str, Any]:
     return get_response_for_google(**kwargs)
 
 
+def piece_and_square(req: Dict[str, Any]) -> Dict[str, Any]:
+    """Intent handler for when only one piece and one square are given"""
+    session_id = get_session_by_req(req)
+    """
+    so on,
+    get piece,
+    get square,
+    convert to SAN,
+    return if ambiguous
+    handle promotion
+
+    note: you will need to do something about when the piece being moved
+    is a pawn. in that case simply having an extra piece as pawn could break
+    compatibility with previous intents. get concrete intel on that.
+    """
+
+
 def resign(req: Dict[str, Any]) -> Dict[str, Any]:
     """Delete the player from the database and return a conclusion response"""
     session_id = get_session_by_req(req)
