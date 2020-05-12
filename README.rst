@@ -7,6 +7,8 @@ Wizard Chess w/ Dialogflow
     :target: https://codecov.io/gh/nikochiko/chess-server
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/ambv/black
+.. image:: https://api.dependabot.com/badges/status?host=github&repo=nikochiko/chess-server&identifier=259290685
+    :target: https://dependabot.com
 
 🤔 What is Wizard Chess?
 =======================
