@@ -11,6 +11,7 @@ from chess_server.utils import (
     get_user,
     get_session_by_req,
     get_params_by_req,
+    get_piece_symbol,
     get_response_for_google,
     get_san_description,
     process_castle_by_querytext,
@@ -35,9 +36,9 @@ mediator = Mediator()
 def welcome(req: Dict[str, Any]) -> Dict[str, Any]:
 
     session_id = get_session_by_req(req)
+    color = get_params_by_req(req)["color"]
 
-    if get_params_by_req(req)["color"]:
-        color = get_params_by_req(req)["color"]
+    if color:
         return start_game_and_get_response(session_id, color)
 
     response_text = "Howdy! Which color would you like to choose?"
@@ -148,30 +149,7 @@ def simply_san(req: Dict[str, Any]) -> Dict[str, Any]:
     user = get_user(session_id)
     board = user.board
 
-    status = get_san_description(board, san)
-
-    if status == "ambiguous":
-        kwargs = {
-            "textToSpeech": f"The move {san} is ambiguous. Please clarify by"
-            " giving more details about the move."
-        }
-
-    elif status == "illegal":
-        kwargs = {
-            "textToSpeech": f"The move {san} is not legal. Please try again."
-            " You can always ask me to 'show the board' if you feel lost."
-        }
-
-    elif status == "invalid":
-        kwargs = {"textToSpeech": f"The move {san} is not valid."}
-
-    elif status == "legal":
-        # Convert SAN to LAN
-        move = board.parse_san(san)
-        lan = board.lan(move)
-
-        mediator.play_lan(session_id, lan)
-        kwargs = get_response_kwargs(session_id)
+    kwargs = handle_san_and_get_response_kwargs(session_id, board, san)
 
     return get_response_for_google(**kwargs)
 
@@ -179,18 +157,31 @@ def simply_san(req: Dict[str, Any]) -> Dict[str, Any]:
 def piece_and_square(req: Dict[str, Any]) -> Dict[str, Any]:
     """Intent handler for when only one piece and one square are given"""
     session_id = get_session_by_req(req)
-    """
-    so on,
-    get piece,
-    get square,
-    convert to SAN,
-    return if ambiguous
-    handle promotion
+    params = get_params_by_req(req)
 
-    note: you will need to do something about when the piece being moved
-    is a pawn. in that case simply having an extra piece as pawn could break
-    compatibility with previous intents. get concrete intel on that.
-    """
+    piece = params["piece"].lower()
+    pawn = params["pawn"].lower()
+    square = params["square"].lower()
+
+    board = get_user(session_id).board
+
+    if pawn:
+        san = square
+
+        if piece and (square[-1] == "1" or square[-1] == "8"):
+            # Promotion move
+            san = f"{square}={get_piece_symbol(piece, upper=True)}"
+
+        kwargs = handle_san_and_get_response_kwargs(session_id, board, san)
+
+    elif piece:
+        san = f"{get_piece_symbol(piece, upper=True)}{square}"
+        kwargs = handle_san_and_get_response_kwargs(session_id, board, san)
+
+    else:
+        kwargs = {"textToSpeech": "Sorry, can you say that again?"}
+
+    return get_response_for_google(**kwargs)
 
 
 def resign(req: Dict[str, Any]) -> Dict[str, Any]:
@@ -332,5 +323,38 @@ def get_response_kwargs(session_id: str):
             kwargs.update(
                 textToSpeech=output, expectUserResponse=False, basicCard=card
             )
+
+    return kwargs
+
+
+def handle_san_and_get_response_kwargs(
+    session_id: str, board: chess.Board, san: str
+) -> Dict[str, Any]:
+    """Process a SAN move and get response kwargs"""
+
+    status = get_san_description(board, san)
+
+    if status == "ambiguous":
+        kwargs = {
+            "textToSpeech": f"The move {san} is ambiguous. Please clarify by"
+            " giving more details about the move."
+        }
+
+    elif status == "illegal":
+        kwargs = {
+            "textToSpeech": f"The move {san} is not legal. Please try again."
+            " You can always ask me to 'show the board' if you feel lost."
+        }
+
+    elif status == "invalid":
+        kwargs = {"textToSpeech": f"The move {san} is not valid."}
+
+    elif status == "legal":
+        # Convert SAN to LAN
+        move = board.parse_san(san)
+        lan = board.lan(move)
+
+        mediator.play_lan(session_id, lan)
+        kwargs = get_response_kwargs(session_id)
 
     return kwargs

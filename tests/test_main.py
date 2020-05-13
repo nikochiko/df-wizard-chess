@@ -9,6 +9,7 @@ from chess_server.main import (
     castle,
     choose_color,
     two_squares,
+    piece_and_square,
     resign,
     show_board,
     simply_san,
@@ -905,6 +906,134 @@ class TestSimplySAN:
         )
         mock_play_lan.assert_called_with(self.session_id, san)
         mock_play_engine.assert_called_with(self.session_id)
+
+
+class TestPieceAndSquare:
+    def setup_method(self):
+        self.session_id = get_random_session_id()
+        self.result = {"spam": "eggs"}
+        self.engine_reply = "engine reply"
+
+    def test_piece_and_square_ambiguous_move(self, mocker):
+        fen = (
+            "rnbqk2r/pp2bppp/4pn2/1N1p4/2Pp4/4PN2/PP3PPP/R1BQKB1R w KQkq - 0 1"
+        )
+        user = User(board=chess.Board(fen), color=chess.WHITE)
+        querytext = "knight takes D4"
+        params = {"pawn": "", "piece": "knight", "square": "D4"}
+
+        mocker.patch("chess_server.main.get_user", return_value=user)
+        mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
+
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id,
+            action="piece_and_square",
+            intent="piece_and_square",
+            queryText=querytext,
+            parameters=params,
+        )
+        value = piece_and_square(req_data)
+
+        assert value == self.result
+        assert "ambiguous" in mock_get_response.call_args[1]["textToSpeech"]
+        mock_play_lan.assert_not_called()
+
+    def test_piece_and_square_illegal_move(self, mocker):
+        fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+        user = User(board=chess.Board(fen), color=chess.WHITE)
+        querytext = "pawn to g5"
+        params = {"piece": "", "pawn": "pawn", "square": "g5"}
+
+        mocker.patch("chess_server.main.get_user", return_value=user)
+        mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
+
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id,
+            action="piece_and_square",
+            intent="piece_and_square",
+            queryText=querytext,
+            parameters=params,
+        )
+        value = piece_and_square(req_data)
+
+        assert value == self.result
+        assert "not legal" in mock_get_response.call_args[1]["textToSpeech"]
+        mock_play_lan.assert_not_called()
+
+    def test_piece_and_square_legal_move(self, mocker):
+        fen = (
+            "rnbqk2r/pp2bppp/2p2n2/3p2B1/3P4/2NBP3/PP3PPP/R2QK1NR b KQkq - 0 1"
+        )
+        user = User(board=chess.Board(fen), color=chess.BLACK)
+        params = {"piece": "", "pawn": "Pawn", "square": "h6"}
+        querytext = "Pawn h6"
+        lan = "h7-h6"
+
+        mocker.patch("chess_server.main.get_user", return_value=user)
+        mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
+        mock_play_engine = mocker.patch(
+            "chess_server.main.Mediator.play_engine_move_and_get_speech",
+            return_value=self.engine_reply,
+        )
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
+
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id,
+            action="piece_and_square",
+            intent="piece_and_square",
+            queryText=querytext,
+            parameters=params,
+        )
+        value = piece_and_square(req_data)
+
+        assert value == self.result
+        assert (
+            mock_get_response.call_args[1]["textToSpeech"] == self.engine_reply
+        )
+        mock_play_lan.assert_called_with(self.session_id, lan)
+        mock_play_engine.assert_called_with(self.session_id)
+
+    def test_piece_and_square_unexpected(self, mocker):
+        fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+        user = User(board=chess.Board(fen), color=chess.BLACK)
+        querytext = "Gibberish and then e4"
+        params = {"piece": "", "pawn": "", "square": "e4"}
+
+        mocker.patch("chess_server.main.get_user", return_value=user)
+        mock_handle_san = mocker.patch(
+            "chess_server.main.handle_san_and_get_response_kwargs"
+        )
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
+
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id,
+            action="piece_and_square",
+            intent="piece_and_square",
+            queryText=querytext,
+            parameters=params,
+        )
+        value = piece_and_square(req_data)
+
+        assert value == self.result
+        assert (
+            mock_get_response.call_args[1]["textToSpeech"]
+            == "Sorry, can you say that again?"
+        )
+        mock_handle_san.assert_not_called()
 
 
 class TestResign:
