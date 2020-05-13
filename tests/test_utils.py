@@ -11,6 +11,7 @@ from chess_server.utils import (
     Image,
     get_session_by_req,
     get_params_by_req,
+    get_piece_symbol,
     get_response_for_google,
     get_response_template_for_google,
     get_san_description,
@@ -605,6 +606,46 @@ class TestGetSanDescription:
 
         assert value == "invalid"
         assert board.fen() == fen
+
+
+class TestGetPieceSymbol:
+    def test_get_piece_symbol(self):
+
+        assert get_piece_symbol("king") == "k"
+        assert get_piece_symbol("king", upper=True) == "K"
+
+        assert get_piece_symbol("knight") == "n"
+        assert get_piece_symbol("knight", upper=True) == "N"
+
+        assert get_piece_symbol("bishop") == "b"
+        assert get_piece_symbol("bishop", upper=True) == "B"
+
+        assert get_piece_symbol("queen") == "q"
+        assert get_piece_symbol("queen", upper=True) == "Q"
+
+        assert get_piece_symbol("rook") == "r"
+        assert get_piece_symbol("rook", upper=True) == "R"
+
+        assert get_piece_symbol("pawn") == ""
+        assert get_piece_symbol("pawn", upper=True) == ""
+
+    def test_get_piece_arg_not_lowercase(self):
+
+        assert get_piece_symbol("QueeN") == "q"
+        assert get_piece_symbol("Pawn") == ""
+
+    def test_get_piece_symbol_not_found(self):
+        piece = "spamandeggs"
+
+        with pytest.raises(
+            Exception, match=f"Cannot get symbol for piece: {piece}"
+        ):
+            get_piece_symbol(piece)
+
+        with pytest.raises(
+            Exception, match=f"Cannot get symbol for piece: {piece}"
+        ):
+            get_piece_symbol(piece, upper=True)
 
 
 class TestSaveBoardAsPNG:

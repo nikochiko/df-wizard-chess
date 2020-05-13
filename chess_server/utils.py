@@ -357,14 +357,14 @@ def delete_user(session_id: str):
     db.session.commit()
 
 
-def get_piece_symbol(piece: str, uppercase: Optional[bool] = False) -> str:
+def get_piece_symbol(piece: str, upper: Optional[bool] = False) -> str:
     """Get the symbol for given piece"""
-    symbol = pieces_symbols.get(piece)
+    symbol = pieces_symbols.get(piece.lower())
 
-    if symbol:
-        return symbol.upper() if uppercase else symbol
+    if symbol is not None:
+        return symbol.upper() if upper else symbol
     else:
-        raise Exception(f"Cannot convert piece to symbol: {piece}")
+        raise Exception(f"Cannot get symbol for piece: {piece}")
 
 
 def lan_to_speech(lan: str) -> str:
