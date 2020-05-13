@@ -85,6 +85,20 @@ class TestWebhookForGoogle:
         assert resp.get_json() == self.result
         mock_show_board.assert_called_with(req_data)
 
+    def test_webhook_piece_and_square(self, client, mocker):
+        mock_piece_and_square = mocker.patch(
+            "chess_server.routes.piece_and_square", return_value=self.result
+        )
+
+        req_data = get_dummy_webhook_request_for_google(
+            action="piece_and_square"
+        )
+
+        resp = client.post("/webhook", json=req_data)
+
+        assert resp.get_json() == self.result
+        mock_piece_and_square.assert_called_with(req_data)
+
     def test_webhook_unknown_intent(self, client, mocker):
         req_data = get_dummy_webhook_request_for_google(action="unknown")
 

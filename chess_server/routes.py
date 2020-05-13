@@ -10,6 +10,7 @@ from chess_server.main import (
     two_squares,
     castle,
     resign,
+    piece_and_square,
     show_board,
     simply_san,
 )
@@ -48,6 +49,9 @@ def webhook():
 
     elif action == "simply_san":
         res = simply_san(req)
+
+    elif action == "piece_and_square":
+        res = piece_and_square(req)
 
     elif action == "show_board":
         res = show_board(req)

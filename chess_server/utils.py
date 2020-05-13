@@ -25,6 +25,7 @@ pieces_symbols = {
     "rook": "r",
     "knight": "n",
     "bishop": "b",
+    "pawn": "",
 }
 
 
@@ -356,6 +357,16 @@ def delete_user(session_id: str):
     db.session.commit()
 
 
+def get_piece_symbol(piece: str, upper: Optional[bool] = False) -> str:
+    """Get the symbol for given piece"""
+    symbol = pieces_symbols.get(piece.lower())
+
+    if symbol is not None:
+        return symbol.upper() if upper else symbol
+    else:
+        raise Exception(f"Cannot get symbol for piece: {piece}")
+
+
 def lan_to_speech(lan: str) -> str:
     """Convert LAN move to a more spoken form
 
@@ -421,7 +432,8 @@ def two_squares_and_piece_to_lan(
 
     # Move could be promotion, try adding theat to uci and see if that works
     if piece:
-        uci = f"{uci}{pieces_symbols[piece]}"
+        symbol = get_piece_symbol(piece)
+        uci = f"{uci}{symbol}"
         move = chess.Move.from_uci(uci)
 
         if board.is_legal(move):
