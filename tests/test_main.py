@@ -1004,6 +1004,76 @@ class TestPieceAndSquare:
         mock_play_lan.assert_called_with(self.session_id, lan)
         mock_play_engine.assert_called_with(self.session_id)
 
+    def test_piece_and_square_legal_move_promotion(self, mocker):
+        fen = "2b5/3P1kp1/5p2/8/3p3p/8/r7/2K5 w - - 1 39"
+        user = User(board=chess.Board(fen), color=chess.BLACK)
+        params = {"piece": "queen", "pawn": "Pawn", "square": "d8"}
+        querytext = "Pawn to d8 queen"
+        lan = "d7-d8=Q"
+
+        mocker.patch("chess_server.main.get_user", return_value=user)
+        mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
+        mock_play_engine = mocker.patch(
+            "chess_server.main.Mediator.play_engine_move_and_get_speech",
+            return_value=self.engine_reply,
+        )
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
+
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id,
+            action="piece_and_square",
+            intent="piece_and_square",
+            queryText=querytext,
+            parameters=params,
+        )
+        value = piece_and_square(req_data)
+
+        assert value == self.result
+        assert (
+            mock_get_response.call_args[1]["textToSpeech"] == self.engine_reply
+        )
+        mock_play_lan.assert_called_with(self.session_id, lan)
+        mock_play_engine.assert_called_with(self.session_id)
+
+    def test_piece_and_square_legal_move_promotion_to_knight_check(
+        self, mocker
+    ):
+        fen = "2b5/3P1kp1/5p2/8/3p3p/8/r7/2K5 w - - 1 39"
+        user = User(board=chess.Board(fen), color=chess.BLACK)
+        params = {"piece": "Knight", "pawn": "Pawn", "square": "D8"}
+        querytext = "Pawn to D8 Knight check"
+        lan = "d7-d8=N+"
+
+        mocker.patch("chess_server.main.get_user", return_value=user)
+        mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
+        mock_play_engine = mocker.patch(
+            "chess_server.main.Mediator.play_engine_move_and_get_speech",
+            return_value=self.engine_reply,
+        )
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
+
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id,
+            action="piece_and_square",
+            intent="piece_and_square",
+            queryText=querytext,
+            parameters=params,
+        )
+        value = piece_and_square(req_data)
+
+        assert value == self.result
+        assert (
+            mock_get_response.call_args[1]["textToSpeech"] == self.engine_reply
+        )
+        mock_play_lan.assert_called_with(self.session_id, lan)
+        mock_play_engine.assert_called_with(self.session_id)
+
     def test_piece_and_square_unexpected(self, mocker):
         fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
         user = User(board=chess.Board(fen), color=chess.BLACK)
