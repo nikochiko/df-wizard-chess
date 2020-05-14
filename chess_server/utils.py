@@ -30,17 +30,11 @@ pieces_symbols = {
 }
 
 PROMPT_PHRASES = [
-    "Over to you.",
     "Your turn.",
-    "What is your reply?",
     "Your move.",
-    "Your go.",
-    "Back to you.",
-    "The ball's in your court",
-    "Your clock's ticking.",
-    "Over to you.",
     "It's your turn.",
     "It's your move.",
+    "What's your move?"
 ]
 
 
