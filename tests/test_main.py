@@ -275,7 +275,7 @@ class TestStartGame:
         mock_create_user.assert_called_with(
             session_id, board=chess.Board(), color=mock.ANY
         )
-        mock_random.assert_called_with([chess.WHITE, chess.BLACK])
+        mock_random.assert_any_call([chess.WHITE, chess.BLACK])
         mock_get_response.assert_called_once()
 
         # Assert that color was announced
@@ -356,6 +356,7 @@ class TestTwoSquares:
     def setup_method(self):
         self.session_id = get_random_session_id()
         self.result = {"foo": "bar"}
+        self.engine_reply = "spam ham and eggs"
 
         self.image = Image(
             url="http://testserver/img.png", accessibilityText="Hello World"
@@ -423,7 +424,7 @@ class TestTwoSquares:
         mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
         mock_play_engine = mocker.patch(
             "chess_server.main.Mediator.play_engine_move_and_get_speech",
-            return_value="spam ham and eggs",
+            return_value=self.engine_reply,
         )
         mock_get_response = mocker.patch(
             "chess_server.main.get_response_for_google",
@@ -450,7 +451,9 @@ class TestTwoSquares:
             session_id=self.session_id, lan=move_lan
         )
         mock_play_engine.assert_called_with(self.session_id)
-        mock_get_response.assert_called_with(textToSpeech="spam ham and eggs")
+        assert mock_get_response.call_args[1]["textToSpeech"].startswith(
+            self.engine_reply
+        )
 
     def test_two_squares_game_ends_after_user_move(self, mocker):
         user = User(board=chess.Board(), color=chess.BLACK)
@@ -474,7 +477,7 @@ class TestTwoSquares:
         mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
         mock_play_engine = mocker.patch(
             "chess_server.main.Mediator.play_engine_move_and_get_speech",
-            return_value="spam ham and eggs",
+            return_value=self.engine_reply,
         )
         mock_get_response = mocker.patch(
             "chess_server.main.get_response_for_google",
@@ -534,7 +537,7 @@ class TestTwoSquares:
         mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
         mock_play_engine = mocker.patch(
             "chess_server.main.Mediator.play_engine_move_and_get_speech",
-            return_value="spam ham and eggs",
+            return_value=self.engine_reply,
         )
         mock_get_response = mocker.patch(
             "chess_server.main.get_response_for_google",
@@ -577,6 +580,7 @@ class TestCastle:
     def setup_method(self):
         self.session_id = get_random_session_id()
         self.result = {"foo": "bar"}
+        self.engine_reply = "spam ham and eggs"
 
         self.image = Image(
             url="http://testserver/img.png", accessibilityText="Hello World"
@@ -644,7 +648,7 @@ class TestCastle:
         mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
         mock_play_engine = mocker.patch(
             "chess_server.main.Mediator.play_engine_move_and_get_speech",
-            return_value="spam ham and eggs",
+            return_value=self.engine_reply,
         )
         mock_get_response = mocker.patch(
             "chess_server.main.get_response_for_google",
@@ -671,7 +675,9 @@ class TestCastle:
             session_id=self.session_id, lan=move_lan
         )
         mock_play_engine.assert_called_with(self.session_id)
-        mock_get_response.assert_called_with(textToSpeech="spam ham and eggs")
+        assert mock_get_response.call_args[1]["textToSpeech"].startswith(
+            self.engine_reply
+        )
 
     def test_castle_game_ends_after_user_move(self, mocker):
         user = User(board=chess.Board(), color=chess.BLACK)
@@ -693,7 +699,7 @@ class TestCastle:
         mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
         mock_play_engine = mocker.patch(
             "chess_server.main.Mediator.play_engine_move_and_get_speech",
-            return_value="spam ham and eggs",
+            return_value=self.engine_reply,
         )
         mock_get_response = mocker.patch(
             "chess_server.main.get_response_for_google",
@@ -751,7 +757,7 @@ class TestCastle:
         mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
         mock_play_engine = mocker.patch(
             "chess_server.main.Mediator.play_engine_move_and_get_speech",
-            return_value="spam ham and eggs",
+            return_value=self.engine_reply,
         )
         mock_get_response = mocker.patch(
             "chess_server.main.get_response_for_google",
@@ -901,8 +907,8 @@ class TestSimplySAN:
         value = simply_san(req_data)
 
         assert value == self.result
-        assert (
-            mock_get_response.call_args[1]["textToSpeech"] == self.engine_reply
+        assert mock_get_response.call_args[1]["textToSpeech"].startswith(
+            self.engine_reply
         )
         mock_play_lan.assert_called_with(self.session_id, san)
         mock_play_engine.assert_called_with(self.session_id)
@@ -998,9 +1004,7 @@ class TestPieceAndSquare:
         value = piece_and_square(req_data)
 
         assert value == self.result
-        assert (
-            mock_get_response.call_args[1]["textToSpeech"] == self.engine_reply
-        )
+        assert mock_get_response.call_args[1]["textToSpeech"]
         mock_play_lan.assert_called_with(self.session_id, lan)
         mock_play_engine.assert_called_with(self.session_id)
 
@@ -1032,9 +1036,7 @@ class TestPieceAndSquare:
         value = piece_and_square(req_data)
 
         assert value == self.result
-        assert (
-            mock_get_response.call_args[1]["textToSpeech"] == self.engine_reply
-        )
+        assert mock_get_response.call_args[1]["textToSpeech"]
         mock_play_lan.assert_called_with(self.session_id, lan)
         mock_play_engine.assert_called_with(self.session_id)
 
@@ -1068,8 +1070,8 @@ class TestPieceAndSquare:
         value = piece_and_square(req_data)
 
         assert value == self.result
-        assert (
-            mock_get_response.call_args[1]["textToSpeech"] == self.engine_reply
+        assert mock_get_response.call_args[1]["textToSpeech"].startswith(
+            self.engine_reply
         )
         mock_play_lan.assert_called_with(self.session_id, lan)
         mock_play_engine.assert_called_with(self.session_id)
