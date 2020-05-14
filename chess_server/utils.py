@@ -40,7 +40,7 @@ PROMPT_PHRASES = [
     "Your clock's ticking.",
     "Over to you.",
     "It's your turn.",
-    "It's your move."
+    "It's your move.",
 ]
 
 

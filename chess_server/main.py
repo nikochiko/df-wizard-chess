@@ -206,7 +206,9 @@ def show_board(req: Dict[str, Any]) -> Dict[str, Any]:
     card = save_board_as_png_and_get_image_card(session_id)
 
     resp = get_response_for_google(
-        textToSpeech="Cool! Here's the board for you.", basicCard=card
+        textToSpeech="Cool! Here's the board for you.",
+        basicCard=card,
+        expectUserResponse=False,
     )
 
     return resp
