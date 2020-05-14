@@ -1004,7 +1004,9 @@ class TestPieceAndSquare:
         value = piece_and_square(req_data)
 
         assert value == self.result
-        assert mock_get_response.call_args[1]["textToSpeech"]
+        assert mock_get_response.call_args[1]["textToSpeech"].startswith(
+            self.engine_reply
+        )
         mock_play_lan.assert_called_with(self.session_id, lan)
         mock_play_engine.assert_called_with(self.session_id)
 
