@@ -2,6 +2,7 @@
     :alt: 🧙🔮
     :width: 192px
     :align: center
+
 ==========================
 Wizard Chess w/ Dialogflow
 ==========================
