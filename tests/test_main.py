@@ -575,6 +575,60 @@ class TestTwoSquares:
             basicCard=self.card,
         )
 
+    def test_two_squares_uppercase(self, mocker):
+        user = User(board=chess.Board(), color=chess.WHITE)
+        squares = ["D2", "D4"]
+        actual_squares = ["d2", "d4"]
+        piece = ""
+        move_lan = "d2-d4"
+        params = {"squares": squares, "piece": piece}
+
+        mock_get_user = mocker.patch(
+            "chess_server.main.get_user", return_value=user
+        )
+        mock_del_user = mocker.patch("chess_server.main.delete_user")
+        mock_two_squares_to_lan = mocker.patch(
+            "chess_server.main.two_squares_and_piece_to_lan",
+            return_value=move_lan,
+        )
+        mock_get_result = mocker.patch(
+            "chess_server.main.get_result_comment",
+            return_value=self.result_unfinished,
+        )
+        mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
+        mock_play_engine = mocker.patch(
+            "chess_server.main.Mediator.play_engine_move_and_get_speech",
+            return_value=self.engine_reply,
+        )
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
+
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id,
+            action="two_squares",
+            intent="two_squares",
+            queryText="Pawn from D2 to D4",
+            parameters=params,
+        )
+        value = two_squares(req_data)
+
+        assert value == self.result
+        mock_get_user.assert_called_with(self.session_id)
+        mock_del_user.assert_not_called()
+        mock_two_squares_to_lan.assert_called_with(
+            board=user.board, squares=actual_squares, piece=piece
+        )
+        mock_get_result.assert_called()
+        mock_play_lan.assert_called_with(
+            session_id=self.session_id, lan=move_lan
+        )
+        mock_play_engine.assert_called_with(self.session_id)
+        assert mock_get_response.call_args[1]["textToSpeech"].startswith(
+            self.engine_reply
+        )
+
 
 class TestCastle:
     def setup_method(self):
@@ -911,6 +965,39 @@ class TestSimplySAN:
             self.engine_reply
         )
         mock_play_lan.assert_called_with(self.session_id, san)
+        mock_play_engine.assert_called_with(self.session_id)
+
+    def test_simply_san_uppercase(self, mocker):
+        fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+        user = User(board=chess.Board(fen), color=chess.WHITE)
+        san = "E4"
+        lan = "e2-e4"
+
+        mocker.patch("chess_server.main.get_user", return_value=user)
+        mock_play_lan = mocker.patch("chess_server.main.Mediator.play_lan")
+        mock_play_engine = mocker.patch(
+            "chess_server.main.Mediator.play_engine_move_and_get_speech",
+            return_value=self.engine_reply,
+        )
+        mock_get_response = mocker.patch(
+            "chess_server.main.get_response_for_google",
+            return_value=self.result,
+        )
+
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id,
+            action="simply_san",
+            intent="simply_san",
+            queryText=san,
+            parameters={"san": san},
+        )
+        value = simply_san(req_data)
+
+        assert value == self.result
+        assert mock_get_response.call_args[1]["textToSpeech"].startswith(
+            self.engine_reply
+        )
+        mock_play_lan.assert_called_with(self.session_id, lan)
         mock_play_engine.assert_called_with(self.session_id)
 
 
