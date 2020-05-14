@@ -206,9 +206,7 @@ def show_board(req: Dict[str, Any]) -> Dict[str, Any]:
     card = save_board_as_png_and_get_image_card(session_id)
 
     resp = get_response_for_google(
-        textToSpeech="Cool! Here's the board for you.",
-        basicCard=card,
-        expectUserResponse=False,
+        textToSpeech="OK! Here it is. What's your next move?", basicCard=card
     )
 
     return resp
@@ -238,7 +236,7 @@ def start_game_and_get_response(session_id: str, color: str):
         speech = mediator.play_engine_move_and_get_speech(
             session_id=session_id
         )
-        output += f" My move is {speech}."
+        output += f" My move is {speech}. {get_prompt_phrase()}"
 
     return get_response_for_google(textToSpeech=output)
 
