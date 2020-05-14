@@ -1,4 +1,5 @@
 import os
+import random
 import re
 from typing import Any, Dict, List, NamedTuple, Optional, Union
 
@@ -27,6 +28,20 @@ pieces_symbols = {
     "bishop": "b",
     "pawn": "",
 }
+
+PROMPT_PHRASES = [
+    "Over to you.",
+    "Your turn.",
+    "What is your reply?",
+    "Your move.",
+    "Your go.",
+    "Back to you.",
+    "The ball's in your court",
+    "Your clock's ticking.",
+    "Over to you.",
+    "It's your turn.",
+    "It's your move.",
+]
 
 
 class User(NamedTuple):
@@ -365,6 +380,11 @@ def get_piece_symbol(piece: str, upper: Optional[bool] = False) -> str:
         return symbol.upper() if upper else symbol
     else:
         raise Exception(f"Cannot get symbol for piece: {piece}")
+
+
+def get_prompt_phrase() -> str:
+    """Gets a phrase to prompt the user to make a move"""
+    return random.choice(PROMPT_PHRASES)
 
 
 def lan_to_speech(lan: str) -> str:
