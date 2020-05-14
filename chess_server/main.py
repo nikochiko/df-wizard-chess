@@ -312,7 +312,6 @@ def get_response_kwargs(session_id: str):
     else:
         # Play engine's move
         output = mediator.play_engine_move_and_get_speech(session_id)
-        kwargs["textToSpeech"] = output
 
         user = get_user(session_id)
 
@@ -327,6 +326,7 @@ def get_response_kwargs(session_id: str):
 
         else:
             output = f"{output}. {get_prompt_phrase()}"
+            kwargs["textToSpeech"] = output
 
     return kwargs
 
