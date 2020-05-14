@@ -34,7 +34,7 @@ PROMPT_PHRASES = [
     "Your move.",
     "It's your turn.",
     "It's your move.",
-    "What's your move?"
+    "What's your move?",
 ]
 
 

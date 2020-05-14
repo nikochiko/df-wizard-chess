@@ -1,4 +1,5 @@
 import random
+import re
 from typing import Any, Dict
 
 import chess
@@ -93,8 +94,8 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
     """Given two squares and a piece, play a move"""
     params = get_params_by_req(req)
 
-    # Extract params
-    squares = params["squares"]
+    # Extract params and take the lowercase of the square
+    squares = [square.lower() for square in params["squares"]]
     piece = params["piece"]
 
     # Extract board
@@ -147,6 +148,11 @@ def simply_san(req: Dict[str, Any]) -> Dict[str, Any]:
     """
     session_id = get_session_by_req(req)
     san = get_params_by_req(req)["san"]
+
+    # Convert pawn moves like E4, D5 to lowercase i.e. e4, d5
+    if re.match(r"^[A-Z][1-8]$", san):
+        san = san.lower()
+
     user = get_user(session_id)
     board = user.board
 
