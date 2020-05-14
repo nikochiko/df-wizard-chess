@@ -651,6 +651,7 @@ class TestGetPieceSymbol:
 class TestSaveBoardAsPNG:
     def setup_method(self):
         self.session_id = get_random_session_id()
+        self.error_msg = "Example error"
 
     def test_save_board_as_png_success(self, mocker, context):
         mock_svg2png = mocker.patch("chess_server.utils.svg2png")
@@ -694,7 +695,7 @@ class TestSaveBoardAsPNG:
         mock_logger = mocker.patch.object(current_app.logger, "error")
         mock_svg2png = mocker.patch(
             "chess_server.utils.svg2png",
-            side_effect=Exception("Example error"),
+            side_effect=Exception(self.error_msg),
         )
         expected_pngfile = os.path.join(
             config["IMG_DIR"], f"{self.session_id}.png"
@@ -703,14 +704,14 @@ class TestSaveBoardAsPNG:
         board = chess.Board()
         svg = str(chess.svg.board(board))
 
-        with pytest.raises(Exception, match="Example error"):
+        with pytest.raises(Exception, match=self.error_msg):
             save_board_as_png(self.session_id, board)
 
         mock_svg2png.assert_called_with(
             bytestring=svg, write_to=expected_pngfile
         )
         mock_logger.assert_called_with(
-            f"Unable to process image. Failed with error:\nExample error"
+            f"Unable to process image. Failed with error:\n{self.error_msg}"
         )
 
 

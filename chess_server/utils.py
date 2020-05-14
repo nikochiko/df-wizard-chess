@@ -320,7 +320,7 @@ def get_user(session_id: str) -> User:
         # When entry does not exist
         # TODO: Handle this case better
         # IDEA: Reteurn a flag like None when user does not exist
-        current_app.logger.error(f"No result found for provided query.")
+        current_app.logger.error("No result found for provided query.")
         raise Exception("Entry not found.")
 
     board = chess.Board(res.fen)
@@ -336,7 +336,7 @@ def update_user(session_id: str, board: chess.Board):
 
     if res is None:
         # IDEA: Start a new game in this case?
-        current_app.logger.error(f"No result found for provided query.")
+        current_app.logger.error("No result found for provided query.")
         raise Exception("Entry not found.")
 
     res.fen = board.fen()
@@ -350,7 +350,7 @@ def delete_user(session_id: str):
 
     if res is None:
         # IDEA: Start a new game in this case?
-        current_app.logger.error(f"No result found for provided query.")
+        current_app.logger.error("No result found for provided query.")
         raise Exception("Entry not found.")
 
     db.session.delete(res)
