@@ -1,4 +1,5 @@
-.. image::static/logo.png
+.. image:: static/logo.png
+    :alt: 🧙🔮
     :width: 192px
     :align: center
 ==========================
