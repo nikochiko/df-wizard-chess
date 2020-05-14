@@ -12,6 +12,7 @@ from chess_server.utils import (
     get_session_by_req,
     get_params_by_req,
     get_piece_symbol,
+    get_prompt_phrase,
     get_response_for_google,
     get_san_description,
     process_castle_by_querytext,
@@ -323,6 +324,9 @@ def get_response_kwargs(session_id: str):
             kwargs.update(
                 textToSpeech=output, expectUserResponse=False, basicCard=card
             )
+
+        else:
+            output = f"{output}. {get_prompt_phrase()}"
 
     return kwargs
 
