@@ -74,8 +74,8 @@ The latest Dialogflow agent can be downloaded from <link to be updated>.
 ⏰ Changelog
 ============
 
-0.2 - 16/05/2020
-----------------
+0.2.0 - 16/05/2020
+------------------
 * Moved from SQLite to Postgres with SQLAlchemy
 * Bug fixes in show_board
 * Bug fixes with session_id handling
