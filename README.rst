@@ -1,6 +1,8 @@
 ==========================
 Wizard Chess w/ Dialogflow
 ==========================
+.. image:: https://badges.gitter.im/wizard-chess/community.svg
+    :target: https://gitter.im/wizard-chess/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge
 .. image:: https://travis-ci.com/nikochiko/df-wizard-chess.svg?token=Tv6EyBGSze8NLsac3zQC&branch=master
     :target: https://travis-ci.com/nikochiko/df-wizard-chess
 .. image:: https://codecov.io/gh/nikochiko/df-wizard-chess/branch/master/graph/badge.svg?token=HMjzAbiZU1
