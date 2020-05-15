@@ -40,7 +40,7 @@ a platform to learn, or a platform to further develop your prowess. See `🧐 Ho
 for the technical details.
 
 Wizard Chess is already available as a `Google Action <https://assistant.google.com/services/a/uid/0000003ba609b4ff>`_!
-See `😃 Where can I use it?`_ to know more.
+See `😃 How do I use it?`_ to know more.
 
 🧐 How do you do it?
 ===================
@@ -56,15 +56,15 @@ basically looks like this:
 Examples of operations done on our end are creating and storing chess games in a database,
 receiving a move and updating the board accordingly, and generating responses for the user.
 
-😃 Where can I use it?
-=====================
+😃 How do I use it?
+==================
 The app is already available for the Google Assistant `here <https://assistant.google.com/services/a/uid/0000003ba609b4ff?hl=en>`_.
 More platforms coming soon! Let me know via `email <mailto:ktvm42@gmail.com>`_ or `Gitter <https://gitter.im/wizard-chess/community>`_
 if you want to see Wizard Chess on a particular platform so that we can prioritize it.
 
 🔧 Contributing
 ==============
-Use the `issue tracker <https://github.com/nikochiko/df-wizard-chess>`_ to suggest new features
+Use the `issue tracker <https://github.com/nikochiko/df-wizard-chess/issues>`_ to suggest new features
 or report bugs.
 Feel free to directly `create pull requests <https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request>`_
 for small changes and typos. Create an issue before opening larger pull requests so that the changes
