@@ -74,8 +74,8 @@ The latest Dialogflow agent can be downloaded from <link to be updated>.
 ⏰ Changelog
 ============
 
-Next release (v0.2.0)
----------------------
+0.2 - 16/05/2020
+----------------
 * Moved from SQLite to Postgres with SQLAlchemy
 * Bug fixes in show_board
 * Bug fixes with session_id handling
@@ -85,8 +85,8 @@ Next release (v0.2.0)
 * Fixed bug which made app to crash when square had capital letters (A4, D5 etc.)
 * Edited show board feature to flip board when user is playing as black
 
-v0.1.1 - 07/05/2020
--------------------
+0.1.1 - 07/05/2020
+------------------
 * Set up Travis CI
 * Set up coverage reporting with Codecov
 * Moved from using Dict in memory to sqlite3 DB on disk 🎉
@@ -95,8 +95,8 @@ v0.1.1 - 07/05/2020
 * Board image will be shown after completion of games 📜
 
 
-v0.1.0 - 27/04/2020
--------------------
+0.1.0 - 27/04/2020
+------------------
 * Format according to Black formatting tool
 * Basic functionality to play a game as a Google Action
 * Voice-activated ability to castle, promote pawn, and play move when at least the two squares involved in the move are given.
