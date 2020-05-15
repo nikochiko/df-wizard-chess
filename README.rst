@@ -1,4 +1,4 @@
-.. image:: static/logo.png
+.. image:: static/big_logo.png
     :alt: 🧙🔮
     :width: 192px
     :align: center
