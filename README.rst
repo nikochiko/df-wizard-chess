@@ -39,7 +39,7 @@ That is, to have anything you might need while playing blindfold chess - be it a
 a platform to learn, or a platform to further develop your prowess. See `🧐 How do you do it?`_
 for the technical details.
 
-Wizard Chess is already available as a `Google Action <https://assistant.google.com/services/a/uid/0000003ba609b4ff>`_!
+Wizard Chess is already available as a Google Action!
 See `😃 How do I use it?`_ to know more.
 
 🧐 How do you do it?
