@@ -79,9 +79,11 @@ Next release (v0.2.0)
 * Moved from SQLite to Postgres with SQLAlchemy
 * Bug fixes in show_board
 * Bug fixes with session_id handling
-* Add feature to accept SAN (or overspecified SAN) moves
-* Fix bug which caused stale result comment after engine's move
-*
+* Added feature to accept SAN (or overspecified SAN) moves
+* Fixed bug which caused stale result comment after engine's move
+* Added feature to accept move when only a piece and square are mentioned
+* Fixed bug which made app to crash when square had capital letters (A4, D5 etc.)
+* Edited show board feature to flip board when user is playing as black
 
 v0.1.1 - 07/05/2020
 -------------------
