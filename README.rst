@@ -40,7 +40,7 @@ a platform to learn, or a platform to further develop your prowess. See `🧐 Ho
 for the technical details.
 
 Wizard Chess is already available as a Google Action!
-See `🏌🏿‍♀️ How do I use it?`_ to know more.
+See `🏄🏽‍♂️ Where can I play it?`_ to know more.
 
 🧐 How do you do it?
 ===================
@@ -56,8 +56,8 @@ basically looks like this:
 Examples of operations done on our end are creating and storing chess games in a database,
 receiving a move and updating the board accordingly, and generating responses for the user.
 
-🏌🏿‍♀️ How do I use it?
-==================
+🏄🏽‍♂️ Where can I play it?
+=======================
 The app is already available for the Google Assistant `here <https://assistant.google.com/services/a/uid/0000003ba609b4ff?hl=en>`_.
 More platforms coming soon! Let me know via `email <mailto:ktvm42@gmail.com>`_ or `Gitter <https://gitter.im/wizard-chess/community>`_
 if you want to see Wizard Chess on a particular platform so that we can prioritize it.
