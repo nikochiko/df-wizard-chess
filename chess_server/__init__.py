@@ -3,7 +3,7 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-__version__ = "0.1.1"
+__version__ = "0.2.0"
 
 db = SQLAlchemy()
 

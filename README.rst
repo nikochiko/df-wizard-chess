@@ -39,7 +39,8 @@ That is, to have anything you might need while playing blindfold chess - be it a
 a platform to learn, or a platform to further develop your prowess. See `🧐 How do you do it?`_
 for the technical details.
 
-The app will first be made available as a Google Action.
+Wizard Chess is already available as a Google Action!
+See `🏄🏽‍♂️ Where can I play it?`_ to know more.
 
 🧐 How do you do it?
 ===================
@@ -52,23 +53,40 @@ basically looks like this:
 ::
     User ======= |AI assistant/chatbot| <-------> |Dialogflow| <-------> |THIS SERVER| 💪
 
-Examples of operations done on our end are creating a new chess game, or receiving a move, updating the
-game board on our side and giving back a response. Or say a user has forgotten the board, in that case
-we save an image of the board and show it to the user.
+Examples of operations done on our end are creating and storing chess games in a database,
+receiving a move and updating the board accordingly, and generating responses for the user.
+
+🏄🏽‍♂️ Where can I play it?
+=======================
+The app is already available for the Google Assistant `here <https://assistant.google.com/services/a/uid/0000003ba609b4ff?hl=en>`_.
+More platforms coming soon! Let me know via `email <mailto:ktvm42@gmail.com>`_ or `Gitter <https://gitter.im/wizard-chess/community>`_
+if you want to see Wizard Chess on a particular platform so that we can prioritize it.
+
+🔧 Contributing
+==============
+Use the `issue tracker <https://github.com/nikochiko/df-wizard-chess/issues>`_ to suggest new features
+or report bugs.
+Feel free to directly `create pull requests <https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request>`_
+for small changes and typos. Create an issue before opening larger pull requests so that the changes
+can be discussed beforehand.
+The latest Dialogflow agent can be downloaded from <link to be updated>.
 
 ⏰ Changelog
 ============
 
-Next release (v0.2.0)
----------------------
+0.2 - 16/05/2020
+----------------
 * Moved from SQLite to Postgres with SQLAlchemy
 * Bug fixes in show_board
 * Bug fixes with session_id handling
-* Add feature to accept SAN (or overspecified SAN) moves
-* Fix bug which caused stale result comment after engine's move
+* Added feature to accept SAN (or overspecified SAN) moves
+* Fixed bug which caused stale result comment after engine's move
+* Added feature to accept move when only a piece and square are mentioned
+* Fixed bug which made app to crash when square had capital letters (A4, D5 etc.)
+* Edited show board feature to flip board when user is playing as black
 
-v0.1.1 - 07/05/2020
--------------------
+0.1.1 - 07/05/2020
+------------------
 * Set up Travis CI
 * Set up coverage reporting with Codecov
 * Moved from using Dict in memory to sqlite3 DB on disk 🎉
@@ -77,8 +95,8 @@ v0.1.1 - 07/05/2020
 * Board image will be shown after completion of games 📜
 
 
-v0.1.0 - 27/04/2020
--------------------
+0.1.0 - 27/04/2020
+------------------
 * Format according to Black formatting tool
 * Basic functionality to play a game as a Google Action
 * Voice-activated ability to castle, promote pawn, and play move when at least the two squares involved in the move are given.
@@ -91,3 +109,8 @@ v0.1.0 - 27/04/2020
     * Add support for simple SAN notation - intent, entity, intent-handler
     * Add support for when one piece and one square are mentioned - tell the user if move is ambiguous
     * Setup Travis CI with flake8 and coverage tools and cover at least 80% with unit tests
+
+License
+=======
+Licensed under GNU General Public License 3.0 (GPL-3.0). See `LICENSE <https://github.com/nikochiko/df-wizard-chess/blob/master/LICENSE>`_
+for full text.
