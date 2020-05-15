@@ -36,7 +36,7 @@ To truly understand, I will have you read this
 
 Wizard Chess is **that** something. The goal is to provide the best blindfold chess experience.
 That is, to have anything you might need while playing blindfold chess - be it a platform to play,
-a platform to learn, or a platform to further develop your prowess. See `🧐 How do you do it?`_
+a platform to learn, or a platform to further develop your prowess. See `🏌🏿‍♀️ How do you do it?`_
 for the technical details.
 
 Wizard Chess is already available as a Google Action!
@@ -56,7 +56,7 @@ basically looks like this:
 Examples of operations done on our end are creating and storing chess games in a database,
 receiving a move and updating the board accordingly, and generating responses for the user.
 
-😃 How do I use it?
+🏌🏿‍♀️ How do I use it?
 ==================
 The app is already available for the Google Assistant `here <https://assistant.google.com/services/a/uid/0000003ba609b4ff?hl=en>`_.
 More platforms coming soon! Let me know via `email <mailto:ktvm42@gmail.com>`_ or `Gitter <https://gitter.im/wizard-chess/community>`_
