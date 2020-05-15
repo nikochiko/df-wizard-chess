@@ -36,11 +36,11 @@ To truly understand, I will have you read this
 
 Wizard Chess is **that** something. The goal is to provide the best blindfold chess experience.
 That is, to have anything you might need while playing blindfold chess - be it a platform to play,
-a platform to learn, or a platform to further develop your prowess. See `🏌🏿‍♀️ How do you do it?`_
+a platform to learn, or a platform to further develop your prowess. See `🧐 How do you do it?`_
 for the technical details.
 
 Wizard Chess is already available as a Google Action!
-See `😃 How do I use it?`_ to know more.
+See `🏌🏿‍♀️ How do I use it?`_ to know more.
 
 🧐 How do you do it?
 ===================
