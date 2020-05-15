@@ -664,7 +664,27 @@ class TestSaveBoardAsPNG:
         board = chess.Board()
         svg = str(chess.svg.board(board))
 
-        value = save_board_as_png(self.session_id, board)
+        value = save_board_as_png(imgkey=self.session_id, board=board)
+
+        assert value == expected_pngfile
+        mock_svg2png.assert_called_with(
+            bytestring=str(svg), write_to=expected_pngfile
+        )
+
+    def test_save_board_as_png_flip(self, mocker, context):
+        mock_svg2png = mocker.patch("chess_server.utils.svg2png")
+
+        expected_pngfile = os.path.join(
+            current_app.config["IMG_DIR"], f"{self.session_id}.png"
+        )
+
+        # With an empty board (lastmove=None)
+        board = chess.Board()
+        svg = str(chess.svg.board(board, flipped=True))
+
+        value = save_board_as_png(
+            imgkey=self.session_id, board=board, flipped=True
+        )
 
         assert value == expected_pngfile
         mock_svg2png.assert_called_with(
@@ -684,7 +704,7 @@ class TestSaveBoardAsPNG:
         lastmove = chess.Move.from_uci("e2e4")
         svg = str(chess.svg.board(board, lastmove=lastmove))
 
-        value = save_board_as_png(self.session_id, board)
+        value = save_board_as_png(imgkey=self.session_id, board=board)
 
         assert value == expected_pngfile
         mock_svg2png.assert_called_with(
@@ -705,7 +725,7 @@ class TestSaveBoardAsPNG:
         svg = str(chess.svg.board(board))
 
         with pytest.raises(Exception, match=self.error_msg):
-            save_board_as_png(self.session_id, board)
+            save_board_as_png(imgkey=self.session_id, board=board)
 
         mock_svg2png.assert_called_with(
             bytestring=svg, write_to=expected_pngfile

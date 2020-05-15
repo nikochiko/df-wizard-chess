@@ -537,7 +537,9 @@ def get_san_description(board: chess.Board, san: str) -> str:
     return status
 
 
-def save_board_as_png(imgkey: str, board: chess.Board) -> str:
+def save_board_as_png(
+    imgkey: str, board: chess.Board, flipped: Optional[bool] = False
+) -> str:
     """Render the PNG of a board, save it on disk and return the location.
     imgkey argument should be the identifier for the image like session id.
     """
@@ -551,7 +553,7 @@ def save_board_as_png(imgkey: str, board: chess.Board) -> str:
         lastmove = None
 
     # Render SVG
-    svg = str(chess.svg.board(board, lastmove=lastmove))
+    svg = str(chess.svg.board(board, lastmove=lastmove, flipped=flipped))
 
     # Path to png
     pngfile = os.path.join(img_dir, f"{imgkey}.png")
@@ -569,11 +571,13 @@ def save_board_as_png(imgkey: str, board: chess.Board) -> str:
 
 
 def save_board_as_png_and_get_image_card(session_id: str):
-    board = get_user(session_id).board
+    user = get_user(session_id)
+    board = user.board
+    flipped = user.color is chess.BLACK
     move_number = board.fullmove_number
 
     # Saves board to disk
-    save_board_as_png(session_id, board)
+    save_board_as_png(imgkey=session_id, board=board, flipped=flipped)
 
     url = url_for(
         "webhook_bp.png_image",
