@@ -14,3 +14,10 @@ script:
 - poetry run pytest tests/ --cov=./
 after_success:
 - bash <(curl -s https://codecov.io/bash)
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/ab5afe4b1bf64798567e
+    on_success: change  # options: [always|never|change] default: always
+    on_failure: always  # options: [always|never|change] default: always
+    on_start: never     # options: [always|never|change] default: always
