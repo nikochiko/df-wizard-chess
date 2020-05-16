@@ -59,7 +59,8 @@ receiving a move and updating the board accordingly, and generating responses fo
 🏄🏽‍♂️ Where can I play it?
 =======================
 The app is already available for the Google Assistant `here <https://assistant.google.com/services/a/uid/0000003ba609b4ff?hl=en>`_.
-You don't need the link anyway, just say *Talk to Wizard Chess* to your Google Assistant to boot up the Action anytime.
+You can even launch the app without touching the link at all, just say *Talk to Wizard Chess* to your Google Assistant
+to boot up the Action anytime.
 
 More platforms coming soon! Let me know via `email <mailto:ktvm42@gmail.com>`_ or `Gitter <https://gitter.im/wizard-chess/community>`_
 if you want to see Wizard Chess on a particular platform so that we can prioritize it.
