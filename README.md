@@ -91,8 +91,8 @@ in:
   - Pawn promotion is supported in the same way as above
   - Note that you will be notified by the assistant if your move
     is ambiguous. This usually means that there were more than one
-    moves which matched your description - e.g. two knights which
-    can come to the same square.
+    moves which matched your description - for example when two knights can
+    come to the mentioned square and you didn't specify which one.
 
 - Pawn moves by the squares they want to move to - e.g. *e4*, *g3*
 - Castling - *castles*, *Castle short*, *Castle kingside*, *Long
