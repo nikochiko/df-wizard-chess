@@ -6,7 +6,7 @@
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=nikochiko/df-wizard-chess&identifier=259290685)](https://dependabot.com)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-<h2 id="what-is-wizard-chess">🤔 What is Wizard Chess?<h2>
+<h2 id="what-is-wizard-chess">🤔 What is Wizard Chess?</h2>
 
 To truly understand, I will have you read this
 
