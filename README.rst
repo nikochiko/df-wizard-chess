@@ -67,12 +67,12 @@ if you want to see Wizard Chess on a particular platform so that we can prioriti
 
 📕 Usage guide
 =============
-Upon starting the Wizard Chess Action (by saying *Talk to Wizard Chess*), you will be asked which color you'd like to choose and assistant
-will show you a list. You'll be presented with three options: White, Black and Random. Now you can either select an option by touch or
+Upon starting the Wizard Chess Action (by saying *Talk to Wizard Chess*), you will be asked to choose the side you'd like to play as and
+the assistant will present you with a list of three options: White, Black and Random. Now you can either select an option by touch or
 say your choice out loud. The latter even works with devices which don't have a screen (e.g. Google Home).
 
-The system to interpret moves is very lenient and allows you to choose how you want to say the move. For example, you can describe your move in a:
-* Long descriptive format - e.g. *Knight from g1 to f3* or *Pawn e4 captures d5* or simply *d5 takes c4*
+The system to interpret moves is very lenient and allows you to choose how you want to say the move. For example, you can describe your move in:
+* Long descriptive format - e.g. *Knight from g1 to f3* or *Pawn e4 captures d5* or even without mentioning the piece *d5 takes c4*
   * For pawn promotion, you can add the name of the promotion piece to the end - that is, *Pawn from d7 to d8 queen* or *b2 takes c1 queen*
 * Shorter format with just the piece and square - e.g. *Knight to d4* or *Queen takes f6*
   * Pawn promotion is supported in the same way as above
