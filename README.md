@@ -1,14 +1,14 @@
 <h2>Wizard Chess w/ Dialogflow</h2>
 
-![image](https://badges.gitter.im/wizard-chess/community.svg%0A%20:target:%20https://gitter.im/wizard-chess/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Gitter](https://badges.gitter.im/wizard-chess/community.svg)](https://gitter.im/wizard-chess/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-![image](https://travis-ci.com/nikochiko/df-wizard-chess.svg?token=Tv6EyBGSze8NLsac3zQC&branch=master%0A%20:target:%20https://travis-ci.com/nikochiko/df-wizard-chess)
+[![Build Status](https://travis-ci.com/nikochiko/df-wizard-chess.svg?branch=master)](https://travis-ci.com/nikochiko/df-wizard-chess)
 
-![image](https://codecov.io/gh/nikochiko/df-wizard-chess/branch/master/graph/badge.svg?token=HMjzAbiZU1%0A%20:target:%20https://codecov.io/gh/nikochiko/df-wizard-chess)
+[![codecov](https://codecov.io/gh/nikochiko/df-wizard-chess/branch/master/graph/badge.svg)](https://codecov.io/gh/nikochiko/df-wizard-chess)
 
-![image](https://api.dependabot.com/badges/status?host=github&repo=nikochiko/df-wizard-chess&identifier=259290685%0A%20:target:%20https://dependabot.com)
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=nikochiko/df-wizard-chess&identifier=259290685)](https://dependabot.com)
 
-![image](https://img.shields.io/badge/code%20style-black-000000.svg%0A%20:target:%20https://github.com/ambv/black)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 <a name="whatis"><h3>🤔 What is Wizard Chess?</h3></a>
 
