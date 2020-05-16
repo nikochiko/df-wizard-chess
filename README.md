@@ -1,13 +1,9 @@
 <h2>Wizard Chess w/ Dialogflow</h2>
 
 [![Gitter](https://badges.gitter.im/wizard-chess/community.svg)](https://gitter.im/wizard-chess/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-
 [![Build Status](https://travis-ci.com/nikochiko/df-wizard-chess.svg?branch=master)](https://travis-ci.com/nikochiko/df-wizard-chess)
-
 [![codecov](https://codecov.io/gh/nikochiko/df-wizard-chess/branch/master/graph/badge.svg)](https://codecov.io/gh/nikochiko/df-wizard-chess)
-
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=nikochiko/df-wizard-chess&identifier=259290685)](https://dependabot.com)
-
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 <a name="whatis"><h3>🤔 What is Wizard Chess?</h3></a>
