@@ -59,8 +59,33 @@ receiving a move and updating the board accordingly, and generating responses fo
 🏄🏽‍♂️ Where can I play it?
 =======================
 The app is already available for the Google Assistant `here <https://assistant.google.com/services/a/uid/0000003ba609b4ff?hl=en>`_.
+You don't need the link anyway, just say *Talk to Wizard Chess* to your Google Assistant to boot up the Action anytime.
+
 More platforms coming soon! Let me know via `email <mailto:ktvm42@gmail.com>`_ or `Gitter <https://gitter.im/wizard-chess/community>`_
 if you want to see Wizard Chess on a particular platform so that we can prioritize it.
+
+📕 Usage guide
+=============
+Upon starting the Wizard Chess Action (by saying *Talk to Wizard Chess*), you will be asked which color you'd like to choose and assistant
+will show you a list. You'll be presented with three options: White, Black and Random. Now you can either select an option by touch or
+say your choice out loud. The latter even works with devices which don't have a screen (e.g. Google Home).
+
+The system to interpret moves is very lenient and allows you to choose how you want to say the move. For example, you can describe your move in a:
+* Long descriptive format - e.g. *Knight from g1 to f3* or *Pawn e4 captures d5* or simply *d5 takes c4*
+  * For pawn promotion, you can add the name of the promotion piece to the end - that is, *Pawn from d7 to d8 queen* or *b2 takes c1 queen*
+* Shorter format with just the piece and square - e.g. *Knight to d4* or *Queen takes f6*
+  * Pawn promotion is supported in the same way as above
+  * Note that you will be notified by the assistant if your move is ambiguous. This usually means that there were more than one moves which
+  match your description - e.g. two knights which can come to the same square.
+* Pawn moves by the squares they want to move to - e.g. *e4*, *g3*
+* Castling - *castles*, *Castle short*, *Castle kingside*, *Long castling*, *Castle to the queen's side*
+  * Note that simply saying *castle* without mentioning a side will castle on whichever side is legal,
+  and defaulting to short castle if both are legal.
+* Short Algebraic Notation (SAN) - e.g. *Bd6*, *Nbd7*
+* Long Algebraic Notation (LAN) - e.g. *e2-e4*, *Nf6xe4*, *O-O*
+
+Note: The app doesn't yet support descriptive moves like *Knight b to d7* or *e takes d5*. In that case you should use the
+long descriptive format of move by mentioning the actual square the piece was at - e.g. *knight b8 to d7* and *e4 takes d5*
 
 🔧 Contributing
 ==============
