@@ -72,6 +72,7 @@ the assistant will present you with a list of three options: White, Black and Ra
 say your choice out loud. The latter even works with devices which don't have a screen (e.g. Google Home).
 
 The system to interpret moves is very lenient and allows you to choose how you want to say the move. For example, you can describe your move in:
+
 * Long descriptive format - e.g. *Knight from g1 to f3* or *Pawn e4 captures d5* or even without mentioning the piece *d5 takes c4*
     * For pawn promotion, you can add the name of the promotion piece to the end - that is, *Pawn from d7 to d8 queen* or *b2 takes c1 queen*
 * Shorter format with just the piece and square - e.g. *Knight to d4* or *Queen takes f6*
