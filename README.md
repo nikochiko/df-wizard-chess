@@ -6,7 +6,7 @@
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=nikochiko/df-wizard-chess&identifier=259290685)](https://dependabot.com)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-## 🤔 What is Wizard Chess? {: what-is-wizard-chess }
+## 🤔 What is Wizard Chess? {: #what-is-wizard-chess }
 
 To truly understand, I will have you read this
 
@@ -39,7 +39,7 @@ learn, or a platform to further develop your prowess. See
 Wizard Chess is already available as a Google Action! See
 [🏄🏽‍♂️ Where can I play?](#where-can-i-play) to know more.
 
-## 🧐 How do you do it? {: how-do-you-do-it }
+## 🧐 How do you do it? {: #how-do-you-do-it }
 
 We use the wizardry 🔮 of AI assistants and chatbots to interact with the
 user. When a user talks to our AI asssistant, the message is forwarded
@@ -57,7 +57,7 @@ Examples of operations done on our end are creating and storing chess
 games in a database, receiving a move and updating the board
 accordingly, and generating responses for the user.
 
-## 🏄🏽‍♂️ Where can I play? {: where-can-i-play }
+## 🏄🏽‍♂️ Where can I play? {: #where-can-i-play }
 The app is already available for the Google Assistant
 [here](https://assistant.google.com/services/a/uid/0000003ba609b4ff?hl=en).
 You can even launch the app without touching the link at all, just say
@@ -68,7 +68,7 @@ More platforms coming soon! Let me know via
 [Gitter](https://gitter.im/wizard-chess/community) if you want to see
 Wizard Chess on a particular platform so that we can prioritize it.
 
-## 📕 Usage guide {: usage-guide }
+## 📕 Usage guide {: #usage-guide }
 
 Upon starting the Wizard Chess Action (by saying *Talk to Wizard
 Chess*), you will be asked to choose the side you'd like to play as and
@@ -107,7 +107,7 @@ d7* or *e takes d5*. In that case you should use the long descriptive
 format of move by mentioning the actual square the piece was at - e.g.
 *knight b8 to d7* and *e4 takes d5*
 
-## 🔧 Contributing {: contributing }
+## 🔧 Contributing {: #contributing }
 
 Use the [issue tracker](https://github.com/nikochiko/df-wizard-chess/issues) to suggest
 new features or report bugs. Feel free to directly [create pull
@@ -116,7 +116,7 @@ for small changes and typos. Create an issue before opening larger pull
 requests so that the changes can be discussed beforehand. The latest
 Dialogflow agent can be downloaded from \<link to be updated\>.
 
-## ⏰ Changelog {: changelog }
+## ⏰ Changelog {: #changelog }
 
 ### 0.2.0 - 16/05/2020
 
@@ -152,7 +152,7 @@ Dialogflow agent can be downloaded from \<link to be updated\>.
 - Unit tests added for most basic functions. More tests required for
   functions which handle intents.
 
-## License {: license }
+## License {: #license }
 
 Licensed under GNU General Public License 3.0 (GPL-3.0). See
 [LICENSE](https://github.com/nikochiko/df-wizard-chess/blob/master/LICENSE)
