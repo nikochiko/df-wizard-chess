@@ -80,36 +80,36 @@ have a screen (e.g. Google Home).
 
 <h3>Playing moves</h3>
 The system to interpret moves is very lenient and allows you to choose
-how you want to say the move so feel free to get creative.
+how you want to say the move.
 
-Here's a short list of examples of how moves can be described:
+Here's a short list of how you can describe your moves:
 
-- **Long descriptive format** - e.g. *Knight from g1 to f3* or *Pawn e4 captures d5* or even without mentioning the piece *d5 takes c4*
+- Long descriptive format - e.g. ***Knight from g1 to f3*** or ***Pawn e4 captures d5*** or even without mentioning the piece ***d5 takes c4***
   - For pawn promotion, you can add the name of the promotion
-    piece to the end - that is, *Pawn from d7 to d8 queen* or
-    *b2 takes c1 queen*
-- **Shorter format with just the piece and square** - e.g. *Knight to d4* or *Queen takes f6*
+    piece to the end - that is, ***Pawn from d7 to d8 queen*** or
+    ***b2 takes c1 queen***
+- Shorter format with just the piece and square - e.g. ***Knight to d4*** or ***Queen takes f6***
   - Pawn promotion is supported in the same way as above
   - Note that you will be notified by the assistant if your move
     is ambiguous. This usually means that there were more than one
     moves which matched your description - for example when two knights can
     come to the mentioned square and you didn't specify which one.
-- **Pawn moves by the squares they want to move to** - e.g. *e4*, *g3*
-- **Short Algebraic Notation (SAN)** - e.g. *Bd6*, *Nbd7*
-- **Long Algebraic Notation (LAN)** - e.g. *e2-e4*, *Nf6xe4*, *O-O*
+- Pawn moves by the squares they want to move to - e.g. ***e4***, ***g3***
+- Short Algebraic Notation (SAN) - e.g. ***Bd6***, ***Nbd7***
+- Long Algebraic Notation (LAN) - e.g. ***e2-e4***, ***Nf6xe4***, ***O-O***
 
-**Note**: The app doesn't yet support descriptive moves like *Knight b to
-d7* or *e takes d5*. In that case you should use the long descriptive
+**Note**: The app doesn't yet support descriptive moves like ***Knight b to
+d7*** or ***e takes d5***. In that case you should use the long descriptive
 format of move by mentioning the actual square the piece was at - e.g.
-*knight b8 to d7* and *e4 takes d5*
+***knight b8 to d7*** and ***e4 takes d5***
 
 <h3>Castling</h3>
 You can castle by telling the assistant to castle and mentioning the side you
 want to castle on.
 
-Some examples: *Castle short*, *Castle kingside*, *Long castling*, *Castle to the queen's side*
+Some examples: ***Castle short***, ***Castle kingside***, ***Long castling***, ***Castle to the queen's side***
 
-If you don't mention which side you want to castle on (just *castles*), castling
+If you don't mention which side you want to castle on (just ***castles***), castling
 will be performed on whichever side is legal, defaulting to the kingside in
 case both are legal.
 
@@ -117,9 +117,8 @@ case both are legal.
 You are also given the option to take a peek at the board. To do that just say
 something like *show me the board* or *let me see the board* to the assistant.
 
-<h3>Resigning</h3>
-You can resign at any time by saying *resign* or anything else that means the
-same.
+<h3>Resignation</h3>
+You can resign at any time by just saying *resign*.
 
 <h2 id="contributing">🔧 Contributing</h2>
 
