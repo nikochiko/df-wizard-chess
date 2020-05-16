@@ -114,10 +114,12 @@ will be performed on whichever side is legal, defaulting to the kingside in
 case both are legal.
 
 <h3>Seeing the board</h3>
+
 You are also given the option to take a peek at the board. To do that just say
 something like ***show me the board*** or ***let me see the board*** to the assistant.
 
 <h3>Resignation</h3>
+
 You can resign at any time by just saying ***resign***.
 
 <h2 id="contributing">🔧 Contributing</h2>
