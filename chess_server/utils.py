@@ -588,7 +588,7 @@ def save_board_as_png_and_get_image_card(session_id: str):
     alt = str(board)
 
     image = Image(url=url, accessibilityText=alt)
-    formattedText = f"**Moves played: {move_number}**"
+    formattedText = f"**Current move number: {move_number}**"
     card = BasicCard(image=image, formattedText=formattedText)
 
     return card
