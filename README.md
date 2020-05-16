@@ -82,28 +82,28 @@ The system to interpret moves is very lenient and allows you to choose
 how you want to say the move. For example, you can describe your move
 in:
 
-- Long descriptive format - e.g. *Knight from g1 to f3* or *Pawn e4 captures d5* or even without mentioning the piece *d5 takes c4*
+- **Long descriptive format** - e.g. *Knight from g1 to f3* or *Pawn e4 captures d5* or even without mentioning the piece *d5 takes c4*
   - For pawn promotion, you can add the name of the promotion
     piece to the end - that is, *Pawn from d7 to d8 queen* or
     *b2 takes c1 queen*
 
-- Shorter format with just the piece and square - e.g. *Knight to d4* or *Queen takes f6*
+- **Shorter format with just the piece and square** - e.g. *Knight to d4* or *Queen takes f6*
   - Pawn promotion is supported in the same way as above
   - Note that you will be notified by the assistant if your move
     is ambiguous. This usually means that there were more than one
     moves which matched your description - for example when two knights can
     come to the mentioned square and you didn't specify which one.
 
-- Pawn moves by the squares they want to move to - e.g. *e4*, *g3*
-- Castling - *castles*, *Castle short*, *Castle kingside*, *Long
+- **Pawn moves by the squares they want to move to** - e.g. *e4*, *g3*
+- **Castling** - *castles*, *Castle short*, *Castle kingside*, *Long
   castling*, *Castle to the queen's side*
   - Note that simply saying *castle* without mentioning a side will
     castle on whichever side is legal, and defaulting to short castle if
     both are legal.
-- Short Algebraic Notation (SAN) - e.g. *Bd6*, *Nbd7*
-- Long Algebraic Notation (LAN) - e.g. *e2-e4*, *Nf6xe4*, *O-O*
+- **Short Algebraic Notation (SAN)** - e.g. *Bd6*, *Nbd7*
+- **Long Algebraic Notation (LAN)** - e.g. *e2-e4*, *Nf6xe4*, *O-O*
 
-Note: The app doesn't yet support descriptive moves like *Knight b to
+**Note**: The app doesn't yet support descriptive moves like *Knight b to
 d7* or *e takes d5*. In that case you should use the long descriptive
 format of move by mentioning the actual square the piece was at - e.g.
 *knight b8 to d7* and *e4 takes d5*
