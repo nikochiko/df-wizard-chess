@@ -6,7 +6,7 @@
 [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=nikochiko/df-wizard-chess&identifier=259290685)](https://dependabot.com)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-## 🤔 What is Wizard Chess? {: #what-is-wizard-chess }
+## 🤔 What is Wizard Chess?
 
 To truly understand, I will have you read this
 
@@ -34,10 +34,10 @@ Wizard Chess is **that** something. The goal is to provide the best
 blindfold chess experience. That is, to have anything you might need
 while playing blindfold chess - be it a platform to play, a platform to
 learn, or a platform to further develop your prowess. See
-[🧐 How do you do it?](-🧐-How-do-you-do-it?) for the technical details.
+[🧐 How do you do it?](-🧐-how-do-you-do-it?) for the technical details.
 
 Wizard Chess is already available as a Google Action! See
-[🏄🏽‍♂️ Where can I play?](#🏄🏽‍♂️-Where-can-I-play?) to know more.
+[🏄🏽‍♂️ Where can I play?](#🏄🏽‍♂️-where-can-I-play?) to know more.
 
 ## 🧐 How do you do it?
 
