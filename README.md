@@ -34,12 +34,12 @@ Wizard Chess is **that** something. The goal is to provide the best
 blindfold chess experience. That is, to have anything you might need
 while playing blindfold chess - be it a platform to play, a platform to
 learn, or a platform to further develop your prowess. See
-[🧐 How do you do it?](#how-do-you-do-it) for the technical details.
+[🧐 How do you do it?](-🧐-How-do-you-do-it?) for the technical details.
 
 Wizard Chess is already available as a Google Action! See
-[🏄🏽‍♂️ Where can I play?](#where-can-i-play) to know more.
+[🏄🏽‍♂️ Where can I play?](#🏄🏽‍♂️-Where-can-I-play?) to know more.
 
-## 🧐 How do you do it? {: #how-do-you-do-it }
+## 🧐 How do you do it?
 
 We use the wizardry 🔮 of AI assistants and chatbots to interact with the
 user. When a user talks to our AI asssistant, the message is forwarded
@@ -57,7 +57,7 @@ Examples of operations done on our end are creating and storing chess
 games in a database, receiving a move and updating the board
 accordingly, and generating responses for the user.
 
-## 🏄🏽‍♂️ Where can I play? {: #where-can-i-play }
+## 🏄🏽‍♂️ Where can I play?
 The app is already available for the Google Assistant
 [here](https://assistant.google.com/services/a/uid/0000003ba609b4ff?hl=en).
 You can even launch the app without touching the link at all, just say
@@ -68,7 +68,7 @@ More platforms coming soon! Let me know via
 [Gitter](https://gitter.im/wizard-chess/community) if you want to see
 Wizard Chess on a particular platform so that we can prioritize it.
 
-## 📕 Usage guide {: #usage-guide }
+## 📕 Usage guide
 
 Upon starting the Wizard Chess Action (by saying *Talk to Wizard
 Chess*), you will be asked to choose the side you'd like to play as and
