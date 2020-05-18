@@ -26,9 +26,7 @@ def webhook():
 
     req = request.get_json()
 
-    # DEBUG:
     print(f"Got POST request at /webhook:\n{str(req)}")
-    # DEBUG:
 
     action = req["queryResult"].get("action")
 
@@ -60,9 +58,7 @@ def webhook():
         log.error(f"Bad request:\n{str(req)}")
         raise BadRequest(f"Unknown intent action: {action}")
 
-    # DEBUG:
-    print(f"\nRESPONSE:\n{res}\n")
-    # DEBUG:
+    print(f"\nResponse:\n{res}\n")
 
     return make_response(jsonify(res))
 

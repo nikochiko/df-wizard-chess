@@ -144,6 +144,7 @@ def get_response_template_for_google(
 
 def get_response_for_google(
     textToSpeech: str,
+    displayText: Optional[str] = None,
     expectUserResponse: Optional[bool] = True,
     basicCard: Optional[BasicCard] = None,
     options: Optional[List[Dict[str, Union[str, Dict[str, str]]]]] = None,
@@ -274,9 +275,13 @@ def get_response_for_google(
         "simpleResponse"
     ]["textToSpeech"] = textToSpeech
 
+    if displayText:
+        template["payload"]["google"]["richResponse"]["items"][0][
+            "simpleResponse"
+        ]["displayText"] = displayText
+
     # If options List is given
     if options:
-        print(template)
         template["payload"]["google"]["systemIntent"]["data"]["listSelect"][
             "items"
         ] = options
