@@ -303,9 +303,7 @@ def create_user(session_id: str, board: chess.Board, color: chess.Color):
     """Creates a new entry in table with given data"""
 
     try:
-        new_user = UserModel(
-            session_id=session_id, fen=board.fen(), color=color
-        )
+        new_user = UserModel(session_id=session_id, board=board, color=color)
         db.session.add(new_user)
         db.session.commit()
 
@@ -332,7 +330,7 @@ def get_user(session_id: str) -> User:
         current_app.logger.error("No result found for provided query.")
         raise Exception("Entry not found.")
 
-    board = chess.Board(res.fen)
+    board = res.board
     color = chess.WHITE if res.color else chess.BLACK
 
     return User(board=board, color=color)
@@ -348,7 +346,7 @@ def update_user(session_id: str, board: chess.Board):
         current_app.logger.error("No result found for provided query.")
         raise Exception("Entry not found.")
 
-    res.fen = board.fen()
+    res.board = board
     db.session.commit()
 
 
