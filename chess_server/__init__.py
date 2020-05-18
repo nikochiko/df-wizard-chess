@@ -25,7 +25,7 @@ def create_app(env="dev", test_config=None):
     db.init_app(app)
 
     with app.app_context():
-        from chess_server import routes
+        from chess_server import routes, models
 
         app.register_blueprint(routes.webhook_bp)
 
