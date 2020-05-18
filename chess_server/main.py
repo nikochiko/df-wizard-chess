@@ -1,6 +1,6 @@
 import random
 import re
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import chess
 
@@ -294,7 +294,7 @@ def get_result_comment(user: User) -> str:
     return output
 
 
-def get_response_kwargs(session_id: str):
+def get_response_kwargs(session_id: str, lastmove_lan: Optional[str] = None):
     """
     Gets the appropriate args for generating response from result and
     engine's move
@@ -334,6 +334,9 @@ def get_response_kwargs(session_id: str):
             output = f"{output}. {get_prompt_phrase()}"
             kwargs["textToSpeech"] = output
 
+    if lastmove_lan:
+        kwargs["displayText"] = f"Your last move was {lastmove_lan}.\n {output}"
+
     return kwargs
 
 
@@ -344,7 +347,15 @@ def handle_san_and_get_response_kwargs(
 
     status = get_san_description(board, san)
 
-    if status == "ambiguous":
+    if status == "legal":
+        # Convert SAN to LAN
+        move = board.parse_san(san)
+        lan = board.lan(move)
+
+        mediator.play_lan(session_id, lan)
+        kwargs = get_response_kwargs(session_id, lastmove_lan=lan)
+
+    elif status == "ambiguous":
         kwargs = {
             "textToSpeech": f"The move {san} is ambiguous. Please clarify by"
             " giving more details about the move."
@@ -358,13 +369,5 @@ def handle_san_and_get_response_kwargs(
 
     elif status == "invalid":
         kwargs = {"textToSpeech": f"The move {san} is not valid."}
-
-    elif status == "legal":
-        # Convert SAN to LAN
-        move = board.parse_san(san)
-        lan = board.lan(move)
-
-        mediator.play_lan(session_id, lan)
-        kwargs = get_response_kwargs(session_id)
 
     return kwargs
