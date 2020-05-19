@@ -2,6 +2,7 @@ import random
 from unittest import TestCase, mock
 
 import chess
+from flask import url_for
 
 from chess_server.main import (
     RESPONSES,
@@ -16,9 +17,10 @@ from chess_server.main import (
     get_result_comment,
     start_game_and_get_response,
 )
-from chess_server.utils import User, Image, BasicCard
+from chess_server.utils import User, Image, BasicCard, create_user, get_user
 from tests.utils import (
     GoogleOptionsList,
+    GoogleWebhookResponse,
     get_dummy_webhook_request_for_google,
     get_random_session_id,
 )
@@ -1266,3 +1268,78 @@ class TestShowBoard:
         assert value == self.result
         mock_save_board_and_get_card.assert_called_with(self.session_id)
         assert mock_get_response.call_args[1]["basicCard"] == self.card
+
+
+class TestUndo:
+    def setup_method(self):
+        self.session_id = get_random_session_id()
+
+    def test_undo(self, client):
+        board = chess.Board()
+        color = chess.BLACK
+
+        for san in ["e4", "e5", "Nf3", "Nc6", "Bc4"]:
+            board.push_san(san)
+        fen = board.fen()
+        board.push_san("Bc5")
+        board.push_san("b4")
+        engine_move, user_move = "b4", "Bc5"
+        create_user(self.session_id, board, color)
+
+        expected_text = (
+            f"Alright! Your move {user_move} and engine's move {engine_move} "
+            "have been undone"
+        )
+
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id, action="undo", intent="undo"
+        )
+        r = client.post(url_for("webhook_bp.webhook"), json=req_data)
+        resp = GoogleWebhookResponse(r.json)
+
+        assert get_user(self.session_id).board.fen() == fen
+        assert expected_text in resp.simple_response.text_to_speech
+        assert expected_text in resp.simple_response.display_text
+
+    def test_undo_game_ended_after_users_move(self, client):
+        board = chess.Board()
+        color = chess.WHITE
+
+        for san in ["e4", "e5", "Qh5", "Nc6", "Bc4", "Nf6"]:
+            board.push_san(san)
+
+        fen = board.fen()
+        board.push_san("Qxf7#")
+        undone_move = "Qxf7#"
+        create_user(self.session_id, board, color)
+
+        expected_text = f"OK! Undid the move {undone_move}"
+
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id, action="undo", intent="undo"
+        )
+        r = client.post(url_for("webhook_bp.webhook"), json=req_data)
+        resp = GoogleWebhookResponse(r.json)
+
+        assert get_user(self.session_id).board.fen() == fen
+        assert expected_text in resp.simple_response.text_to_speech
+        assert expected_text in resp.simple_response.display_text
+
+    def test_undo_on_move_one(self, client):
+        board = chess.Board()
+        color = chess.BLACK
+        board.push_san("e4")
+        fen = board.fen()
+        create_user(self.session_id, board, color)
+
+        expected_text = "Nothing to undo!"
+
+        req_data = get_dummy_webhook_request_for_google(
+            session_id=self.session_id, action="undo", intent="undo"
+        )
+        r = client.post(url_for("webhook_bp.webhook"), json=req_data)
+        resp = GoogleWebhookResponse(r.json)
+
+        assert get_user(self.session_id).board.fen() == fen
+        assert expected_text in resp.simple_response.text_to_speech
+        assert expected_text in resp.simple_response.display_text
