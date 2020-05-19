@@ -13,6 +13,7 @@ from chess_server.main import (
     piece_and_square,
     show_board,
     simply_san,
+    undo,
 )
 
 
@@ -53,6 +54,9 @@ def webhook():
 
     elif action == "show_board":
         res = show_board(req)
+
+    elif action == "undo":
+        res = undo(req)
 
     else:
         log.error(f"Bad request:\n{str(req)}")

@@ -19,6 +19,7 @@ from chess_server.utils import (
     process_castle_by_querytext,
     save_board_as_png_and_get_image_card,
     two_squares_and_piece_to_lan,
+    undo_users_last_move,
 )
 
 RESPONSES = {
@@ -216,6 +217,33 @@ def show_board(req: Dict[str, Any]) -> Dict[str, Any]:
     )
 
     return resp
+
+
+def undo(req: Dict[str, Any]) -> Dict[str, Any]:
+    """Undo the last move of the user"""
+    session_id = get_session_by_req(req)
+
+    undone = undo_users_last_move(session_id)
+
+    if undone:
+        if len(undone) == 1:
+            resp = f"OK! Undid the move {undone[0]}"
+
+        else:
+            engine_move, user_move = undone
+            resp = (
+                f"Alright! Your move {user_move} and "
+                f"engine's move {engine_move} have been undone"
+            )
+
+    else:
+        resp = "Nothing to undo!"
+
+    text_to_speech = f"{user_move}. {get_prompt_phrase()}"
+
+    return get_response_for_google(
+        textToSpeech=text_to_speech, displayText=resp
+    )
 
 
 def start_game_and_get_response(session_id: str, color: str):

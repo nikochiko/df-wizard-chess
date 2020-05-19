@@ -595,3 +595,27 @@ def save_board_as_png_and_get_image_card(session_id: str):
     card = BasicCard(image=image, formattedText=formattedText)
 
     return card
+
+
+def undo_users_last_move(session_id: str) -> List[chess.Move]:
+    """Undos all moves until user's last move. Returns a list of undone moves.
+
+    Note: No move will be undone if user tries this on move 1 (as white or as
+    black)
+    """
+    user = get_user(session_id)
+    board = user.board
+
+    if board.fullmove_number == 1:
+        return []
+
+    undone = []
+
+    undone.append(board.pop())
+    if board.turn is user.color:
+        # This move was the user's turn
+        undone.append(board.pop())
+
+    update_user(session_id, board)
+
+    return undone
