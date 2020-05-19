@@ -335,7 +335,9 @@ def get_response_kwargs(session_id: str, lastmove_lan: Optional[str] = None):
             kwargs["textToSpeech"] = output
 
     if lastmove_lan:
-        kwargs["displayText"] = f"Your last move was {lastmove_lan}.\n {output}"
+        kwargs[
+            "displayText"
+        ] = f"Your last move was {lastmove_lan}.\n {output}"
 
     return kwargs
 
