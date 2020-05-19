@@ -227,19 +227,19 @@ def undo(req: Dict[str, Any]) -> Dict[str, Any]:
 
     if undone:
         if len(undone) == 1:
-            resp = f"OK! Undid the move {undone[0]}"
+            resp = f"OK! Undid the move {undone[0]}."
 
         else:
             engine_move, user_move = undone
             resp = (
                 f"Alright! Your move {user_move} and "
-                f"engine's move {engine_move} have been undone"
+                f"engine's move {engine_move} have been undone."
             )
 
     else:
         resp = "Nothing to undo!"
 
-    text_to_speech = f"{user_move}. {get_prompt_phrase()}"
+    text_to_speech = f"{resp} {get_prompt_phrase()}"
 
     return get_response_for_google(
         textToSpeech=text_to_speech, displayText=resp

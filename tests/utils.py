@@ -2,6 +2,8 @@ import random
 import string
 from typing import Any, Dict, List, Optional, NamedTuple, Tuple
 
+from chess_server.utils import BasicCard, Image
+
 
 def get_random_session_id(length: Optional[int] = 36) -> str:
     """Returns a randomly generated session id of given length (default 36)"""
@@ -20,9 +22,12 @@ class Option(NamedTuple):
 
 
 class GoogleOptionsList(Dict):
-    def __init__(self, options_list: List[Dict[str, Any]]):
+    def __init__(
+        self, options_list: List[Dict[str, Any]], title: Optional[str] = None
+    ):
         self.__dict__ = self  # Accessible as a dict
 
+        self.title = title
         for each_dict in options_list:
             # Iterate over each option
             key = each_dict["optionInfo"]["key"]
@@ -64,6 +69,94 @@ class WebhookRequest:
         self.output_contexts: List[Dict[str, Any]] = req["queryResult"][
             "outputContexts"
         ]
+
+
+class SimpleResponse(NamedTuple):
+    text_to_speech: Optional[str] = None
+    ssml: Optional[str] = None
+    display_text: Optional[str] = None
+
+    @classmethod
+    def create(cls, sr_dict):
+        """Create a SimpleResponse object from a SimpleResponse dict"""
+        text_to_speech = sr_dict.get("textToSpeech")
+        ssml = sr_dict.get("ssml")
+        display_text = sr_dict.get("displayText")
+        return cls(text_to_speech, ssml, display_text)
+
+
+class GoogleWebhookResponse:
+    def __init__(self, resp: Dict[str, Any]):
+        items = resp["payload"]["google"]["richResponse"]["items"]
+        self.simple_response = SimpleResponse.create(
+            items[0]["simpleResponse"]
+        )
+        self.simple_response_2 = None
+        self.basic_card = None
+
+        if len(items) > 1:
+            for item in items:
+                if item.get("simpleResponse"):
+                    if not self.simple_response_2:
+                        self.simple_response_2 = SimpleResponse.create(
+                            item["simpleResponse"]
+                        )
+                    else:
+                        raise Exception(
+                            "There can be at most 2 simple responses in a rich"
+                            " response"
+                        )
+
+                if item.get("basicCard"):
+                    if self.basic_card is not None:
+                        raise Exception(
+                            "Only 1 basic card is allowed in one response"
+                        )
+
+                    card_dict = item["basicCard"]
+                    if card_dict.get("image"):
+                        card_image_url = card_dict["image"].get("url")
+                        card_image_alt_text = card_dict["image"].get(
+                            "accessibilityText"
+                        )
+                        card_image_width = card_dict["image"].get("width")
+                        card_image_height = card_dict["image"].get("height")
+                        card_image = Image(
+                            card_image_url,
+                            card_image_alt_text,
+                            card_image_width,
+                            card_image_height,
+                        )
+                    else:
+                        card_image = None
+
+                    card_formatted_text = card_dict.get("formattedText")
+                    card_title = card_dict.get("title")
+                    card_subtitle = card_dict.get("subtitle")
+
+                    self.basic_card = BasicCard(
+                        card_image,
+                        card_formatted_text,
+                        card_title,
+                        card_subtitle,
+                    )
+
+        self.expect_user_response = resp["payload"]["google"][
+            "expectUserResponse"
+        ]
+        self.options_list = None
+        if resp["payload"]["google"].get("systemIntent"):
+            if (
+                resp["payload"]["google"]["systemIntent"]["intent"]
+                == "actions.intent.OPTION"
+            ):
+                title = resp["payload"]["google"]["systemIntent"][
+                    "listSelect"
+                ].get("title")
+                items = resp["payload"]["google"]["systemIntent"][
+                    "listSelect"
+                ]["items"]
+                self.options_list = GoogleOptionsList(items, title)
 
 
 # For general webhook request
