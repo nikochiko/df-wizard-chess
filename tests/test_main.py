@@ -1287,8 +1287,8 @@ class TestUndo:
         create_user(self.session_id, board, color)
 
         expected_text = (
-            f"Alright! Your move {user_move} and engine's move {engine_move} "
-            "have been undone"
+            f"Alright! The moves {user_move} and {engine_move} have been "
+            "undone."
         )
 
         req_data = get_dummy_webhook_request_for_google(

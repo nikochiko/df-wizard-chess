@@ -232,8 +232,8 @@ def undo(req: Dict[str, Any]) -> Dict[str, Any]:
         else:
             engine_move, user_move = undone
             resp = (
-                f"Alright! Your move {user_move} and "
-                f"engine's move {engine_move} have been undone."
+                f"Alright! The moves {user_move} and {engine_move} have been "
+                "undone."
             )
 
     else:
