@@ -8,3 +8,4 @@ exclude_lines =
   import
   def main():
   if __name__ == .__main__.:
+  pragma: no cover
