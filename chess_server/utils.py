@@ -144,6 +144,7 @@ def get_response_template_for_google(
 
 def get_response_for_google(
     textToSpeech: str,
+    displayText: Optional[str] = None,
     expectUserResponse: Optional[bool] = True,
     basicCard: Optional[BasicCard] = None,
     options: Optional[List[Dict[str, Union[str, Dict[str, str]]]]] = None,
@@ -274,9 +275,13 @@ def get_response_for_google(
         "simpleResponse"
     ]["textToSpeech"] = textToSpeech
 
+    if displayText:
+        template["payload"]["google"]["richResponse"]["items"][0][
+            "simpleResponse"
+        ]["displayText"] = displayText
+
     # If options List is given
     if options:
-        print(template)
         template["payload"]["google"]["systemIntent"]["data"]["listSelect"][
             "items"
         ] = options
@@ -590,3 +595,28 @@ def save_board_as_png_and_get_image_card(session_id: str):
     card = BasicCard(image=image, formattedText=formattedText)
 
     return card
+
+
+def undo_users_last_move(session_id: str) -> List[str]:
+    """Undos all moves until user's last move. Returns a list of undone moves
+    in their SAN form.
+
+    Note: No move will be undone if user tries this on move 1 (as white or as
+    black)
+    """
+    user = get_user(session_id)
+    board = user.board
+
+    if board.fullmove_number == 1:
+        return []
+
+    undone = []
+
+    undone.append(board.san(board.pop()))
+    if board.turn is not user.color:
+        # One more undo to reach user's move
+        undone.append(board.san(board.pop()))
+
+    update_user(session_id, board)
+
+    return undone

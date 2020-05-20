@@ -13,6 +13,7 @@ from chess_server.main import (
     piece_and_square,
     show_board,
     simply_san,
+    undo,
 )
 
 
@@ -26,9 +27,7 @@ def webhook():
 
     req = request.get_json()
 
-    # DEBUG:
     print(f"Got POST request at /webhook:\n{str(req)}")
-    # DEBUG:
 
     action = req["queryResult"].get("action")
 
@@ -56,13 +55,14 @@ def webhook():
     elif action == "show_board":
         res = show_board(req)
 
+    elif action == "undo":
+        res = undo(req)
+
     else:
         log.error(f"Bad request:\n{str(req)}")
         raise BadRequest(f"Unknown intent action: {action}")
 
-    # DEBUG:
-    print(f"\nRESPONSE:\n{res}\n")
-    # DEBUG:
+    print(f"\nResponse:\n{res}\n")
 
     return make_response(jsonify(res))
 

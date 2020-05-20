@@ -9,17 +9,20 @@ from chess_server.utils import (
     User,
     BasicCard,
     Image,
+    create_user,
     get_session_by_req,
     get_params_by_req,
     get_piece_symbol,
     get_response_for_google,
     get_response_template_for_google,
     get_san_description,
+    get_user,
     lan_to_speech,
     process_castle_by_querytext,
     save_board_as_png,
     save_board_as_png_and_get_image_card,
     two_squares_and_piece_to_lan,
+    undo_users_last_move,
 )
 from tests import data
 from tests.utils import get_random_session_id
@@ -758,6 +761,60 @@ class TestSaveBoardAsPngAndGetCard:
         card = save_board_as_png_and_get_image_card(self.session_id)
 
         assert card.image.url == url
+
+
+class TestUndoUsersLastMove:
+    def setup_method(self):
+        self.session_id = get_random_session_id()
+
+    def test_undo_users_last_move(self, context, mocker):
+        board = chess.Board()
+        color = chess.BLACK
+
+        for san in ["e4", "e5", "Nf3", "Nc6", "Bc4"]:
+            board.push_san(san)
+
+        fen = board.fen()
+        board.push_san("Bc5")
+        board.push_san("b4")
+        expected_undone = ["b4", "Bc5"]
+        create_user(self.session_id, board, color)
+
+        value = undo_users_last_move(self.session_id)
+
+        assert value == expected_undone
+        assert get_user(self.session_id).board.fen() == fen
+
+    def test_undo_users_last_move_on_move_one(self, context, mocker):
+        board = chess.Board()
+        color = chess.BLACK
+        board.push_san("e4")
+        fen = board.fen()
+        create_user(self.session_id, board, color)
+
+        value = undo_users_last_move(self.session_id)
+
+        assert value == []
+        assert get_user(self.session_id).board.fen() == fen
+
+    def test_undo_users_last_move_game_ended_after_users_move(
+        self, context, mocker
+    ):
+        board = chess.Board()
+        color = chess.WHITE
+
+        for san in ["e4", "e5", "Qh5", "Nc6", "Bc4", "Nf6"]:
+            board.push_san(san)
+
+        fen = board.fen()
+        board.push_san("Qxf7#")
+        expected_undone = ["Qxf7#"]
+        create_user(self.session_id, board, color)
+
+        value = undo_users_last_move(self.session_id)
+
+        assert value == expected_undone
+        assert get_user(self.session_id).board.fen() == fen
 
 
 class TestImage:

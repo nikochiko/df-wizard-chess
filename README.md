@@ -113,6 +113,10 @@ If you don't mention which side you want to castle on (just ***castles***), cast
 will be performed on whichever side is legal, defaulting to the kingside in
 case both are legal.
 
+<h3>Undoing the moves</h3>
+You can easily undo your last move by saying ***Undo move***, ***take back
+my last move***, etc.
+
 <h3>Seeing the board</h3>
 
 You are also given the option to take a peek at the board. To do that just say
