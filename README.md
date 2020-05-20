@@ -114,6 +114,7 @@ will be performed on whichever side is legal, defaulting to the kingside in
 case both are legal.
 
 <h3>Undoing the moves</h3>
+
 You can easily undo your last move by saying ***Undo move***, ***take back
 my last move***, etc.
 
