@@ -419,7 +419,7 @@ description = "A pure Python chess library with move generation and validation, 
 name = "python-chess"
 optional = false
 python-versions = ">=3.6"
-version = "0.31.1"
+version = "0.31.2"
 
 [[package]]
 category = "main"
@@ -542,7 +542,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "cb08bb2f16ee458b7241f01737cb3742d36d8192e50470491fd418ca8794e657"
+content-hash = "7a9be8d106683bf129d6ef38fec8fada2df2e63dc6282d57e3400d22595ad8f6"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -788,8 +788,8 @@ pytest-mock = [
     {file = "pytest_mock-3.1.1-py3-none-any.whl", hash = "sha256:a9fedba70e37acf016238bb2293f2652ce19985ceb245bbd3d7f3e4032667402"},
 ]
 python-chess = [
-    {file = "python-chess-0.31.1.tar.gz", hash = "sha256:62ba5511fc40ec158e535840242027169deeb44911977122857f2a46eaf77f2b"},
-    {file = "python_chess-0.31.1-py3-none-any.whl", hash = "sha256:b05428ad9740d3d4c07a005bed2d7ff7f334faa2db52a88d6040557e85dfaa4c"},
+    {file = "python-chess-0.31.2.tar.gz", hash = "sha256:fef2a8b7a2522dd7bdab3fd07bfbbb522a2e385a8aba92c97fa1d82d9da90037"},
+    {file = "python_chess-0.31.2-py3-none-any.whl", hash = "sha256:0370abcde45a7f3d13da71e74e9b3c5f916606b593d87916e31062f57b5b46fb"},
 ]
 python-dotenv = [
     {file = "python-dotenv-0.13.0.tar.gz", hash = "sha256:3b9909bc96b0edc6b01586e1eed05e71174ef4e04c71da5786370cebea53ad74"},
