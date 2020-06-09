@@ -18,7 +18,7 @@ psycopg2-binary = "^2.8.5"
 [tool.poetry.dev-dependencies]
 pytest = "^5.4"
 pytest-mock = "^3.1.1"
-flake8 = "^3.8.2"
+flake8 = "^3.8.3"
 black = "^19.10b0"
 
 [build-system]
