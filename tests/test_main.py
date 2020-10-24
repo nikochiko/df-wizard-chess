@@ -1,5 +1,4 @@
 import random
-from unittest import TestCase, mock
 
 import chess
 from flask import url_for
@@ -26,7 +25,7 @@ from tests.utils import (
 )
 
 
-class TestGetResultComment(TestCase):
+class TestGetResultComment():
     def test_get_result_comment_game_is_not_over_as_white(self):
 
         user = User(board=chess.Board(), color=chess.WHITE)
@@ -275,7 +274,7 @@ class TestStartGame:
         value = start_game_and_get_response(session_id, color)
 
         mock_create_user.assert_called_with(
-            session_id, board=chess.Board(), color=mock.ANY
+            session_id, board=chess.Board(), color=mocker.ANY
         )
         mock_random.assert_any_call([chess.WHITE, chess.BLACK])
         mock_get_response.assert_called_once()
