@@ -99,7 +99,7 @@ def two_squares(req: Dict[str, Any]) -> Dict[str, Any]:
     squares = [square.lower() for square in params["squares"]]
     piece = params["piece"]
 
-    if len(squares) == 1 and piece:
+    if len(squares) == 1:
         return piece_and_square(req)
 
     # Extract board
