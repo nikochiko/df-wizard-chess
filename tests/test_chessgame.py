@@ -1,9 +1,9 @@
-from unittest import TestCase, mock
 
 import chess
 import chess.engine
 import pytest
 from flask import current_app
+from pytest_mock import mocker
 
 from chess_server.chessgame import Mediator
 from chess_server.utils import User
@@ -11,10 +11,10 @@ from tests.utils import get_random_session_id
 
 
 @pytest.mark.usefixtures("context")
-class TestMediator(TestCase):
+class TestMediator():
     def setUp(self):
         self.mock_engine_path = "engine_path"
-        self.mock_engine = mock.MagicMock()
+        self.mock_engine = mocker.MagicMock()
 
         self.board = chess.Board()
         self.color = chess.WHITE
@@ -23,7 +23,7 @@ class TestMediator(TestCase):
         self.mediator = Mediator()
 
         # Mock the popen_uci method to return our mock engine
-        self.patcher = mock.patch(
+        self.patcher = mocker.patch(
             "chess.engine.SimpleEngine.popen_uci",
             return_value=self.mock_engine,
         )
@@ -38,7 +38,7 @@ class TestMediator(TestCase):
         self.mock_popen_uci.assert_called_with(self.mock_engine_path)
         self.assertEqual(self.mediator.engine, self.mock_engine)
 
-    @mock.patch("chess_server.chessgame.logger.error")
+    @mocker.patch("chess_server.chessgame.logger.error")
     def test_activate_engine_with_arg_error(self, mock_logger):
 
         # popen_uci method will raise exception when run
@@ -63,9 +63,9 @@ class TestMediator(TestCase):
         self.mock_popen_uci.assert_called_with(self.mock_engine_path)
         self.assertEqual(self.mediator.engine, self.mock_engine)
 
-    @mock.patch("chess_server.chessgame.lan_to_speech")
-    @mock.patch("chess_server.chessgame.update_user")
-    @mock.patch("chess_server.chessgame.get_user")
+    @mocker.patch("chess_server.chessgame.lan_to_speech")
+    @mocker.patch("chess_server.chessgame.update_user")
+    @mocker.patch("chess_server.chessgame.get_user")
     def test_play_engine_move_and_get_speech(
         self, mock_get_user, mock_update_user, mock_lts
     ):
@@ -82,8 +82,8 @@ class TestMediator(TestCase):
             move=move, ponder=None
         )
 
-        with mock.patch.object(self.board, "push") as mock_push:
-            with mock.patch.object(self.board, "lan", return_value=lan):
+        with mocker.patch.object(self.board, "push") as mock_push:
+            with mocker.patch.object(self.board, "lan", return_value=lan):
                 value = self.mediator.play_engine_move_and_get_speech(
                     session_id
                 )
@@ -98,8 +98,8 @@ class TestMediator(TestCase):
         )  # DB was updated
         self.assertEqual(value, "test reply")  # Correctly reply was given
 
-    @mock.patch("chess_server.chessgame.update_user")
-    @mock.patch("chess_server.chessgame.get_user")
+    @mocker.patch("chess_server.chessgame.update_user")
+    @mocker.patch("chess_server.chessgame.get_user")
     def test_play_lan_success(self, mock_get_user, mock_update_user):
 
         session_id = get_random_session_id()
@@ -108,7 +108,7 @@ class TestMediator(TestCase):
 
         mock_get_user.return_value = self.user
 
-        with mock.patch.object(self.board, "push") as mock_push:
+        with mocker.patch.object(self.board, "push") as mock_push:
             # The board method which finally makes the move is `Board.push`
             # even though the method being called directly is `Board.push_san`
             value = self.mediator.play_lan(session_id, lan)
@@ -120,8 +120,8 @@ class TestMediator(TestCase):
         )  # DB updated
         self.assertTrue(value)  # Correct value returned
 
-    @mock.patch("chess_server.chessgame.update_user")
-    @mock.patch("chess_server.chessgame.get_user")
+    @mocker.patch("chess_server.chessgame.update_user")
+    @mocker.patch("chess_server.chessgame.get_user")
     def test_play_lan_illegal_move(self, mock_get_user, mock_update_user):
 
         session_id = get_random_session_id()
