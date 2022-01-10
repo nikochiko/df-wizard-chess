@@ -13,7 +13,7 @@ python-dotenv = "^0.15.0"
 pytest-flask = "^1.1.0"
 cairosvg = "^2.5.0"
 flask-sqlalchemy = "^2.4.4"
-psycopg2-binary = "^2.8.6"
+psycopg2-binary = "^2.9.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.1"
