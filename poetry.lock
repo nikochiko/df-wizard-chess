@@ -97,6 +97,14 @@ python-versions = "*"
 pycparser = "*"
 
 [[package]]
+name = "chess"
+version = "1.3.2"
+description = "A pure Python chess library with move generation and validation, Polyglot opening book probing, PGN reading and writing, Gaviota tablebase probing, Syzygy tablebase probing and XBoard/UCI engine communication."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[[package]]
 name = "click"
 version = "7.1.2"
 description = "Composable command line interface toolkit"
@@ -389,11 +397,14 @@ dev = ["pre-commit", "tox", "pytest-asyncio"]
 
 [[package]]
 name = "python-chess"
-version = "0.31.4"
-description = "A pure Python chess library with move generation and validation, Polyglot opening book probing, PGN reading and writing, Gaviota tablebase probing, Syzygy tablebase probing and XBoard/UCI engine communication."
+version = "1.999"
+description = "A chess library with move generation, move validation, and support for common formats."
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = "*"
+
+[package.dependencies]
+chess = ">=1,<2"
 
 [[package]]
 name = "python-dotenv"
@@ -504,7 +515,7 @@ watchdog = ["watchdog"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "ca3af3c6fc7c2eee2d510a0282c166e5a0da1469d260f376d36c7cfae3d3b780"
+content-hash = "378c3b1c9989ba3fc83af971bba1663de08205945227548561734cfc31cdc196"
 
 [metadata.files]
 appdirs = [
@@ -558,6 +569,10 @@ cffi = [
     {file = "cffi-1.14.0-cp38-cp38-win32.whl", hash = "sha256:675686925a9fb403edba0114db74e741d8181683dcf216be697d208857e04ca8"},
     {file = "cffi-1.14.0-cp38-cp38-win_amd64.whl", hash = "sha256:00789914be39dffba161cfc5be31b55775de5ba2235fe49aa28c148236c4e06b"},
     {file = "cffi-1.14.0.tar.gz", hash = "sha256:2d384f4a127a15ba701207f7639d94106693b6cd64173d6c8988e2c25f3ac2b6"},
+]
+chess = [
+    {file = "chess-1.3.2-py3-none-any.whl", hash = "sha256:f8773e8a98da646c37d0c80f04c089335c54135ed282cea785b44395c21b5776"},
+    {file = "chess-1.3.2.tar.gz", hash = "sha256:323d585a23384cbfbc478e3b852ca1853d329618a5fa7ed285cf6f31267f25c0"},
 ]
 click = [
     {file = "click-7.1.2-py2.py3-none-any.whl", hash = "sha256:dacca89f4bfadd5de3d7489b7c8a566eee0d3676333fbb50030263894c38c0dc"},
@@ -802,8 +817,8 @@ pytest-mock = [
     {file = "pytest_mock-3.3.1-py3-none-any.whl", hash = "sha256:024e405ad382646318c4281948aadf6fe1135632bea9cc67366ea0c4098ef5f2"},
 ]
 python-chess = [
-    {file = "python-chess-0.31.4.tar.gz", hash = "sha256:1fb46b9fd7919332fcfe34df7284e58e9adb9579ef44f26ed9e3343ce9b30d07"},
-    {file = "python_chess-0.31.4-py3-none-any.whl", hash = "sha256:ce9e88e82cf9dcf131b44a04ee8be4891b411e2fee54f5389df27289dae32be4"},
+    {file = "python-chess-1.999.tar.gz", hash = "sha256:8cad0388c42242d890ac6368ad64def15cd0165db033df0ad479492e266e5e6c"},
+    {file = "python_chess-1.999-py3-none-any.whl", hash = "sha256:93b562f8f1124cb7bf56fb095e18743758e69dc6a028ccda0badcaa5c59d88c8"},
 ]
 python-dotenv = [
     {file = "python-dotenv-0.15.0.tar.gz", hash = "sha256:587825ed60b1711daea4832cf37524dfd404325b7db5e25ebe88c495c9f807a0"},
